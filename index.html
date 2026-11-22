@@ -378,13 +378,40 @@ const LOADS={
 const loadLabel=(id,v)=>{const l=LOADS[id];if(!l||v==null)return '';return l.L?`Sac ${String(v).replace('.',',')} L`:l.opts[Math.max(0,Math.min(l.opts.length-1,v))]};
 const lastLoad=id=>{for(let i=S.sessions.length-1;i>=0;i--){const v=S.sessions[i].loads?.[id];if(v!=null)return v}return null};
 const bumpLoad=(id,v)=>{const l=LOADS[id];return l.L?Math.min(25,v+.5):Math.min(l.opts.length-1,v+1)};
+/* ---------- Échauffement guidé : 5 mouvements animés, ~3 min ---------- */
+const WU_STAND={head:[302,106],neck:[300,150],hip:[300,282]};
 const WARMUP=[
- ['Marche sur place en montant les genoux','45 s'],
- ['Grands cercles de bras, vers l’avant puis l’arrière','10 + 10'],
- ['Squats sans charge, lents','10'],
- ['Pompes faciles (sur les genoux)','6'],
- ['Rotations du buste, bras croisés','10'],
+ {id:'wu1',name:'Marche genoux hauts',dose:'40 s',secs:40,period:1.3,muscles:'Cœur · Hanches',
+  tips:['Monte chaque genou à hauteur de hanche','Balance les bras en rythme'],phase:['Genou droit','Genou gauche'],
+  setup:['Debout, pieds largeur de hanches','Monte un genou puis l’autre, sur place'],mistakes:['Se pencher en arrière'],breath:'Respire normalement.',easier:'Monte moins haut les genoux.',progress:'Accélère le rythme.',
+  a:{...WU_STAND,kN:[364,236],fN:[352,322],kF:[292,362],fF:[288,440],eN:[272,214],hN:[262,282],eF:[332,210],hF:[362,252]},
+  b:{...WU_STAND,kN:[312,362],fN:[318,440],kF:[364,236],fF:[352,322],eN:[332,210],hN:[362,252],eF:[272,214],hF:[262,282]},
+  work:['legN','legF'],cues:[{j:'kN',t:'Genou à hauteur de hanche',ph:'a',o:[90,-90]}]},
+ {id:'wu2',name:'Grands cercles de bras',dose:'10 + 10',secs:35,period:2.2,spin:true,muscles:'Épaules',
+  tips:['Bras tendus, grands cercles lents','10 vers l’avant, puis 10 vers l’arrière'],phase:['Grands cercles','Grands cercles'],
+  setup:['Debout, bras tendus le long du corps','Dessine de grands cercles avec les bras'],mistakes:['Plier les coudes','Aller trop vite'],breath:'Respire calmement.',easier:'Fais des cercles plus petits.',progress:'Agrandis les cercles.',
+  a:{...WU_STAND,kN:[312,362],fN:[318,440],kF:[292,362],fF:[288,440],eN:[300,210],hN:[300,270]},b:{...WU_STAND,kN:[312,362],fN:[318,440],kF:[292,362],fF:[288,440],eN:[300,210],hN:[300,270]},
+  work:['armN','armF'],cues:[{j:'hN',t:'Bras tendus',ph:'all',o:[120,-40]}]},
+ {id:'wu3',name:'Squats sans charge',dose:'10 lents',secs:40,period:3,muscles:'Cuisses · Fessiers',
+  tips:['Bras tendus devant pour l’équilibre','Fesses en arrière, talons au sol'],phase:['Descends lentement','Remonte'],
+  setup:['Pieds un peu plus larges que les hanches','Bras tendus devant toi'],mistakes:['Talons qui décollent'],breath:'Inspire en descendant, souffle en remontant.',easier:'Descends moins bas.',progress:'Descends plus bas.',
+  a:{...WU_STAND,kN:[312,362],fN:[318,440],kF:[292,362],fF:[288,440],eN:[330,212],hN:[384,214]},
+  b:{head:[312,168],neck:[296,210],hip:[232,330],kN:[332,342],fN:[318,440],kF:[312,346],fF:[288,440],eN:[350,232],hN:[404,228]},
+  work:['legN','legF'],cues:[{j:'fN',t:'Talons au sol',ph:'b',o:[100,-40]}]},
+ {id:'wu4',name:'Pompes sur les genoux',dose:'6 faciles',secs:30,period:2.8,muscles:'Pecs · Épaules',
+  tips:['Genoux au sol, corps droit des genoux à la tête','Doucement, juste pour chauffer'],phase:['Descends','Pousse'],
+  setup:['Mains au sol sous les épaules','Genoux au sol, pieds levés'],mistakes:['Fesses en l’air'],breath:'Inspire en descendant, souffle en poussant.',easier:'Mains sur une chaise.',progress:'Fais-les au sol.',
+  a:{head:[478,300],neck:[432,322],hip:[288,384],kN:[200,434],fN:[112,390],eN:[432,378],hN:[434,440]},
+  b:{head:[486,384],neck:[442,400],hip:[292,414],kN:[200,434],fN:[112,390],eN:[392,386],hN:[434,440]},
+  work:['armN','armF','torso'],cues:[{j:'kN',t:'Genoux au sol',ph:'all',o:[-40,-90]}]},
+ {id:'wu5',name:'Rotations du buste',dose:'10',secs:30,period:2.6,view:'front',muscles:'Taille · Dos',
+  tips:['Bras croisés sur la poitrine','Tourne le buste, les hanches restent fixes'],phase:['Tourne à gauche','Tourne à droite'],
+  setup:['Debout, pieds écartés','Croise les bras sur la poitrine'],mistakes:['Tourner les hanches'],breath:'Respire normalement.',easier:'Tourne moins loin.',progress:'Tourne plus loin, lentement.',
+  a:{head:[312,104],neck:[310,150],hip:[300,282],kN:[330,362],fN:[336,440],kF:[270,362],fF:[264,440],eN:[352,220],hN:[278,196],eF:[272,222],hF:[340,198]},
+  b:{head:[288,104],neck:[290,150],hip:[300,282],kN:[330,362],fN:[336,440],kF:[270,362],fF:[264,440],eN:[328,222],hN:[256,198],eF:[248,220],hF:[318,196]},
+  work:['torso'],cues:[{j:'hip',t:'Hanches fixes',ph:'all',o:[120,30]}]},
 ];
+WARMUP.forEach(w=>{X[w.id]={...w,min:0,max:0,rest:0}});
 
 /* ---------- Personnage (illustré, relief + traînée de mouvement) ---------- */
 const C={skin:'#F0B892',skinD:'#C98763',skinF:'#B8805F',tee:'#2A2D3A',teeF:'#1E2029',sh:'#3B3F55',shF:'#2B2E3E',shoe:'#F5F5F7',sole:'#8E8E9A',hair:'#1B1512',ink:'#0B0B10',mat:'#1D1D27',band:'#34E39B'};
@@ -402,6 +429,7 @@ function pose(e,t){
  const dx=head[0]-neck[0],dy=head[1]-neck[1],l=Math.hypot(dx,dy)||1,up=[dx/l,dy/l];
  const shN=front?ad(neck,[40,12]):ad(neck,[-up[0]*8,-up[1]*8]),shF=front?ad(neck,[-40,12]):shN;
  const hpN=front?ad(hip,[20,0]):hip,hpF=front?ad(hip,[-20,0]):hip;
+ if(e.spin){const a=t*Math.PI*2,R=118,c=[Math.sin(a),Math.cos(a)];J.hN=[shN[0]+c[0]*R,shN[1]+c[1]*R];J.eN=[shN[0]+c[0]*R*.5,shN[1]+c[1]*R*.5];J.hF=ad(J.hN,[-12,-4]);J.eF=ad(J.eN,[-12,-4])}
  return {front,head,neck,hip,J,up,shN,shF,hpN,hpF};
 }
 function face(P){const h=P.head,u=P.up;
@@ -435,7 +463,7 @@ const BOX={};
 function fitBox(e,labels){
  const key=e.id+(labels?'L':'');if(BOX[key])return BOX[key];
  const xs=[],ys=[];
- [0,.5,1].forEach(t=>{const P=pose(e,t);[P.head,P.neck,P.hip,P.shN,P.shF,...Object.values(P.J)].forEach(q=>{xs.push(q[0]);ys.push(q[1])});
+ (e.spin?[0,.25,.5,.75]:[0,.5,1]).forEach(t=>{const P=pose(e,t);[P.head,P.neck,P.hip,P.shN,P.shF,...Object.values(P.J)].forEach(q=>{xs.push(q[0]);ys.push(q[1])});
   if(e.prop==='bagHang')ys.push(P.J.hN[1]+100);if(e.prop==='kb')ys.push(P.J.hN[1]-80);});
  if(e.prop==='bandDoor'||e.prop==='bandSide')xs.push(560);
  if(e.top){xs.push(165,435);ys.push(44,472)}
@@ -506,7 +534,7 @@ function animate(now){
  document.querySelectorAll('[data-fig]').forEach(el=>{
   const e=X[el.dataset.fig];if(!e)return;
   if(IO){if(!el._obs){el._obs=1;el._vis=true;IO.observe(el)}if(!el._vis)return}
-  const ph=x=>(1-Math.cos(x/e.period*Math.PI*2))/2;
+  const ph=x=>e.spin?((x/e.period)%1+1)%1:(1-Math.cos(x/e.period*Math.PI*2))/2;
   el.innerHTML=figSVG(e,ph(s),el.dataset.trail?ph(s-.12):null,el.dataset.labels==='1');
   if(el.dataset.labels==='1'){const cap=el.parentElement.querySelector('[data-cap]');if(cap&&e.phase){const go=Math.sin(s/e.period*Math.PI*2)>=0||e.unit==='s';const txt=(e.unit==='s'?'⏱ ':'▸ ')+e.phase[go?0:1];if(cap.textContent!==txt)cap.textContent=txt}}
  });
@@ -756,25 +784,34 @@ function startRun(k){
  const loads={},bumped={};
  SESSIONS[k].list.forEach(([id])=>{if(!LOADS[id])return;let v=lastLoad(id);if(v==null)v=LOADS[id].def;else if(readyToProgress(k,id)){const nv=bumpLoad(id,v);if(nv!==v){v=nv;bumped[id]=true}}loads[id]=v});
  SESSIONS[k].list.forEach(([id,n0])=>{const n=light?Math.min(2,n0):n0;const e=X[id];for(let s=1;s<=n;s++){(e.per?(e.per==='côté'?['côté droit','côté gauche']:[e.per]):[null]).forEach((side,i,arr)=>steps.push({e,set:s,sets:n,side,lastSide:i===arr.length-1}))}});
- RUN={k,steps,loads,bumped,light,i:0,phase:'warmup',wuEnd:Date.now()+180000,results:{},val:null,hold:null,anim:true,before:S.sessions.slice()};
+ RUN={k,steps,loads,bumped,light,i:0,phase:'warmup',wu:0,wuEnd:Date.now()+WARMUP[0].secs*1000,results:{},val:null,hold:null,anim:true,before:S.sessions.slice()};
  keepAwake(true);render();
- clearInterval(timerId);timerId=setInterval(()=>{if(!RUN||RUN.phase!=='warmup')return clearInterval(timerId);const left=Math.max(0,Math.ceil((RUN.wuEnd-Date.now())/1000)),el=$('#wt');if(!el)return;el.textContent=mmss(left);setRing(left/180);if(left===0&&!RUN.wuDone){RUN.wuDone=true;chord();renderRun()}},500);
+ startWuTimer();
 }
+function startWuTimer(){clearInterval(timerId);RUN.wuBeep=null;timerId=setInterval(()=>{if(!RUN||RUN.phase!=='warmup')return clearInterval(timerId);if(RUN.wuDone)return;
+ const w=WARMUP[RUN.wu],left=Math.max(0,Math.ceil((RUN.wuEnd-Date.now())/1000)),el=$('#wt');
+ if(left<=3&&left>0&&RUN.wuBeep!==left){RUN.wuBeep=left;beep(880,.1,.2)}
+ if(left===0)return nextWu(true);
+ if(el){el.textContent=left+' s';setRing(left/w.secs)}},250)}
+function nextWu(auto){if(RUN.wu<WARMUP.length-1){RUN.wu++;RUN.wuEnd=Date.now()+WARMUP[RUN.wu].secs*1000;RUN.wuBeep=null;beep(1320,.18,.25);buzz(60);RUN.anim=true;renderRun();startWuTimer()}else{RUN.wuDone=true;clearInterval(timerId);if(auto)chord();RUN.anim=true;renderRun()}}
 const cur=()=>RUN.steps[RUN.i];
 function suggested(st){const l=lastFor(st.e.id);const idx=(RUN.results[st.e.id]||[]).length;return l?.[idx]??st.e.min}
 function topBar(){const ids=SESSIONS[RUN.k].list.map(x=>x[0]),ei=ids.indexOf(cur().e.id);return `<div class="top">${ids.map((_,k)=>`<i class="${k<ei?'d':k===ei?'c':''}"></i>`).join('')}</div>`}
 const quitBtn=`<button data-act="quit" class="chip">Quitter</button>`;
 function renderRun(bump){
  const app=$('#app'),st=cur(),anim=RUN.anim;RUN.anim=false;
+ if(anim)window.scrollTo(0,0);
  const wrap=h=>`<div class="${anim?'view':''}">${h}</div>`;
  if(RUN.phase==='warmup'){
-  const left=Math.max(0,Math.ceil((RUN.wuEnd-Date.now())/1000));
-  if(left===0&&!RUN.wuDone){RUN.wuDone=true;chord()}
-  app.innerHTML=wrap(`<div class="between"><div><div class="kicker">Avant de commencer</div><h1 style="font-size:34px;margin-top:4px">Échauffement</h1></div>${quitBtn}</div>
-  <p class="muted" style="line-height:1.45">3 minutes pour préparer tes articulations. Enchaîne les mouvements tranquillement, sans forcer.</p>
-  <div class="ring" style="width:200px;height:200px">${ringSVG(left/180,200,14,'wr')}<div class="t"><b id="wt" style="font-size:52px">${mmss(left)}</b></div></div>
-  <div class="glass pad"><ol class="steps">${WARMUP.map(([a,b])=>`<li><span style="display:flex;justify-content:space-between;gap:10px"><span>${esc(a)}</span><b class="gtext" style="white-space:nowrap">${b}</b></span></li>`).join('')}</ol></div>
-  <div style="margin-top:18px"><button class="btn" data-act="gowork">${left?'Je suis prêt, on commence':'C’est parti'}</button></div>`);
+  const w=WARMUP[RUN.wu],left=Math.max(0,Math.ceil((RUN.wuEnd-Date.now())/1000));
+  const dots=`<div class="top">${WARMUP.map((_,k)=>`<i class="${RUN.wuDone||k<RUN.wu?'d':k===RUN.wu?'c':''}"></i>`).join('')}</div>`;
+  if(RUN.wuDone){app.innerHTML=wrap(`${dots}<div style="text-align:center;margin-top:40px"><div class="medal"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h1 style="margin-top:18px">Tu es <span class="gtext">chaud.</span></h1><p class="muted" style="line-height:1.5">Bois une gorgée d’eau, prépare ton matériel pour le premier exercice : <b style="color:var(--fg)">${esc(cur().e.name)}</b>.</p></div><div style="margin-top:26px"><button class="btn" data-act="gowork">C’est parti</button></div>`)}
+  else app.innerHTML=wrap(`<div class="dockpage">${dots}<div class="between"><div><div class="kicker">Échauffement · ${RUN.wu+1}/${WARMUP.length}</div><h1 style="margin-top:4px">${esc(w.name)}</h1></div>${quitBtn}</div>
+  <div style="margin-top:12px">${stageHTML(w)}</div>
+  <div class="row" style="justify-content:space-between;margin-top:14px"><span class="chip g" style="font-size:15px">${esc(w.dose)}</span><div class="ring" style="width:84px;height:84px;margin:0">${ringSVG(left/w.secs,84,8,'wr')}<div class="t"><b id="wt" style="font-size:20px">${left} s</b></div></div></div>
+  <div style="margin-top:6px">${w.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}</div>
+  <div class="dock"><button class="btn" data-act="nextwu">${RUN.wu<WARMUP.length-1?'Mouvement suivant ›':'Terminer l’échauffement'}</button><button class="chip" data-act="gowork" style="display:block;margin:10px auto 0;background:none;border:0;color:var(--muted)">Passer l’échauffement</button></div></div>`);
+  const nx=app.querySelector('[data-act=nextwu]');if(nx)nx.onclick=()=>nextWu(false);
   app.querySelector('[data-act=gowork]').onclick=()=>{clearInterval(timerId);saveRun();RUN.phase='work';RUN.anim=true;beep(1320,.2,.3);renderRun()};
  } else if(RUN.phase==='work'){
   const e=st.e,timed=e.unit==='s';
