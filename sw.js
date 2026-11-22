@@ -1,5 +1,5 @@
 // Cache tout au premier lancement : l'app marche ensuite sans réseau.
-const CACHE = 'muscu-v8';
+const CACHE = 'muscu-v10';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener('activate', (e) =>

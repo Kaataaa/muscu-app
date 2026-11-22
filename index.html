@@ -149,7 +149,7 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opac
 #splash .logo{width:96px;height:96px;border-radius:28px;background:linear-gradient(135deg,#FF6A3D,#FF2E7E);display:flex;align-items:center;justify-content:center;box-shadow:0 20px 60px -10px rgba(255,46,126,.7);animation:pop .7s cubic-bezier(.2,1.6,.4,1) both}
 #splash b{font-size:28px;letter-spacing:-.03em;animation:in .6s .2s both}
 .dock{position:sticky;bottom:0;z-index:5;margin:6px -18px 0;padding:6px 18px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(8,8,12,0),rgba(8,8,12,.92) 22%,#08080C);backdrop-filter:blur(6px)}
-.dock .counter{margin:6px 0 4px}.dock .big{font-size:84px}
+.dock .counter{margin:4px 0 2px}.dock .big{font-size:74px}.dock .counter button{width:54px;height:54px}.dock .load{margin-top:6px;padding:7px 10px}.dock .banner{margin-top:8px;padding:10px 14px;font-size:14px}
 [data-fig]{aspect-ratio:4/3}
 .stage .fig{aspect-ratio:auto;height:290px}
 .hero .fig{aspect-ratio:auto;height:240px}
@@ -157,6 +157,9 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opac
 .sbtn{display:flex;gap:6px;pointer-events:auto}
 .sbtn button{width:40px;height:40px;border-radius:50%;background:rgba(8,8,12,.72);backdrop-filter:blur(10px);border:1px solid var(--line);font-size:17px;display:flex;align-items:center;justify-content:center}
 .sbtn button.on{background:var(--grad);border:0}
+.dockpage .stage .fig{height:clamp(240px,calc(100svh - 500px),340px);padding-top:50px}
+.dockpage h1{font-size:30px!important}
+.res b{white-space:nowrap;font-size:15px;font-variant-numeric:tabular-nums}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 </style>
 </head>
@@ -510,7 +513,7 @@ function animate(now){
 }
 requestAnimationFrame(animate);
 
-const stageHTML=(e,extra='')=>`<div class="stage" ${extra}><div class="cap"><span data-cap="${e.id}"></span><div class="sbtn"><button data-slow class="${SLOW?'on':''}" aria-label="Ralenti">🐢</button><button data-info="${e.id}" aria-label="Mise en place">📋</button></div></div><div class="fig" data-fig="${e.id}" data-trail="1" data-labels="1"></div><div class="small muted" style="text-align:center;padding:0 0 10px">🐢 ralenti · 📋 mise en place</div></div>`;
+const stageHTML=(e,extra='')=>`<div class="stage" ${extra}><div class="cap"><span data-cap="${e.id}"></span><div class="sbtn"><button data-slow class="${SLOW?'on':''}" aria-label="Ralenti">🐢</button><button data-info="${e.id}" aria-label="Mise en place">📋</button></div></div><div class="fig" data-fig="${e.id}" data-trail="1" data-labels="1"></div></div>`;
 document.addEventListener('click',ev=>{
  const sl=ev.target.closest('[data-slow]');if(sl){SLOW=!SLOW;document.querySelectorAll('[data-slow]').forEach(b=>b.classList.toggle('on',SLOW));return}
  const inf=ev.target.closest('[data-info]');if(inf)showInfo(inf.dataset.info);
@@ -640,7 +643,7 @@ function homeView(){
  ${adv?`<div class="banner ${adv.ok?'ok':''}">${adv.msg}</div>`:''}
  ${isLightWeek()?`<div class="banner ok"><b>Semaine légère.</b> Toutes les 7 semaines, on récupère : 2 séries par exercice, même charge. L’app l’applique toute seule.</div>`:''}
  ${tired()?`<div class="banner">Tes 2 dernières séances étaient dures. Cette semaine, limite la piscine à 3 séances et dors un peu plus.</div>`:''}
- ${S.sessions.length>=3&&(!lsGet('mm2_lastbk',null)||Date.now()-new Date(lsGet('mm2_lastbk'))>14*864e5)?`<div class="banner">Pense à sauvegarder tes progrès : ils ne sont que sur ce téléphone. <button class="chip g" style="margin-top:10px" data-gobk>Sauvegarder</button></div>`:''}
+ ${S.sessions.length>=3&&(!lsGet('mm2_lastbk',null)||Date.now()-new Date(lsGet('mm2_lastbk'))>14*864e5)?`<div class="banner">Pense à sauvegarder tes progrès : ils ne sont que sur ce téléphone.<div style="margin-top:10px"><button class="chip g" data-gobk>Sauvegarder maintenant</button></div></div>`:''}
  <div class="stats">
   <div class="glass stat row" style="gap:14px"><div style="position:relative;width:64px;height:64px">${ringSVG(done.length/4,64,9,'rw')}<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900">${done.length}</div></div><div><div class="kicker">Semaine</div><b style="font-size:22px"><span data-count="${done.length}">${done.length}</span>/4</b></div></div>
   <div class="glass stat"><div class="kicker">Série en cours</div><b>${streakWeeks()} <span style="font-size:15px" class="muted">sem.</span></b></div>
@@ -697,14 +700,15 @@ function suiviView(){
  let chart='';
  if(ws.length>=2){const vs=ws.map(b=>b.waist),mn=Math.min(...vs)-1,mx=Math.max(...vs)+1,W=300,H=90;
   const pts=vs.map((v,i)=>[i*(W/(vs.length-1)),H-(v-mn)/(mx-mn)*H]);
-  chart=`<svg viewBox="-6 -6 ${W+12} ${H+12}" width="100%" style="margin-top:12px"><defs><linearGradient id="cg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient></defs><polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="url(#cg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="#fff"/>`).join('')}</svg>`}
+  const dts=ws.map(b=>new Date(b.date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}));
+  chart=`<svg viewBox="-14 -22 ${W+28} ${H+46}" width="100%" style="margin-top:6px"><text x="${pts[0][0]}" y="${H+20}" font-size="10" fill="#8E8E9A">${dts[0]}</text><text x="${pts[pts.length-1][0]}" y="${H+20}" font-size="10" fill="#8E8E9A" text-anchor="end">${dts[dts.length-1]}</text>${pts.map((q,i)=>`<text x="${q[0]}" y="${q[1]-10}" text-anchor="${i===0?'start':i===pts.length-1?'end':'middle'}" font-size="11" font-weight="800" fill="#fff">${vs[i]}</text>`).join('')}<defs><linearGradient id="cg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient></defs><polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="url(#cg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="#fff"/>`).join('')}</svg>`}
  return `<div class="kicker">${weeks} semaine${weeks>1?'s':''} · ${S.sessions.length} séances · ${tot} séries</div><h1 style="margin-top:6px">Tes <span class="gtext">progrès</span></h1>
- <div class="stats">
+ ${!S.sessions.length&&!S.body.length?`<div class="hero" style="margin-top:16px"><div class="kicker" style="color:#fff;opacity:.8">Ta page de progrès</div><h1 style="font-size:30px;margin-top:8px">Elle se remplit <span class="gtext">à chaque séance.</span></h1><p style="line-height:1.5;opacity:.85">Tes records, tes courbes par exercice et l’évolution de ton tour de taille apparaîtront ici. Commence par noter ton poids et ton tour de taille ci-dessous : c’est ton point de départ.</p></div>`:`<div class="stats">
   <div class="glass stat"><div class="kicker">Record pompes</div><b>${bestFor('pompes')||'–'}</b></div>
   <div class="glass stat"><div class="kicker">Record curl</div><b>${bestFor('curl')||'–'}</b></div>
   <div class="glass stat"><div class="kicker">Poids 7 j</div><b>${f(weekAvg('kg',wk,new Date(+now+864e5)))} <span class="muted" style="font-size:15px">kg</span></b></div>
   <div class="glass stat"><div class="kicker">Taille 7 j</div><b>${f(weekAvg('waist',wk,new Date(+now+864e5)))} <span class="muted" style="font-size:15px">cm</span></b></div>
- </div>
+ </div>`}
  ${adv?`<div class="banner ${adv.ok?'ok':''}">${adv.msg}</div>`:''}
  ${weeks>=4?`<div class="banner">Point des ${weeks>=8?8:4} semaines : refais une photo debout, relâché, même lumière, et compare.</div>`:''}
  <h2>Progression par exercice</h2>
@@ -779,18 +783,17 @@ function renderRun(bump){
   const hard=firstOfExo&&readyToProgress(RUN.k,e.id)&&!LOADS[e.id];
   const test=e.id==='pompes'&&st.set===1&&!lastFor('pompes');
   const el=RUN.hold?Math.floor((Date.now()-RUN.hold)/1000):null,shown=timed?(el??RUN.val):RUN.val;
-  app.innerHTML=wrap(`${topBar()}
+  app.innerHTML=wrap(`<div class="dockpage">${topBar()}
   <div class="between"><div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip g">Série ${st.set}/${st.sets}</span>${st.side&&st.side!=='côté'?`<span class="chip">${st.side}</span>`:''}</div>${quitBtn}</div>
   <h1 style="margin:14px 0 12px;font-size:34px">${esc(e.name)}</h1>
   ${stageHTML(e)}
   ${test?`<div class="banner">Test : fais le maximum de pompes propres. Moins de 6 ? Fais les séries suivantes sur les genoux.</div>`:''}
   ${hard?`<div class="banner">Haut de fourchette partout la dernière fois : ${esc(e.progress)}</div>`:''}
-  ${firstOfExo?`<div class="glass pad" style="margin-top:12px"><div class="kicker">Mise en place</div><ol class="steps">${e.setup.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><div class="tip" style="margin-top:10px"><b>Respire :</b> ${esc(e.breath)}</div></div>`:`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}</div>`}
-  ${LOADS[e.id]?`<div class="load glass"><span class="kicker" style="font-size:11px">Charge</span><button data-ld="-1">−</button><b>${loadLabel(e.id,RUN.loads[e.id])}</b><button data-ld="1">+</button></div>${RUN.bumped[e.id]&&firstOfExo?`<div class="banner ok">Charge augmentée automatiquement : tu as tout réussi la dernière fois. 💪</div>`:''}`:''}
-  <div class="dock"><div class="counter"><button data-d="${timed?-5:-1}" ${RUN.hold?'disabled style="opacity:.3"':''}>−</button><div class="big gtext ${bump?'bump':''}">${shown}${timed?'<span style="font-size:40px">s</span>':''}</div><button data-d="${timed?5:1}" ${RUN.hold?'disabled style="opacity:.3"':''}>+</button></div>
+  <div class="dock">${LOADS[e.id]?`<div class="load glass"><span class="kicker" style="font-size:11px">Charge</span><button data-ld="-1">−</button><b>${loadLabel(e.id,RUN.loads[e.id])}</b><button data-ld="1">+</button></div>${RUN.bumped[e.id]&&firstOfExo?`<div class="banner ok">Charge augmentée automatiquement : tu as tout réussi la dernière fois. 💪</div>`:''}`:''}<div class="counter"><button data-d="${timed?-5:-1}" ${RUN.hold?'disabled style="opacity:.3"':''}>−</button><div class="big gtext ${bump?'bump':''}">${shown}${timed?'<span style="font-size:40px">s</span>':''}</div><button data-d="${timed?5:1}" ${RUN.hold?'disabled style="opacity:.3"':''}>+</button></div>
   <div class="small muted" style="text-align:center">Objectif ${e.min}–${e.max} ${timed?'secondes':'reps'} · garde ~2 reps en réserve</div>
   <div class="range">${Array.from({length:e.max},(_,k)=>`<i class="${k<shown?(k<e.min?'min':'on'):''}"></i>`).join('')}</div>
-  <div style="margin-top:20px">${timed?(RUN.hold?`<button class="btn" data-act="stophold">Stop</button>`:`<button class="btn dark" data-act="hold">▶︎ Lancer le chrono</button><div style="height:10px"></div><button class="btn" data-act="done">Série faite</button>`):`<button class="btn" data-act="done">Série faite</button>`}</div></div>`);
+  <div style="margin-top:20px">${timed?(RUN.hold?`<button class="btn" data-act="stophold">Stop</button>`:`<button class="btn dark" data-act="hold">▶︎ Lancer le chrono</button><div style="height:10px"></div><button class="btn" data-act="done">Série faite</button>`):`<button class="btn" data-act="done">Série faite</button>`}</div></div>
+  ${firstOfExo?`<div class="glass pad" style="margin-top:12px"><div class="kicker">Mise en place</div><ol class="steps">${e.setup.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><div class="tip" style="margin-top:10px"><b>Respire :</b> ${esc(e.breath)}</div></div>`:`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}</div>`}</div>`);
   app.querySelectorAll('[data-ld]').forEach(b=>b.onclick=()=>{const l=LOADS[e.id],d=+b.dataset.ld;RUN.loads[e.id]=l.L?Math.max(0,Math.min(25,RUN.loads[e.id]+d*.5)):Math.max(0,Math.min(l.opts.length-1,RUN.loads[e.id]+d));RUN.bumped[e.id]=false;beep(900,.04,.06);renderRun()});
   app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{RUN.val=Math.max(0,Math.min(300,RUN.val+ +b.dataset.d));beep(1200,.03,.06);renderRun(true)});
   const h=app.querySelector('[data-act=hold]');if(h)h.onclick=()=>{RUN.hold=Date.now();beep(1320,.2,.3);clearInterval(timerId);timerId=setInterval(()=>{const s=Math.floor((Date.now()-RUN.hold)/1000);if(s===e.min&&RUN.lastBeep!==s){RUN.lastBeep=s;beep(990,.12,.25)}if(s===e.max&&RUN.lastBeep!==s){RUN.lastBeep=s;chord();buzz(200)}const b=document.querySelector('.big');if(b)b.innerHTML=s+'<span style="font-size:40px">s</span>';document.querySelectorAll('.range i').forEach((x,k)=>x.className=k<s?(k<e.min?'min':'on'):'')},250);renderRun()};
@@ -816,7 +819,7 @@ function renderRun(bump){
   <div class="stats"><div class="glass stat" style="text-align:center"><div class="kicker">Séries</div><b data-count="${sets}">${sets}</b></div><div class="glass stat" style="text-align:center"><div class="kicker">Reps</div><b data-count="${reps}">${reps}</b></div></div>
   <div class="glass stat" style="margin-top:12px;text-align:center"><div class="kicker">Durée</div><b>${mins} min</b></div>
   ${prs.length?`<div class="banner">Nouveau record : ${prs.map(id=>`<b>${esc(X[id].name)}</b>`).join(', ')} 🔥</div>`:''}
-  <div class="glass pad" style="margin-top:12px">${ids.map(id=>`<div class="between" style="padding:9px 0;border-bottom:1px solid var(--line)"><span>${esc(X[id].name)}${prs.includes(id)?'<span class="pr">Record</span>':''}</span><b>${RUN.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b></div>`).join('')}</div>
+  <div class="glass pad" style="margin-top:12px">${ids.map(id=>`<div class="between res" style="padding:9px 0;border-bottom:1px solid var(--line)"><span>${esc(X[id].name)}${prs.includes(id)?'<span class="pr">Record</span>':''}</span><b>${RUN.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b></div>`).join('')}</div>
   <div class="glass pad" style="margin-top:12px;text-align:center"><div class="kicker">Comment tu te sens ?</div><div class="row" style="justify-content:center;margin-top:10px;gap:8px">${[['dur','😮‍💨','Dur'],['bien','🙂','Bien'],['top','💪','En forme']].map(([k,ic,t])=>`<button class="chip ${RUN.feel===k?'g':''}" data-feel="${k}" style="padding:12px 16px;font-size:15px">${ic} ${t}</button>`).join('')}</div></div>
   <p class="muted" style="line-height:1.45">Un repas riche en protéines maintenant. La piscine : après la muscu ou un autre jour.</p>
   <button class="btn" data-act="close">Terminer</button>`);
