@@ -586,8 +586,12 @@ function waistAdvice(){
  if(end<=start-1)return {ok:true,msg:`Tour de taille : −${(start-end).toFixed(1)} cm depuis le début. Continue exactement comme ça.`};
  return {ok:false,msg:'Ton tour de taille ne baisse pas depuis 4 semaines : enlève environ un tiers de ta portion de riz, garde toutes les protéines.'};
 }
+/* Sons : 'mix' = bips mélangés à ta musique (ne la coupe jamais) · 'duck' = la musique baisse le temps du bip · 'off' = muet */
+let SOUND=lsGet('mm2_sound','mix');
+function audioSessionType(){try{if(navigator.audioSession)navigator.audioSession.type=SOUND==='duck'?'transient':'ambient'}catch(e){}}
+audioSessionType();
 let AC=null;
-function beep(f=880,d=.12,v=.25){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(AC.destination);const n=AC.currentTime;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.start(n);o.stop(n+d)}catch(e){}}
+function beep(f=880,d=.12,v=.25){if(SOUND==='off')return;audioSessionType();try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(AC.destination);const n=AC.currentTime;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.start(n);o.stop(n+d)}catch(e){}}
 const chord=()=>{beep(660,.25,.18);setTimeout(()=>beep(880,.25,.18),90);setTimeout(()=>beep(1320,.4,.2),180)};
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 let wake=null;
@@ -621,7 +625,7 @@ const SLIDES=[
  {k:'Pendant la séance',h:'Regarde, place-toi, <span class="gtext">fais.</span>',fig:'rowing',labels:true,body:`<ol class="steps"><li>Le personnage te montre le mouvement. Les <b>repères</b> indiquent ce qui compte, la <b>flèche</b> le trajet, la consigne en haut le moment.</li><li><b>📋 Mise en place</b> explique comment te positionner, les erreurs à éviter et une version plus facile. <b>🐢 Ralenti</b> pour bien voir.</li><li>Fais ta série, règle ton nombre avec − et +, puis <b>Série faite</b>.</li><li>Le repos se lance tout seul. 3 bips = c’est reparti.</li></ol>`},
  {k:'Progresser',h:'Un peu plus <span class="gtext">chaque semaine.</span>',body:`<p>Chaque exercice a une fourchette, par exemple <b>8–12 reps</b>.</p><ol class="steps"><li>Essaie de faire 1 rep de plus que la dernière fois (l’app te rappelle tes chiffres).</li><li>Quand tu atteins le haut de la fourchette sur toutes les séries, l’app te dit de <b>durcir</b> : +0,5 L d’eau dans le sac, élastique plus court, ou descente plus lente.</li></ol>`},
  {k:'Poignées d’amour',h:'Le gras part <span class="gtext">partout à la fois.</span>',body:`<ol class="steps"><li>Aucun exercice ne fait fondre le gras d’un endroit précis. Les abdos se voient quand le gras global baisse.</li><li>Mange environ <b>140 g de protéines</b> par jour (œufs, thon, poulet, skyr).</li><li>Chaque lundi matin, note ton <b>poids</b> et ton <b>tour de taille</b> au nombril (onglet Progrès).</li><li>Si ta taille ne baisse pas en 4 semaines, l’app te dira de réduire un peu le riz.</li></ol>`},
- {k:'Ton matériel',h:'Prépare <span class="gtext">ton coin.</span>',body:`<ol class="steps"><li><b>Sac à dos</b> avec des bouteilles d’eau bien calées. Commence avec environ 5 L (≈ 5 kg).</li><li><b>Élastique</b> et une porte qui ferme bien (pour les tirages).</li><li><b>Haltères de 3 kg</b> et <b>kettlebell de 4 kg</b>.</li><li>Une serviette ou un tapis pour les exercices au sol.</li><li>Mode silencieux désactivé pour entendre les bips.</li></ol>`},
+ {k:'Ton matériel',h:'Prépare <span class="gtext">ton coin.</span>',body:`<ol class="steps"><li><b>Sac à dos</b> avec des bouteilles d’eau bien calées. Commence avec environ 5 L (≈ 5 kg).</li><li><b>Élastique</b> et une porte qui ferme bien (pour les tirages).</li><li><b>Haltères de 3 kg</b> et <b>kettlebell de 4 kg</b>.</li><li>Une serviette ou un tapis pour les exercices au sol.</li><li>Ta musique peut tourner en même temps : l’app ne la coupe pas. Désactive juste le mode silencieux pour entendre les bips.</li></ol>`},
 ];
 function obView(){
  const sl=SLIDES[OB],last=OB===SLIDES.length-1;
@@ -695,6 +699,10 @@ function progView(){
   <div class="small muted" style="margin:6px 0 4px">${esc(e.muscles)}${e.per?' · par '+e.per:''} · repos ${e.rest>=90?'1 min 30':e.rest+' s'}</div>
   ${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}
   <div class="small" style="margin-top:8px;color:#D6D6DE"><span class="gtext" style="font-weight:800">Pour durcir</span> · ${esc(e.progress)}</div></div></div>`}).join('')}
+ <h2>Sons et musique</h2>
+ <div class="glass pad"><p class="muted small" style="margin-top:0;line-height:1.45">Lance ta musique (Spotify, Apple Music…) puis ouvre l’app : elle ne la coupe pas.</p>
+ <div class="seg" style="flex-direction:column;gap:4px">${[['mix','🎵 Bips mélangés à ma musique'],['duck','🔉 Ma musique baisse pendant le bip'],['off','🔇 Pas de bips']].map(([k,t])=>`<button data-sound="${k}" class="${SOUND===k?'on':''}" style="text-align:left;padding:13px 14px">${t}</button>`).join('')}</div>
+ <p class="muted small" style="margin-bottom:0;line-height:1.45">Les bips suivent le bouton silencieux de l’iPhone : désactive le mode silencieux pour les entendre.</p></div>
  <div style="height:14px"></div><button class="btn dark" data-act="tuto">Revoir le tutoriel</button>
  <h2>Poignées d’amour : ce qui marche</h2>
  <div class="glass pad">
@@ -762,6 +770,7 @@ function bind(){
  const gb=$('[data-gobk]');if(gb)gb.onclick=()=>{TAB='suivi';render();setTimeout(()=>$('[data-act=file]')?.scrollIntoView({behavior:'smooth',block:'center'}),100)};
  const rs=$('[data-resume]');if(rs)rs.onclick=resumeRun;const dr=$('[data-drop]');if(dr)dr.onclick=()=>{const r=pendingRun();clearRun();if(r&&Object.keys(r.results||{}).length){S.sessions.push({id:'s'+Date.now(),date:new Date(r.at).toISOString(),sess:r.k,results:r.results,loads:r.loads,partial:true});saveSessions()}render()};
  const sw=$('[data-swim]');if(sw)sw.onclick=()=>{if(swamToday())S.swims=S.swims.filter(d=>new Date(d).toDateString()!==new Date().toDateString());else{S.swims.push(new Date().toISOString());beep(990,.12,.15)}saveSwims();render()};
+ document.querySelectorAll('[data-sound]').forEach(b=>b.onclick=()=>{SOUND=b.dataset.sound;lsSet('mm2_sound',SOUND);audioSessionType();const y=scrollY;render();scrollTo(0,y);beep(990,.12,.2)});
  const tu=$('[data-act=tuto]');if(tu)tu.onclick=()=>{OB=0;render()};
  document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PROGK=b.dataset.pk;render()});
  const num=v=>{const x=parseFloat(String(v).replace(',','.'));return isFinite(x)?x:null};
