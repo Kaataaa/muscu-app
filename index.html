@@ -117,16 +117,49 @@ input::placeholder,textarea::placeholder{color:#6E6E7A}
 .ob{min-height:calc(100vh - 60px);display:flex;flex-direction:column}
 .obdots{display:flex;gap:6px;justify-content:center;margin:18px 0}
 .obdots i{width:7px;height:7px;border-radius:4px;background:var(--glass2);transition:all .3s}.obdots i.on{width:26px;background:var(--grad)}
+
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.07;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.glass{box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 20px 40px -20px rgba(0,0,0,.6)}
+.view>*{animation:in .55s cubic-bezier(.16,1,.3,1) both}
+.view>*:nth-child(2){animation-delay:.04s}.view>*:nth-child(3){animation-delay:.08s}.view>*:nth-child(4){animation-delay:.12s}.view>*:nth-child(5){animation-delay:.16s}.view>*:nth-child(n+6){animation-delay:.2s}
+.hero{isolation:isolate;box-shadow:0 30px 80px -30px color-mix(in srgb,var(--g2) 60%,transparent)}
+.hero:after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;background:conic-gradient(from var(--ang),transparent 0 55%,var(--g1),var(--g2),transparent 95%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 5s linear infinite}
+.hero:before{content:"";position:absolute;width:320px;height:320px;right:-120px;top:-120px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--g2) 45%,transparent),transparent);filter:blur(10px);z-index:-1;animation:float 7s ease-in-out infinite alternate}
+@keyframes spin{to{--ang:360deg}}
+@keyframes float{to{transform:translate(-30px,40px) scale(1.1)}}
+.btn{position:relative;overflow:hidden}
+.btn:not(.dark):after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);animation:sheen 3.8s ease-in-out infinite}
+@keyframes sheen{0%,60%{left:-60%}100%{left:130%}}
+.btn:active{filter:brightness(1.1)}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 18px;font-size:11px}
+.tabs svg{width:22px;height:22px}
+.tabs button.on svg{stroke:url(#tg)}
+.load{display:flex;align-items:center;gap:10px;justify-content:center;padding:10px 12px;margin-top:14px;border-radius:18px}
+.load button{width:34px;height:34px;border-radius:50%;background:var(--glass2);border:1px solid var(--line);font-size:18px;font-weight:700}
+.load b{min-width:140px;text-align:center;font-size:16px}
+.ring:before{content:"";position:absolute;inset:34px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--g1) 40%,transparent),transparent);animation:breathe 4s ease-in-out infinite;z-index:-1}
+@keyframes breathe{50%{transform:scale(1.22);opacity:.55}}
+.medal{width:128px;height:128px;margin:10px auto 0;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 20px 60px -10px color-mix(in srgb,var(--g2) 70%,transparent),inset 0 -8px 20px rgba(0,0,0,.25),inset 0 6px 14px rgba(255,255,255,.35);animation:pop .7s cubic-bezier(.2,1.6,.4,1) both}
+.medal:after{content:"";position:absolute;inset:-40%;background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%);animation:sheen2 2.6s ease-in-out .6s infinite}
+@keyframes sheen2{from{transform:translateX(-60%)}60%,to{transform:translateX(60%)}}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+#splash{position:fixed;inset:0;z-index:60;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s,visibility .5s}
+#splash.out{opacity:0;visibility:hidden}
+#splash .logo{width:96px;height:96px;border-radius:28px;background:linear-gradient(135deg,#FF6A3D,#FF2E7E);display:flex;align-items:center;justify-content:center;box-shadow:0 20px 60px -10px rgba(255,46,126,.7);animation:pop .7s cubic-bezier(.2,1.6,.4,1) both}
+#splash b{font-size:28px;letter-spacing:-.03em;animation:in .6s .2s both}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 </style>
 </head>
 <body>
 <div class="wrap" id="app"></div>
+<svg width="0" height="0" style="position:absolute"><defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6A3D"/><stop offset="1" stop-color="#FF2E7E"/></linearGradient></defs></svg>
 <nav class="tabs" id="tabs">
- <button data-t="home">Aujourd’hui</button>
- <button data-t="prog">Programme</button>
- <button data-t="suivi">Progrès</button>
+ <button data-t="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Aujourd’hui</button>
+ <button data-t="prog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg>Programme</button>
+ <button data-t="suivi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg>Progrès</button>
 </nav>
+<div id="splash"><div class="logo"><svg width="58" height="58" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M6.5 6.5v11M17.5 6.5v11M3 9.5v5M21 9.5v5M6.5 12h11"/></svg></div><b>Muscu maison</b></div>
 <div id="modal"></div>
 <canvas id="confetti"></canvas>
 <script>
@@ -316,6 +349,23 @@ deadbug:{setup:['Allongé sur le dos, bras tendus vers le plafond','Jambes levé
 };
 Object.entries(GUIDE).forEach(([id,g])=>Object.assign(X[id],g));
 
+/* Charge suivie par exercice : L = litres d'eau dans le sac (pas 0,5) · opts = niveaux */
+const BAND=['Élastique long','Élastique moyen','Élastique court','Élastique très court'];
+const LOADS={
+ pompes:{opts:['Sur les genoux','Au sol','Sac 3 L','Sac 4 L','Sac 5 L','Sac 6 L','Sac 7 L','Sac 8 L','Sac 9 L','Sac 10 L','Sac 12 L','Sac 14 L'],def:1},
+ rowing:{L:true,def:6},squat:{L:true,def:5},sdt:{L:true,def:6},
+ dev:{opts:BAND,def:0},tirage:{opts:BAND,def:1},ecarte:{opts:BAND,def:0},rotation:{opts:BAND,def:0},
+ ecarteSol:{opts:['3 kg par main','6 kg par main','6 kg, descente 3 s'],def:0},
+ lat:{opts:['3 kg par main','3 kg, descente 3 s','3 kg, pause 1 s en haut'],def:0},
+ curl:{opts:['3 kg par main','6 kg par main','6 kg, descente 3 s'],def:1},
+ triceps:{opts:['Kettlebell 4 kg','Kettlebell, descente 3 s','Élastique'],def:0},
+ crunch:{opts:['Genoux pliés','Descente 3 s','Jambes tendues'],def:0},
+ planche:{opts:['Genoux au sol','Jambes tendues','Jambe du dessus levée'],def:1},
+ deadbug:{opts:['Sans charge','Haltère 3 kg'],def:0},
+};
+const loadLabel=(id,v)=>{const l=LOADS[id];if(!l||v==null)return '';return l.L?`Sac ${String(v).replace('.',',')} L`:l.opts[Math.max(0,Math.min(l.opts.length-1,v))]};
+const lastLoad=id=>{for(let i=S.sessions.length-1;i>=0;i--){const v=S.sessions[i].loads?.[id];if(v!=null)return v}return null};
+const bumpLoad=(id,v)=>{const l=LOADS[id];return l.L?Math.min(25,v+.5):Math.min(l.opts.length-1,v+1)};
 const WARMUP=[
  ['Marche sur place en montant les genoux','45 s'],
  ['Grands cercles de bras, vers l’avant puis l’arrière','10 + 10'],
@@ -481,6 +531,12 @@ document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{TAB=b.datase
 const setTheme=k=>document.body.classList.toggle('sB',k==='B');
 const todaySess=()=>WEEK[new Date().getDay()].s;
 const nextSess=()=>{const l=S.sessions[S.sessions.length-1];return l&&l.sess==='A'?'B':'A'};
+const weeksSince=()=>{const f=S.sessions[0]?.date;return f?Math.floor((monday(new Date())-monday(new Date(f)))/6048e5):0};
+const isLightWeek=()=>{const w=weeksSince();return w>0&&w%7===6};
+S.swims=lsGet('mm2_swims',[]);const saveSwims=()=>lsSet('mm2_swims',S.swims);
+const swamToday=()=>S.swims.some(d=>new Date(d).toDateString()===new Date().toDateString());
+const swimsWeek=()=>S.swims.filter(d=>new Date(d)>=monday(new Date())).length;
+const tired=()=>{const l=S.sessions.slice(-2);return l.length===2&&l.every(x=>x.feel==='dur')};
 let OB=lsGet('mm2_onb',false)?-1:0;
 const SLIDES=[
  {k:'Bienvenue',h:'Ton plan <span class="gtext">sur mesure.</span>',fig:'pompes',body:`<p>Objectif : <b>garder tes pecs et tes bras</b>, <b>dessiner tes abdos</b> et <b>affiner ta taille</b>.</p><p class="muted">Tout se fait chez toi avec ton sac à dos, ton élastique et tes haltères. L’app te guide à chaque répétition.</p>`},
@@ -503,6 +559,7 @@ function obView(){
 }
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ob]');if(!b)return;const a=b.dataset.ob;
  if(a==='prev')OB=Math.max(0,OB-1);else if(a==='next'&&OB<SLIDES.length-1)OB++;else{OB=-1;lsSet('mm2_onb',true);TAB='home'}render()});
+function countUp(){document.querySelectorAll('[data-count]').forEach(el=>{if(el.dataset.done)return;el.dataset.done=1;const to=+el.dataset.count,t0=performance.now();(function f(n){const k=Math.min(1,(n-t0)/900),e=1-Math.pow(1-k,3);el.textContent=Math.round(to*e);if(k<1)requestAnimationFrame(f)})(t0)})}
 function render(){
  if(OB>=0&&!RUN){$('#tabs').style.display='none';$('#app').innerHTML=`<div class="view">${obView()}</div>`;window.scrollTo(0,0);return}
  $('#tabs').style.display=RUN?'none':'flex';
@@ -510,7 +567,7 @@ function render(){
  if(RUN)return renderRun();
  setTheme(todaySess()||nextSess());
  $('#app').innerHTML=`<div class="view">${TAB==='home'?homeView():TAB==='prog'?progView():suiviView()}</div>`;
- bind();window.scrollTo(0,0);
+ bind();countUp();window.scrollTo(0,0);
 }
 const estMin=k=>Math.round(SESSIONS[k].list.reduce((a,[id,n])=>{const e=X[id],side=e.per?2:1,work=e.unit==='s'?e.max:e.max*e.period;return a+n*(side*work+e.rest+20)},0)/60);
 function ringSVG(k,size,stroke,id){const r=(size-stroke)/2,c=2*Math.PI*r;return `<svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient></defs><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="url(#${id})" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-Math.min(1,k))}" style="transition:stroke-dashoffset .6s cubic-bezier(.16,1,.3,1)"/></svg>`}
@@ -534,12 +591,16 @@ function homeView(){
  ${first?`<div class="banner">Première séance : sur la 1<sup>re</sup> série de pompes, fais le <b>maximum propre</b>. C’est ton point de départ.</div>`:''}
  ${prog.length?`<div class="banner">À durcir aujourd’hui : ${prog.map(([id])=>`<b>${esc(X[id].name)}</b>`).join(', ')}</div>`:''}
  ${adv?`<div class="banner ${adv.ok?'ok':''}">${adv.msg}</div>`:''}
+ ${isLightWeek()?`<div class="banner ok"><b>Semaine légère.</b> Toutes les 7 semaines, on récupère : 2 séries par exercice, même charge. L’app l’applique toute seule.</div>`:''}
+ ${tired()?`<div class="banner">Tes 2 dernières séances étaient dures. Cette semaine, limite la piscine à 3 séances et dors un peu plus.</div>`:''}
  ${S.sessions.length>=3&&(!lsGet('mm2_lastbk',null)||Date.now()-new Date(lsGet('mm2_lastbk'))>14*864e5)?`<div class="banner">Pense à sauvegarder tes progrès : ils ne sont que sur ce téléphone. <button class="chip g" style="margin-top:10px" data-gobk>Sauvegarder</button></div>`:''}
  <div class="stats">
-  <div class="glass stat row" style="gap:14px"><div style="position:relative;width:64px;height:64px">${ringSVG(done.length/4,64,9,'rw')}<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900">${done.length}</div></div><div><div class="kicker">Semaine</div><b style="font-size:22px">${done.length}/4</b></div></div>
+  <div class="glass stat row" style="gap:14px"><div style="position:relative;width:64px;height:64px">${ringSVG(done.length/4,64,9,'rw')}<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900">${done.length}</div></div><div><div class="kicker">Semaine</div><b style="font-size:22px"><span data-count="${done.length}">${done.length}</span>/4</b></div></div>
   <div class="glass stat"><div class="kicker">Série en cours</div><b>${streakWeeks()} <span style="font-size:15px" class="muted">sem.</span></b></div>
  </div>
- <div class="glass pad" style="margin-top:12px"><div class="week">${days}</div></div>
+ <div class="glass pad" style="margin-top:12px"><div class="week">${days}</div>
+  <div class="between" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)"><div><div class="kicker">Piscine cette semaine</div><b style="font-size:20px">🏊 ${swimsWeek()}</b></div>
+  <button class="chip ${swamToday()?'':'g'}" data-swim>${swamToday()?'✓ Nagé aujourd’hui':'J’ai nagé aujourd’hui'}</button></div></div>
  <h2>Au programme</h2>
  <div class="glass pad">${s.list.map(([id,n])=>{const e=X[id];return `<div class="exo"><div class="fig" data-fig="${id}"></div><div><b>${esc(e.name)}</b><span class="muted">${n} × ${e.min}–${e.max}${e.unit==='s'?' s':''}${e.per?' / '+e.per:''}</span></div></div>`}).join('')}</div>
  <div class="small muted" style="text-align:center;margin-top:22px">Fonctionne hors connexion · données gardées sur ce téléphone</div>`;
@@ -565,6 +626,22 @@ function progView(){
   <div class="tip">8 000 pas par jour en plus de la piscine, et 7 à 8 h de sommeil.</div>
  </div>`;
 }
+let CHX='pompes';
+function exoChart(){
+ const ids=Object.keys(X).filter(id=>S.sessions.some(s=>s.results?.[id]));
+ if(!ids.length)return '<div class="muted small">Ta courbe apparaît après ta première séance.</div>';
+ if(!ids.includes(CHX))CHX=ids[0];
+ const pts=S.sessions.filter(s=>s.results?.[CHX]).slice(-12).map(s=>({v:Math.max(...s.results[CHX]),l:s.loads?.[CHX],d:s.date}));
+ const W=320,H=120,vs=pts.map(p=>p.v),mn=Math.min(...vs)-1,mx=Math.max(...vs)+1;
+ const xy=pts.map((p,i)=>[pts.length>1?i*(W/(pts.length-1)):W/2,H-(p.v-mn)/(mx-mn)*H]);
+ const area=xy.length>1?`M ${xy[0][0]} ${H} L ${xy.map(q=>q.join(' ')).join(' L ')} L ${xy[xy.length-1][0]} ${H} Z`:'';
+ return `<div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin:-2px -2px 6px">${ids.map(id=>`<button class="chip ${id===CHX?'g':''}" data-chx="${id}" style="white-space:nowrap">${esc(X[id].name)}</button>`).join('')}</div>
+ <svg viewBox="-10 -16 ${W+20} ${H+40}" width="100%"><defs><linearGradient id="xg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient><linearGradient id="xa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--g2);stop-opacity:.35"/><stop offset="1" style="stop-color:var(--g2);stop-opacity:0"/></linearGradient></defs>
+ ${area?`<path d="${area}" fill="url(#xa)"/>`:''}<polyline points="${xy.map(q=>q.join(',')).join(' ')}" fill="none" stroke="url(#xg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+ ${xy.map((q,i)=>`<circle cx="${q[0]}" cy="${q[1]}" r="5" fill="#fff"/><text x="${q[0]}" y="${q[1]-11}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff">${pts[i].v}</text>${i===0||pts[i].l!==pts[i-1].l?`<text x="${q[0]}" y="${H+20}" text-anchor="${i===0?'start':i===xy.length-1?'end':'middle'}" font-size="10" fill="#8E8E9A">${esc(loadLabel(CHX,pts[i].l)||'')}</text>`:''}`).join('')}</svg>
+ <div class="small muted">Meilleure série de chaque séance${LOADS[CHX]?' · en bas : la charge quand elle change':''}.</div>`;
+}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-chx]');if(b){CHX=b.dataset.chx;const y=scrollY;render();scrollTo(0,y)}});
 function suiviView(){
  const first=S.sessions[0]?.date,weeks=first?Math.floor((Date.now()-new Date(first))/6048e5):0;
  const now=new Date(),wk=new Date(+now-6048e5),f=(v,d=1)=>v==null?'–':v.toFixed(d);
@@ -583,13 +660,15 @@ function suiviView(){
  </div>
  ${adv?`<div class="banner ${adv.ok?'ok':''}">${adv.msg}</div>`:''}
  ${weeks>=4?`<div class="banner">Point des ${weeks>=8?8:4} semaines : refais une photo debout, relâché, même lumière, et compare.</div>`:''}
+ <h2>Progression par exercice</h2>
+ <div class="glass pad">${exoChart()}</div>
  <h2>Tour de taille</h2>
  <div class="glass pad">${chart||'<div class="muted small">La courbe apparaît après 2 mesures. Mesure au nombril, le matin, 1 fois par semaine.</div>'}
  <form id="bform" style="margin-top:14px"><div class="row"><input id="kg" type="text" inputmode="decimal" placeholder="Poids (kg)"><input id="waist" type="text" inputmode="decimal" placeholder="Taille (cm)"></div><button class="btn" style="margin-top:10px">Enregistrer</button></form>
  ${S.body.slice(-6).reverse().map(b=>`<div class="between small" style="padding:10px 0;border-bottom:1px solid var(--line)"><span class="muted">${fmtDate(b.date)}</span><span>${b.kg?`<b>${b.kg} kg</b>`:''}${b.kg&&b.waist?' · ':''}${b.waist?`<b>${b.waist} cm</b>`:''} <button data-delb="${b.id}" style="background:none;color:var(--muted)">✕</button></span></div>`).join('')}</div>
  <h2>Historique</h2>
  <div class="glass pad">${S.sessions.length?S.sessions.slice().reverse().map(s=>`<div class="hist"><div class="between"><b>${fmtDate(s.date)}</b><span class="chip ${s.sess==='B'?'':'g'}">Séance ${s.sess}${s.partial?' · partielle':''}</span></div>
-  <div class="small muted" style="margin-top:8px;line-height:1.7">${Object.keys(s.results||{}).filter(id=>X[id]).map(id=>`${esc(X[id].name)} · <b style="color:var(--fg)">${s.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b>`).join('<br>')}</div></div>`).join(''):'<div class="muted">Pas encore de séance. Ta première t’attend.</div>'}</div>
+  <div class="small muted" style="margin-top:8px;line-height:1.7">${Object.keys(s.results||{}).filter(id=>X[id]).map(id=>`${esc(X[id].name)} · <b style="color:var(--fg)">${s.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b>${s.loads?.[id]!=null?` <span style="opacity:.7">· ${esc(loadLabel(id,s.loads[id]))}</span>`:''}`).join('<br>')}</div></div>`).join(''):'<div class="muted">Pas encore de séance. Ta première t’attend.</div>'}</div>
  <h2>Sauvegarde</h2>
  <div class="glass pad"><p class="muted small" style="margin-top:0;line-height:1.45">Tes données restent sur ce téléphone. Copie ta sauvegarde de temps en temps (dans Notes).</p>
  <button class="btn" data-act="file">⬇︎ Enregistrer un fichier de sauvegarde</button>
@@ -602,6 +681,7 @@ function suiviView(){
 function bind(){
  document.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>startRun(b.dataset.start));
  const gb=$('[data-gobk]');if(gb)gb.onclick=()=>{TAB='suivi';render();setTimeout(()=>$('[data-act=file]')?.scrollIntoView({behavior:'smooth',block:'center'}),100)};
+ const sw=$('[data-swim]');if(sw)sw.onclick=()=>{if(swamToday())S.swims=S.swims.filter(d=>new Date(d).toDateString()!==new Date().toDateString());else{S.swims.push(new Date().toISOString());beep(990,.12,.15)}saveSwims();render()};
  const tu=$('[data-act=tuto]');if(tu)tu.onclick=()=>{OB=0;render()};
  document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PROGK=b.dataset.pk;render()});
  const num=v=>{const x=parseFloat(String(v).replace(',','.'));return isFinite(x)?x:null};
@@ -620,8 +700,11 @@ function bind(){
 function startRun(k){
  beep(660,.05,.01);setTheme(k);
  const steps=[];
- SESSIONS[k].list.forEach(([id,n])=>{const e=X[id];for(let s=1;s<=n;s++){(e.per?(e.per==='côté'?['côté droit','côté gauche']:[e.per]):[null]).forEach((side,i,arr)=>steps.push({e,set:s,sets:n,side,lastSide:i===arr.length-1}))}});
- RUN={k,steps,i:0,phase:'warmup',wuEnd:Date.now()+180000,results:{},val:null,hold:null,anim:true,before:S.sessions.slice()};
+ const light=isLightWeek();
+ const loads={},bumped={};
+ SESSIONS[k].list.forEach(([id])=>{if(!LOADS[id])return;let v=lastLoad(id);if(v==null)v=LOADS[id].def;else if(readyToProgress(k,id)){const nv=bumpLoad(id,v);if(nv!==v){v=nv;bumped[id]=true}}loads[id]=v});
+ SESSIONS[k].list.forEach(([id,n0])=>{const n=light?Math.min(2,n0):n0;const e=X[id];for(let s=1;s<=n;s++){(e.per?(e.per==='côté'?['côté droit','côté gauche']:[e.per]):[null]).forEach((side,i,arr)=>steps.push({e,set:s,sets:n,side,lastSide:i===arr.length-1}))}});
+ RUN={k,steps,loads,bumped,light,i:0,phase:'warmup',wuEnd:Date.now()+180000,results:{},val:null,hold:null,anim:true,before:S.sessions.slice()};
  keepAwake(true);render();
  clearInterval(timerId);timerId=setInterval(()=>{if(RUN&&RUN.phase==='warmup')renderRun();else clearInterval(timerId)},1000);
 }
@@ -645,7 +728,7 @@ function renderRun(bump){
   const e=st.e,timed=e.unit==='s';
   if(RUN.val==null)RUN.val=suggested(st);
   const firstOfExo=st.set===1&&(!st.side||st.side==='côté droit');
-  const hard=firstOfExo&&readyToProgress(RUN.k,e.id);
+  const hard=firstOfExo&&readyToProgress(RUN.k,e.id)&&!LOADS[e.id];
   const test=e.id==='pompes'&&st.set===1&&!lastFor('pompes');
   const el=RUN.hold?Math.floor((Date.now()-RUN.hold)/1000):null,shown=timed?(el??RUN.val):RUN.val;
   app.innerHTML=wrap(`${topBar()}
@@ -655,10 +738,12 @@ function renderRun(bump){
   ${test?`<div class="banner">Test : fais le maximum de pompes propres. Moins de 6 ? Fais les séries suivantes sur les genoux.</div>`:''}
   ${hard?`<div class="banner">Haut de fourchette partout la dernière fois : ${esc(e.progress)}</div>`:''}
   ${firstOfExo?`<div class="glass pad" style="margin-top:12px"><div class="kicker">Mise en place</div><ol class="steps">${e.setup.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><div class="tip" style="margin-top:10px"><b>Respire :</b> ${esc(e.breath)}</div></div>`:`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}</div>`}
+  ${LOADS[e.id]?`<div class="load glass"><span class="kicker" style="font-size:11px">Charge</span><button data-ld="-1">−</button><b>${loadLabel(e.id,RUN.loads[e.id])}</b><button data-ld="1">+</button></div>${RUN.bumped[e.id]&&firstOfExo?`<div class="banner ok">Charge augmentée automatiquement : tu as tout réussi la dernière fois. 💪</div>`:''}`:''}
   <div class="counter"><button data-d="${timed?-5:-1}" ${RUN.hold?'disabled style="opacity:.3"':''}>−</button><div class="big gtext ${bump?'bump':''}">${shown}${timed?'<span style="font-size:40px">s</span>':''}</div><button data-d="${timed?5:1}" ${RUN.hold?'disabled style="opacity:.3"':''}>+</button></div>
   <div class="small muted" style="text-align:center">Objectif ${e.min}–${e.max} ${timed?'secondes':'reps'} · garde ~2 reps en réserve</div>
   <div class="range">${Array.from({length:e.max},(_,k)=>`<i class="${k<shown?(k<e.min?'min':'on'):''}"></i>`).join('')}</div>
   <div style="margin-top:20px">${timed?(RUN.hold?`<button class="btn" data-act="stophold">Stop</button>`:`<button class="btn dark" data-act="hold">▶︎ Lancer le chrono</button><div style="height:10px"></div><button class="btn" data-act="done">Série faite</button>`):`<button class="btn" data-act="done">Série faite</button>`}</div>`);
+  app.querySelectorAll('[data-ld]').forEach(b=>b.onclick=()=>{const l=LOADS[e.id],d=+b.dataset.ld;RUN.loads[e.id]=l.L?Math.max(0,Math.min(25,RUN.loads[e.id]+d*.5)):Math.max(0,Math.min(l.opts.length-1,RUN.loads[e.id]+d));RUN.bumped[e.id]=false;beep(900,.04,.06);renderRun()});
   app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{RUN.val=Math.max(0,Math.min(300,RUN.val+ +b.dataset.d));beep(1200,.03,.06);renderRun(true)});
   const h=app.querySelector('[data-act=hold]');if(h)h.onclick=()=>{RUN.hold=Date.now();beep(1320,.2,.3);clearInterval(timerId);timerId=setInterval(()=>{const s=Math.floor((Date.now()-RUN.hold)/1000);if(s===e.min&&RUN.lastBeep!==s){RUN.lastBeep=s;beep(990,.12,.25)}if(s===e.max&&RUN.lastBeep!==s){RUN.lastBeep=s;chord();buzz(200)}renderRun()},250);renderRun()};
   const sh=app.querySelector('[data-act=stophold]');if(sh)sh.onclick=()=>{clearInterval(timerId);RUN.val=Math.floor((Date.now()-RUN.hold)/1000);RUN.hold=null;finishSet()};
@@ -679,13 +764,15 @@ function renderRun(bump){
   const sets=ids.reduce((a,id)=>a+RUN.results[id].length,0),reps=ids.reduce((a,id)=>a+(X[id].unit==='s'?0:RUN.results[id].reduce((x,y)=>x+y,0)),0);
   const mins=Math.max(1,Math.round((Date.now()-RUN.started)/60000));
   const prs=ids.filter(id=>X[id].unit!=='s'&&Math.max(...RUN.results[id])>bestFor(id,RUN.before)&&bestFor(id,RUN.before)>0);
-  app.innerHTML=wrap(`<div style="text-align:center;margin-top:30px"><div class="kicker">${SESSIONS[RUN.k].name} terminée</div><h1 style="font-size:58px;margin-top:8px">Séance <span class="gtext">finie.</span></h1></div>
-  <div class="stats"><div class="glass stat" style="text-align:center"><div class="kicker">Séries</div><b>${sets}</b></div><div class="glass stat" style="text-align:center"><div class="kicker">Reps</div><b>${reps}</b></div></div>
+  app.innerHTML=wrap(`<div style="text-align:center;margin-top:30px"><div class="kicker">${SESSIONS[RUN.k].name} terminée</div><div class="medal"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div><h1 style="font-size:54px;margin-top:16px">Séance <span class="gtext">finie.</span></h1></div>
+  <div class="stats"><div class="glass stat" style="text-align:center"><div class="kicker">Séries</div><b data-count="${sets}">${sets}</b></div><div class="glass stat" style="text-align:center"><div class="kicker">Reps</div><b data-count="${reps}">${reps}</b></div></div>
   <div class="glass stat" style="margin-top:12px;text-align:center"><div class="kicker">Durée</div><b>${mins} min</b></div>
   ${prs.length?`<div class="banner">Nouveau record : ${prs.map(id=>`<b>${esc(X[id].name)}</b>`).join(', ')} 🔥</div>`:''}
   <div class="glass pad" style="margin-top:12px">${ids.map(id=>`<div class="between" style="padding:9px 0;border-bottom:1px solid var(--line)"><span>${esc(X[id].name)}${prs.includes(id)?'<span class="pr">Record</span>':''}</span><b>${RUN.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b></div>`).join('')}</div>
+  <div class="glass pad" style="margin-top:12px;text-align:center"><div class="kicker">Comment tu te sens ?</div><div class="row" style="justify-content:center;margin-top:10px;gap:8px">${[['dur','😮‍💨','Dur'],['bien','🙂','Bien'],['top','💪','En forme']].map(([k,ic,t])=>`<button class="chip ${RUN.feel===k?'g':''}" data-feel="${k}" style="padding:12px 16px;font-size:15px">${ic} ${t}</button>`).join('')}</div></div>
   <p class="muted" style="line-height:1.45">Un repas riche en protéines maintenant. La piscine : après la muscu ou un autre jour.</p>
   <button class="btn" data-act="close">Terminer</button>`);
+  app.querySelectorAll('[data-feel]').forEach(b=>b.onclick=()=>{RUN.feel=b.dataset.feel;const l=S.sessions[S.sessions.length-1];if(l)l.feel=RUN.feel;saveSessions();renderRun()});
   app.querySelector('[data-act=close]').onclick=()=>{RUN=null;TAB='home';render()};
  }
  const q=app.querySelector('[data-act=quit]');if(q)q.onclick=showQuit;
@@ -707,8 +794,8 @@ function startRest(sec,switching){
  renderRun();
 }
 function endRest(go){clearInterval(timerId);if(go){beep(1320,.25,.3);buzz([80,60,80])}RUN.phase='work';RUN.anim=true;renderRun()}
-function record(partial){S.sessions.push({id:'s'+Date.now(),date:new Date().toISOString(),sess:RUN.k,results:RUN.results,partial});saveSessions()}
-function endRun(){clearInterval(timerId);keepAwake(false);record(false);RUN.phase='end';RUN.anim=true;renderRun();chord();buzz([100,50,100,50,200]);confetti()}
+function record(partial){const used={};Object.keys(RUN.results).forEach(id=>{if(RUN.loads[id]!=null)used[id]=RUN.loads[id]});S.sessions.push({id:'s'+Date.now(),date:new Date().toISOString(),sess:RUN.k,results:RUN.results,loads:used,feel:RUN.feel||null,light:RUN.light||false,partial});saveSessions()}
+function endRun(){clearInterval(timerId);keepAwake(false);record(false);RUN.phase='end';RUN.anim=true;renderRun();countUp();chord();buzz([100,50,100,50,200]);confetti()}
 function showQuit(){
  $('#modal').innerHTML=`<div class="modal"><div class="glass"><h2 style="margin-top:0">Arrêter la séance ?</h2><p class="muted">Les séries déjà faites seront enregistrées.</p>
  <button class="btn" id="mq1">Enregistrer et arrêter</button><div style="height:10px"></div><button class="btn dark" id="mq2">Continuer</button></div></div>`;
@@ -717,6 +804,7 @@ function showQuit(){
 }
 const _start=startRun;startRun=k=>{_start(k);RUN.started=Date.now()};
 
+setTimeout(()=>$('#splash').classList.add('out'),1100);
 render();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
