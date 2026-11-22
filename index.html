@@ -152,9 +152,9 @@ dev:{name:'Développé épaules à l’élastique',min:8,max:12,rest:90,muscles:
 ecarteSol:{name:'Écarté au sol',min:12,max:20,rest:60,muscles:'Pecs',
  tips:['Allongé, 2 haltères de 3 kg par main','Bras presque tendus, ouvre jusqu’au sol, remonte en serrant les pecs'],
  progress:'Descente en 3 secondes, pause 1 s en bas.',
- a:{...LYING,kN:[390,350],fN:[440,440],kF:[380,354],fF:[428,440],...ARMS_UP},
- b:{...LYING,kN:[390,350],fN:[440,440],kF:[380,354],fF:[428,440],eN:[176,404],hN:[168,430],eF:[164,406],hF:[156,432]},
- work:['armN','armF','torso'],prop:'dbs',period:3},
+ a:{...FRONT,head:[300,112],kN:[326,350],fN:[332,430],kF:[274,350],fF:[268,430],eN:[346,170],hN:[330,178],eF:[254,170],hF:[270,178]},
+ b:{...FRONT,head:[300,112],kN:[326,350],fN:[332,430],kF:[274,350],fF:[268,430],eN:[404,176],hN:[466,190],eF:[196,176],hF:[134,190]},
+ work:['armN','armF','torso'],prop:'dbs',view:'front',top:true,period:3},
 lat:{name:'Élévations latérales',min:12,max:20,rest:60,muscles:'Épaules (carrure)',
  tips:['Un haltère de 3 kg par main, coudes légèrement fléchis','Monte jusqu’à l’horizontale, redescends lentement'],
  progress:'Descente en 3 secondes, ou garde 1 s en haut.',
@@ -172,8 +172,8 @@ crunch:{name:'Crunch inversé',min:10,max:15,rest:60,muscles:'Abdos (bas du vent
 planche:{name:'Planche latérale',min:30,max:45,unit:'s',per:'côté',rest:45,muscles:'Obliques · Taille',
  tips:['Coude sous l’épaule, corps bien aligné','Ne laisse pas tomber la hanche'],
  progress:'Lève la jambe du dessus, ou tiens un haltère sur la hanche.',
- a:{head:[112,292],neck:[152,312],hip:[300,372],kN:[385,404],fN:[470,436],kF:[392,410],fF:[478,440],eN:[158,438],hN:[214,440],eF:[226,336],hF:[288,358]},
- b:{head:[112,296],neck:[152,315],hip:[300,380],kN:[385,407],fN:[470,436],kF:[392,412],fF:[478,440],eN:[158,438],hN:[214,440],eF:[226,340],hF:[288,364]},
+ a:{head:[112,292],neck:[152,312],hip:[300,372],kN:[385,404],fN:[470,436],kF:[392,410],fF:[478,440],eN:[154,438],hN:[92,440],eF:[226,336],hF:[288,358]},
+ b:{head:[112,296],neck:[152,315],hip:[300,380],kN:[385,407],fN:[470,436],kF:[392,412],fF:[478,440],eN:[154,438],hN:[92,440],eF:[226,340],hF:[288,364]},
  work:['torso'],period:4},
 rowing:{name:'Rowing penché avec le sac',min:8,max:12,rest:90,muscles:'Dos · Biceps',
  tips:['Penché à 45°, dos plat, sac tenu à deux mains','Tire le sac vers le nombril, serre les omoplates'],
@@ -252,7 +252,7 @@ ecarteSol:{setup:['Allongé sur le dos, genoux pliés, pieds à plat','Un haltè
  mistakes:['Plier les coudes comme un développé','Laisser tomber les bras d’un coup'],
  breath:'Inspire en ouvrant, souffle en refermant.',easier:'Un seul haltère de 3 kg par main.',
  phase:['Ouvre lentement vers le sol','Referme en serrant les pecs'],move:'hN',
- cues:[{j:'hN',t:'Bras presque tendus',ph:'a',o:[70,-30]},{j:'hN',t:'Pose en douceur',ph:'b',o:[90,-70]}]},
+ cues:[{j:'head',t:'Vue de dessus',ph:'all',o:[0,-80]},{j:'hN',t:'Bras au-dessus de la poitrine',ph:'a',o:[60,90]},{j:'hN',t:'Ouvre jusqu’au sol',ph:'b',o:[-40,90]}]},
 lat:{setup:['Debout, un haltère de 3 kg dans chaque main, bras le long du corps','Coudes très légèrement pliés, buste droit, ventre serré'],
  mistakes:['Monter plus haut que les épaules','Hausser les épaules vers les oreilles','Se balancer pour monter'],
  breath:'Souffle en montant.',easier:'Monte un bras à la fois.',
@@ -342,6 +342,11 @@ function pose(e,t){
  const hpN=front?ad(hip,[20,0]):hip,hpF=front?ad(hip,[-20,0]):hip;
  return {front,head,neck,hip,J,up,shN,shF,hpN,hpF};
 }
+function face(P){const h=P.head,u=P.up;
+ if(P.front)return `<circle cx="${h[0]-10}" cy="${h[1]-1}" r="3.6" fill="${C.ink}"/><circle cx="${h[0]+10}" cy="${h[1]-1}" r="3.6" fill="${C.ink}"/><path d="M ${h[0]-7} ${h[1]+11} Q ${h[0]} ${h[1]+16} ${h[0]+7} ${h[1]+11}" stroke="${C.ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+ let f=[-u[1],u[0]];if(f[0]-f[1]*.5<0)f=[-f[0],-f[1]];
+ const ex=h[0]+f[0]*16+u[0]*5,ey=h[1]+f[1]*16+u[1]*5;
+ return `<circle cx="${ex}" cy="${ey}" r="3.6" fill="${C.ink}"/><circle cx="${h[0]-f[0]*4-u[0]*2}" cy="${h[1]-f[1]*4-u[1]*2}" r="6" fill="${C.skinD}"/>`}
 function overlay(e,t,P,id){
  const Jm={head:P.head,neck:P.neck,hip:P.hip,...P.J};let o='';
  const cl=(v,a,b)=>Math.max(a,Math.min(b,v)),placed=[];
@@ -387,15 +392,15 @@ function figSVG(e,t,tPrev,labels){
  <filter id="${id}s" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="${C.band}" flood-opacity=".7"/></filter>
 </defs>
 <ellipse cx="280" cy="458" rx="250" ry="26" fill="url(#${id}fl)"/>
-<rect x="30" y="450" width="500" height="12" rx="6" fill="${C.mat}"/>${pre}
-<ellipse cx="${(mn+mx)/2}" cy="454" rx="${(mx-mn)/2+30}" ry="9" fill="#000" opacity=".45"/>
+${e.top?`<rect x="170" y="48" width="260" height="420" rx="28" fill="#1A1A24" stroke="#2C2C3A" stroke-width="3"/>`:`<rect x="30" y="450" width="500" height="12" rx="6" fill="${C.mat}"/>`}${pre}
+${e.top?'':'<!--'}<ellipse cx="${(mn+mx)/2}" cy="454" rx="${(mx-mn)/2+30}" ry="9" fill="#000" opacity=".45"/>${e.top?'':'-->'}
 ${trail}
 ${glow('legF',[hpF,J.kF,J.fF],40)}${glow('armF',[shF,J.eF,J.hF],28)}${glow('torso',[hip,neck],tw)}${glow('legN',[hpN,J.kN,J.fN],40)}${glow('armN',[shN,J.eN,J.hN],28)}
 ${leg(hpF,J.kF,J.fF,true)}${front?'':arm(shF,J.eF,J.hF,true)}
 ${seg(hip,neck,tw,C.tee)}${ln(LP(hip,neck,.25),LP(hip,neck,.85),tw*.22,`url(#${id}g)`,.9)}${seg(hip,LP(hip,neck,.12),tw,C.sh,false)}
 ${leg(hpN,J.kN,J.fN,false)}${front?arm(shF,J.eF,J.hF,false):''}${arm(shN,J.eN,J.hN,false)}${post}
 ${seg(neck,LP(neck,head,.6),22,C.skin,false)}
-<circle cx="${head[0]}" cy="${head[1]}" r="32" fill="${C.ink}"/><circle cx="${hair[0]}" cy="${hair[1]}" r="30" fill="${C.hair}"/><circle cx="${head[0]}" cy="${head[1]}" r="28" fill="${C.skin}"/><circle cx="${head[0]-8}" cy="${head[1]-10}" r="8" fill="#fff" opacity=".18"/>
+<circle cx="${head[0]}" cy="${head[1]}" r="32" fill="${C.ink}"/><circle cx="${hair[0]}" cy="${hair[1]}" r="30" fill="${C.hair}"/><circle cx="${head[0]}" cy="${head[1]}" r="28" fill="${C.skin}"/><circle cx="${head[0]-8}" cy="${head[1]-10}" r="8" fill="#fff" opacity=".18"/>${face(P)}
 ${labels?overlay(e,t,P,id):''}</svg>`;
 }
 let CLOCK=0,SLOW=false;
@@ -529,6 +534,7 @@ function homeView(){
  ${first?`<div class="banner">Première séance : sur la 1<sup>re</sup> série de pompes, fais le <b>maximum propre</b>. C’est ton point de départ.</div>`:''}
  ${prog.length?`<div class="banner">À durcir aujourd’hui : ${prog.map(([id])=>`<b>${esc(X[id].name)}</b>`).join(', ')}</div>`:''}
  ${adv?`<div class="banner ${adv.ok?'ok':''}">${adv.msg}</div>`:''}
+ ${S.sessions.length>=3&&(!lsGet('mm2_lastbk',null)||Date.now()-new Date(lsGet('mm2_lastbk'))>14*864e5)?`<div class="banner">Pense à sauvegarder tes progrès : ils ne sont que sur ce téléphone. <button class="chip g" style="margin-top:10px" data-gobk>Sauvegarder</button></div>`:''}
  <div class="stats">
   <div class="glass stat row" style="gap:14px"><div style="position:relative;width:64px;height:64px">${ringSVG(done.length/4,64,9,'rw')}<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900">${done.length}</div></div><div><div class="kicker">Semaine</div><b style="font-size:22px">${done.length}/4</b></div></div>
   <div class="glass stat"><div class="kicker">Série en cours</div><b>${streakWeeks()} <span style="font-size:15px" class="muted">sem.</span></b></div>
@@ -586,12 +592,16 @@ function suiviView(){
   <div class="small muted" style="margin-top:8px;line-height:1.7">${Object.keys(s.results||{}).filter(id=>X[id]).map(id=>`${esc(X[id].name)} · <b style="color:var(--fg)">${s.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b>`).join('<br>')}</div></div>`).join(''):'<div class="muted">Pas encore de séance. Ta première t’attend.</div>'}</div>
  <h2>Sauvegarde</h2>
  <div class="glass pad"><p class="muted small" style="margin-top:0;line-height:1.45">Tes données restent sur ce téléphone. Copie ta sauvegarde de temps en temps (dans Notes).</p>
- <button class="btn dark" data-act="export">Copier ma sauvegarde</button>
+ <button class="btn" data-act="file">⬇︎ Enregistrer un fichier de sauvegarde</button>
+ <label class="btn dark" style="margin-top:10px;text-align:center;cursor:pointer">⬆︎ Restaurer depuis un fichier<input type="file" accept=".json,application/json" id="impf" style="display:none"></label>
+ <div style="height:10px"></div><button class="btn dark" data-act="export">Copier la sauvegarde en texte</button>
+ <div class="small muted" style="margin-top:8px">${lsGet('mm2_lastbk',null)?'Dernière sauvegarde : '+fmtDate(lsGet('mm2_lastbk')):'Aucune sauvegarde pour l’instant.'}</div>
  <textarea id="imp" placeholder="Colle une sauvegarde ici pour la restaurer" style="min-height:70px;margin-top:10px"></textarea>
  <button class="btn dark" data-act="import" style="margin-top:8px">Restaurer</button><div id="bk" class="muted small" style="margin-top:8px"></div></div>`;
 }
 function bind(){
  document.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>startRun(b.dataset.start));
+ const gb=$('[data-gobk]');if(gb)gb.onclick=()=>{TAB='suivi';render();setTimeout(()=>$('[data-act=file]')?.scrollIntoView({behavior:'smooth',block:'center'}),100)};
  const tu=$('[data-act=tuto]');if(tu)tu.onclick=()=>{OB=0;render()};
  document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PROGK=b.dataset.pk;render()});
  const num=v=>{const x=parseFloat(String(v).replace(',','.'));return isFinite(x)?x:null};
@@ -599,7 +609,10 @@ function bind(){
   const ok={kg:kg>30&&kg<250?kg:null,waist:waist>40&&waist<200?waist:null};if(!ok.kg&&!ok.waist)return;
   S.body.push({id:'b'+Date.now(),date:new Date().toISOString(),...ok});S.body.sort((a,b)=>a.date.localeCompare(b.date));saveBody();render()};
  document.querySelectorAll('[data-delb]').forEach(b=>b.onclick=()=>{S.body=S.body.filter(x=>x.id!==b.dataset.delb);saveBody();render()});
- const ex=$('[data-act=export]');if(ex)ex.onclick=async()=>{const txt=JSON.stringify({v:2,sessions:S.sessions,body:S.body});try{await navigator.clipboard.writeText(txt);$('#bk').textContent='Sauvegarde copiée.'}catch(e){$('#imp').value=txt;$('#bk').textContent='Copie le texte ci-dessus.'}};
+ const ex=$('[data-act=export]');if(ex)ex.onclick=async()=>{const txt=JSON.stringify({v:2,sessions:S.sessions,body:S.body});try{await navigator.clipboard.writeText(txt);lsSet('mm2_lastbk',new Date().toISOString());$('#bk').textContent='Sauvegarde copiée.'}catch(e){$('#imp').value=txt;$('#bk').textContent='Copie le texte ci-dessus.'}};
+ const dump=()=>JSON.stringify({v:2,date:new Date().toISOString(),sessions:S.sessions,body:S.body});
+ const fl=$('[data-act=file]');if(fl)fl.onclick=()=>{const blob=new Blob([dump()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='muscu-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();lsSet('mm2_lastbk',new Date().toISOString());setTimeout(render,400)};
+ const ff=$('#impf');if(ff)ff.onchange=async()=>{try{const d=JSON.parse(await ff.files[0].text());if(!Array.isArray(d.sessions))throw 0;S.sessions=d.sessions;S.body=d.body||[];saveSessions();saveBody();render()}catch(e){$('#bk').textContent='Fichier illisible.'}};
  const im=$('[data-act=import]');if(im)im.onclick=()=>{try{const d=JSON.parse($('#imp').value);if(!Array.isArray(d.sessions))throw 0;S.sessions=d.sessions;S.body=d.body||[];saveSessions();saveBody();render()}catch(e){$('#bk').textContent='Sauvegarde illisible.'}};
 }
 
@@ -656,7 +669,8 @@ function renderRun(bump){
   <div class="between"><div><div class="kicker">${RUN.switching?'Change de côté':'Récupère'}</div><h1 style="font-size:34px;margin-top:4px">${left<=3?'Prépare-toi':RUN.switching?'Autre côté':'Repos'}</h1></div>${quitBtn}</div>
   <div class="ring">${ringSVG(left/RUN.restTotal,270,16,'rr')}<div class="t"><b class="${left<=3?'gtext pulse':''}" style="${left<=3?'font-size:110px':''}">${left<=3?left:mmss(left)}</b>${left>3?'<span class="muted small">restant</span>':''}</div></div>
   <div class="row" style="justify-content:center;gap:10px"><button class="chip" data-add="-15">−15 s</button><button class="chip" data-add="15">+15 s</button><button class="chip g" data-act="skip">Passer ›</button></div>
-  <div class="kicker" style="margin-top:26px">Ensuite</div>
+  <div class="small muted" style="text-align:center;margin-top:12px">Garde l’app ouverte : le bip ne sonne pas écran verrouillé.</div>
+  <div class="kicker" style="margin-top:22px">Ensuite</div>
   <div class="glass row" style="margin-top:10px;padding:12px;overflow:hidden"><div class="stage" style="width:130px;flex-shrink:0;border-radius:20px"><div data-fig="${nx.e.id}"></div></div><div><b style="font-size:19px;letter-spacing:-.02em">${esc(nx.e.name)}</b><div class="gtext" style="font-weight:800;margin-top:4px">Série ${nx.set}/${nx.sets}${nx.side&&nx.side!=='côté'?' · '+nx.side:''}</div><div class="small muted" style="margin-top:2px">${nx.e.min}–${nx.e.max} ${nx.e.unit==='s'?'s':'reps'}</div></div></div>`);
   app.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{RUN.restEnd+= +b.dataset.add*1000;RUN.restTotal=Math.max(RUN.restTotal,(RUN.restEnd-Date.now())/1000);renderRun()});
   app.querySelector('[data-act=skip]').onclick=()=>endRest();
