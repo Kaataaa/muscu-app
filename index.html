@@ -3,91 +3,117 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#F3F0E8" />
+<meta name="theme-color" content="#08080C" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Muscu" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon-180.png" />
 <link rel="icon" href="icon-192.png" />
 <title>Muscu maison</title>
 <style>
-:root{--bg:#F3F0E8;--card:#fff;--fg:#15171F;--muted:#6B6E78;--accent:#FF5B2E;--soft:#E7E2D6;--mat:#DCE3F0;--ok:#2BB673;
---shadow:0 20px 50px rgba(30,30,60,.09),0 4px 12px rgba(30,30,60,.05)}
+:root{
+ --bg:#08080C;--fg:#F5F5F7;--muted:#8E8E9A;--line:rgba(255,255,255,.08);--glass:rgba(255,255,255,.055);--glass2:rgba(255,255,255,.09);
+ --a1:#FF6A3D;--a2:#FF2E7E;--b1:#3DD6FF;--b2:#7B5CFF;--ok:#34E39B;
+ --g1:var(--a1);--g2:var(--a2);
+ --grad:linear-gradient(135deg,var(--g1),var(--g2));
+ --font:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text',system-ui,sans-serif;
+}
+body.sB{--g1:var(--b1);--g2:var(--b2)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif}
-body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);min-height:100vh}
-.wrap{max-width:520px;margin:0 auto;padding:20px 18px 120px}
-h1,h2,.display{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',system-ui,sans-serif;letter-spacing:-.02em;margin:0}
-h1{font-size:40px;line-height:1;font-weight:800}
-h2{font-size:24px;font-weight:800;margin:28px 0 12px}
-.muted{color:var(--muted)}
-.card{background:var(--card);border-radius:24px;box-shadow:var(--shadow);padding:18px}
-.pill{display:inline-block;padding:7px 14px;border-radius:999px;font-weight:700;font-size:14px;background:var(--soft)}
-.pill.a{background:var(--accent);color:#fff}
-.pill.g{background:#DFF5E9;color:#167A48}
-button{font:inherit;border:0;cursor:pointer}
-.btn{display:block;width:100%;padding:18px;border-radius:18px;font-weight:700;font-size:18px;background:var(--fg);color:#fff}
-.btn.a{background:var(--accent)}
-.btn.ghost{background:transparent;color:var(--fg);border:2px solid var(--soft)}
-.row{display:flex;align-items:center;gap:12px}
-.between{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-top:1px solid var(--soft);display:flex;justify-content:center;padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
-.tabs button{flex:1;max-width:170px;background:none;padding:10px;border-radius:14px;font-weight:600;color:var(--muted);font-size:14px}
-.tabs button.on{color:var(--fg);background:var(--soft)}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px}
-.day{border-radius:14px;padding:10px 0;text-align:center;font-size:12px;font-weight:700;background:var(--card);box-shadow:var(--shadow)}
-.day.w{background:var(--accent);color:#fff}
-.day.today{outline:3px solid var(--fg);outline-offset:2px}
-.day small{display:block;font-weight:500;opacity:.75;margin-top:2px;font-size:10px}
-.exo{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--soft)}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);overflow-x:hidden}
+body:before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+ background:radial-gradient(40% 30% at 15% 8%,color-mix(in srgb,var(--g1) 28%,transparent),transparent 70%),
+ radial-gradient(45% 35% at 95% 30%,color-mix(in srgb,var(--g2) 22%,transparent),transparent 70%),
+ radial-gradient(50% 40% at 40% 110%,rgba(123,92,255,.14),transparent 70%);animation:drift 18s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate3d(4%,3%,0) scale(1.05)}}
+.wrap{max-width:520px;margin:0 auto;padding:18px 18px 130px}
+.view{animation:in .45s cubic-bezier(.16,1,.3,1) both}
+@keyframes in{from{opacity:0;transform:translateY(18px)}}
+h1,h2{margin:0;letter-spacing:-.03em;font-weight:800}
+h1{font-size:40px;line-height:1.02}
+h2{font-size:22px;margin:30px 0 12px}
+.muted{color:var(--muted)}.small{font-size:13px}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.gtext{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:26px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.pad{padding:18px}
+button{font:inherit;border:0;cursor:pointer;color:inherit}
+button:active{transform:scale(.97)}
+.btn{display:block;width:100%;padding:19px;border-radius:20px;font-weight:800;font-size:18px;letter-spacing:-.01em;background:var(--grad);color:#fff;box-shadow:0 12px 40px -8px color-mix(in srgb,var(--g2) 60%,transparent);transition:transform .15s}
+.btn.dark{background:var(--glass2);box-shadow:none;border:1px solid var(--line)}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;font-weight:700;font-size:13px;background:var(--glass2);border:1px solid var(--line)}
+.chip.g{background:var(--grad);border:0;color:#fff}
+.row{display:flex;align-items:center;gap:12px}.between{display:flex;justify-content:space-between;align-items:center;gap:12px}
+/* barre d'onglets */
+.tabs{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));display:flex;gap:4px;padding:6px;border-radius:24px;background:rgba(22,22,30,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.5);z-index:10}
+.tabs button{background:none;padding:12px 18px;border-radius:18px;font-weight:700;font-size:14px;color:var(--muted);transition:all .25s}
+.tabs button.on{background:var(--glass2);color:var(--fg)}
+/* accueil */
+.hero{position:relative;overflow:hidden;border-radius:32px;padding:22px;margin-top:18px;background:linear-gradient(160deg,color-mix(in srgb,var(--g1) 30%,#121218),color-mix(in srgb,var(--g2) 22%,#0C0C12) 70%);border:1px solid rgba(255,255,255,.1)}
+.hero .fig{margin:6px -10px -6px}
+.hero h1{font-size:44px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.stat{padding:16px}.stat b{font-size:30px;letter-spacing:-.03em;display:block;margin-top:4px}
+.week{display:flex;justify-content:space-between;margin-top:14px}
+.day{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--muted)}
+.dot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;border:1.5px solid var(--line);color:var(--fg)}
+.dot.plan{border-color:color-mix(in srgb,var(--g1) 60%,transparent)}
+.dot.done{background:var(--grad);border:0;color:#fff;box-shadow:0 6px 20px -4px color-mix(in srgb,var(--g2) 70%,transparent)}
+.dot.today{outline:2px solid var(--fg);outline-offset:3px}
+.exo{display:flex;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
 .exo:last-child{border:0}
-.exo .fig{width:86px;flex-shrink:0}
-.exo b{display:block;font-size:16px}
-.exo span{font-size:14px}
-.seg{display:flex;background:var(--soft);border-radius:14px;padding:4px}
-.seg button{flex:1;padding:10px;border-radius:11px;background:none;font-weight:600;color:var(--muted)}
-.seg button.on{background:var(--card);color:var(--fg);box-shadow:var(--shadow)}
-.tip{display:flex;gap:10px;font-size:16px;line-height:1.35;margin:6px 0}
-.tip:before{content:"→";color:var(--accent);font-weight:800}
+.exo .fig{width:84px;flex-shrink:0;border-radius:16px;background:rgba(255,255,255,.03)}
+.exo b{display:block;font-size:16px}.exo span{font-size:13px}
+.banner{border-radius:20px;padding:14px 16px;font-weight:600;line-height:1.4;margin-top:14px;background:color-mix(in srgb,var(--g1) 16%,transparent);border:1px solid color-mix(in srgb,var(--g1) 35%,transparent)}
+.banner.ok{background:rgba(52,227,155,.12);border-color:rgba(52,227,155,.35)}
+.tip{display:flex;gap:10px;font-size:15px;line-height:1.4;margin:7px 0;color:#D6D6DE}
+.tip:before{content:"";flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:8px;background:var(--grad)}
+/* scène du personnage */
+.stage{position:relative;border-radius:30px;overflow:hidden;background:radial-gradient(70% 60% at 50% 85%,color-mix(in srgb,var(--g1) 22%,transparent),transparent 70%),linear-gradient(180deg,#15151D,#0D0D13);border:1px solid var(--line)}
+.stage .fig{padding:20px 14px 6px}
 /* séance */
-.top{display:flex;gap:6px;margin-bottom:14px}
-.top i{flex:1;height:6px;border-radius:3px;background:var(--soft)}
-.top i.d{background:var(--fg)}.top i.c{background:var(--accent)}
-.stepper{display:flex;align-items:center;justify-content:center;gap:22px;margin:18px 0}
-.stepper button{width:64px;height:64px;border-radius:50%;background:var(--soft);font-size:32px;font-weight:700;color:var(--fg)}
-.stepper .n{font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-size:88px;font-weight:800;color:var(--accent);min-width:120px;text-align:center;line-height:1;font-variant-numeric:tabular-nums}
-.range{display:flex;gap:3px;margin-top:6px}
-.range i{flex:1;height:10px;border-radius:3px;background:var(--soft)}
-.range i.on{background:var(--accent)}.range i.min{background:var(--fg)}
-.ring{position:relative;width:250px;height:250px;margin:20px auto}
-.ring svg{transform:rotate(-90deg)}
-.ring .t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;font-weight:800;font-size:64px;font-variant-numeric:tabular-nums}
-input[type=number],input[type=text]{font:inherit;font-size:18px;padding:14px;border-radius:14px;border:2px solid var(--soft);width:100%;background:var(--card)}
-.banner{background:#FFE3D8;border-radius:18px;padding:14px 16px;font-weight:600;margin-top:12px;line-height:1.35}
-.hist{padding:14px 0;border-bottom:1px solid var(--soft)}
-.hist:last-child{border:0}
-.small{font-size:13px}
-.status{font-size:12px;margin-top:20px;text-align:center}
-.modal{position:fixed;inset:0;background:rgba(21,23,31,.45);display:flex;align-items:flex-end;justify-content:center;z-index:20}
-.modal .card{width:100%;max-width:520px;border-radius:26px 26px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom))}
+.top{display:flex;gap:5px;margin-bottom:14px}
+.top i{flex:1;height:5px;border-radius:3px;background:var(--glass2)}
+.top i.d{background:rgba(255,255,255,.55)}.top i.c{background:var(--grad)}
+.counter{display:flex;align-items:center;justify-content:center;gap:18px;margin:16px 0 6px}
+.counter button{width:62px;height:62px;border-radius:50%;background:var(--glass2);border:1px solid var(--line);font-size:30px;font-weight:600}
+.big{font-size:104px;font-weight:900;letter-spacing:-.05em;line-height:1;min-width:150px;text-align:center;font-variant-numeric:tabular-nums}
+.bump{animation:bump .25s cubic-bezier(.2,1.6,.4,1)}
+@keyframes bump{from{transform:scale(1.18)}}
+.range{display:flex;gap:3px;margin-top:8px}
+.range i{flex:1;height:8px;border-radius:4px;background:var(--glass2);transition:background .2s}
+.range i.min{background:rgba(255,255,255,.6)}.range i.on{background:var(--grad)}
+.ring{position:relative;width:270px;height:270px;margin:22px auto 16px}
+.ring svg{transform:rotate(-90deg);filter:drop-shadow(0 0 18px color-mix(in srgb,var(--g2) 55%,transparent))}
+.ring .t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .t b{font-size:68px;font-weight:900;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.pulse{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+input,textarea{font:inherit;font-size:17px;padding:15px;border-radius:16px;border:1px solid var(--line);width:100%;background:rgba(255,255,255,.05);color:var(--fg)}
+input::placeholder,textarea::placeholder{color:#6E6E7A}
+.hist{padding:14px 0;border-bottom:1px solid var(--line)}.hist:last-child{border:0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;z-index:30;animation:in .3s both}
+.modal .glass{width:100%;max-width:520px;border-radius:30px 30px 0 0;padding:24px 18px calc(24px + env(safe-area-inset-bottom));background:#15151C}
+.seg{display:flex;padding:4px;border-radius:16px;background:var(--glass)}
+.seg button{flex:1;padding:11px;border-radius:12px;background:none;font-weight:700;color:var(--muted)}
+.seg button.on{background:var(--glass2);color:var(--fg)}
+.pr{display:inline-block;margin-left:6px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:800;background:var(--grad);color:#fff;vertical-align:middle}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 </style>
 </head>
 <body>
 <div class="wrap" id="app"></div>
 <nav class="tabs" id="tabs">
-	<button data-t="home">Aujourd’hui</button>
-	<button data-t="prog">Programme</button>
-	<button data-t="suivi">Suivi</button>
+ <button data-t="home">Aujourd’hui</button>
+ <button data-t="prog">Programme</button>
+ <button data-t="suivi">Progrès</button>
 </nav>
 <div id="modal"></div>
+<canvas id="confetti"></canvas>
 <script>
-/* =========================================================
-   MUSCU MAISON — programme « garder pecs & bras, dessiner les
-   abdos, perdre les poignées d'amour ». Tout est local.
-   ========================================================= */
-
 /* ---------- Poses (viewBox 560×480, sol y≈440) ---------- */
 const PUSH_UP={head:[478,300],neck:[432,322],hip:[270,372],kN:[175,402],fN:[78,432],eN:[432,378],hN:[434,440]};
 const PUSH_DN={head:[486,384],neck:[442,400],hip:[275,412],kN:[178,424],fN:[78,432],eN:[392,386],hN:[434,440]};
@@ -189,12 +215,16 @@ const WEEK=[ // index = getDay()
  {d:'Sam',s:null,t:'Piscine, et 8 000 pas'},
 ];
 
-/* ---------- Personnage SVG ---------- */
-const C={skin:'#E9B48E',skinF:'#C98D69',tee:'#262B40',teeF:'#3A4060',sh:'#4C63E0',shF:'#3549B0',shoe:'#15171F',hair:'#2A211C',acc:'#FF5B2E',mat:'#DCE3F0',band:'#2BB673',ink:'#15171F'};
+
+/* ---------- Personnage (illustré, relief + traînée de mouvement) ---------- */
+const C={skin:'#F0B892',skinD:'#C98763',skinF:'#B8805F',tee:'#2A2D3A',teeF:'#1E2029',sh:'#3B3F55',shF:'#2B2E3E',shoe:'#F5F5F7',sole:'#8E8E9A',hair:'#1B1512',ink:'#0B0B10',mat:'#1D1D27',band:'#34E39B'};
 const L=(a,b,t)=>a+(b-a)*t, LP=(a,b,t)=>[L(a[0],b[0],t),L(a[1],b[1],t)], ad=(p,d)=>[p[0]+d[0],p[1]+d[1]];
-const cap=(a,b,w,c,o=1)=>`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" opacity="${o}"/>`;
-const db=(p)=>`<g><rect x="${p[0]-24}" y="${p[1]-7}" width="48" height="14" rx="7" fill="${C.ink}"/><rect x="${p[0]-28}" y="${p[1]-14}" width="12" height="28" rx="5" fill="${C.ink}"/><rect x="${p[0]+16}" y="${p[1]-14}" width="12" height="28" rx="5" fill="${C.ink}"/></g>`;
-function figSVG(e,t){
+const ln=(a,b,w,c,o=1,extra='')=>`<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" stroke="${c}" stroke-width="${w}" stroke-linecap="round" opacity="${o}" ${extra}/>`;
+// segment illustré : contour sombre + couleur + reflet
+const seg=(a,b,w,c,hl=true)=>ln(a,b,w+6,C.ink,.9)+ln(a,b,w,c)+(hl?ln(LP(a,b,.15),LP(a,b,.8),Math.max(3,w*.18),'#fff',.16,`transform="translate(${-w*.18} ${-w*.18})"`):'');
+const db=p=>`<g><rect x="${p[0]-24}" y="${p[1]-6}" width="48" height="12" rx="6" fill="#B9BCC8"/><rect x="${p[0]-30}" y="${p[1]-15}" width="13" height="30" rx="5" fill="#3A3D4C" stroke="${C.ink}" stroke-width="3"/><rect x="${p[0]+17}" y="${p[1]-15}" width="13" height="30" rx="5" fill="#3A3D4C" stroke="${C.ink}" stroke-width="3"/></g>`;
+let FIGID=0;
+function pose(e,t){
  const front=e.view==='front';
  const p=(k,fb)=>{const A=e.a[k]||ad(e.a[fb],[-14,-4]),B=e.b[k]||ad(e.b[fb],[-14,-4]);return LP(A,B,t)};
  const head=p('head'),neck=p('neck'),hip=p('hip');
@@ -202,38 +232,57 @@ function figSVG(e,t){
  const dx=head[0]-neck[0],dy=head[1]-neck[1],l=Math.hypot(dx,dy)||1,up=[dx/l,dy/l];
  const shN=front?ad(neck,[40,12]):ad(neck,[-up[0]*8,-up[1]*8]),shF=front?ad(neck,[-40,12]):shN;
  const hpN=front?ad(hip,[20,0]):hip,hpF=front?ad(hip,[-20,0]):hip;
- const w=new Set(e.work),go=.25+.45*t;
- const halo=(s,pts,wd)=>w.has(s)?`<polyline points="${pts.map(q=>q.join(',')).join(' ')}" fill="none" stroke="${C.acc}" stroke-width="${wd+22}" stroke-linecap="round" stroke-linejoin="round" opacity="${go}"/>`:'';
- const leg=(h,k,f,far)=>cap(k,f,30,far?C.skinF:C.skin)+cap(h,k,42,far?C.skinF:C.skin)+cap(h,LP(h,k,.62),46,far?C.shF:C.sh)+`<ellipse cx="${f[0]+(front?0:10)}" cy="${f[1]+4}" rx="${front?18:26}" ry="13" fill="${C.shoe}"/>`;
- const arm=(s,el,h,far)=>cap(el,h,24,far?C.skinF:C.skin)+cap(s,el,28,far?C.skinF:C.skin)+cap(s,LP(s,el,.45),34,far?C.teeF:C.tee)+`<circle cx="${h[0]}" cy="${h[1]}" r="14" fill="${far?C.skinF:C.skin}"/>`;
- let pre='',post='';
- const pr=e.prop;
- if(pr==='bagHang'){const[x,y]=J.hN;post=`<path d="M ${x-14} ${y+26} Q ${x} ${y-8} ${x+14} ${y+26}" stroke="#8C7550" stroke-width="6" fill="none"/><rect x="${x-34}" y="${y+22}" width="68" height="74" rx="12" fill="#D9C49A"/><rect x="${x-34}" y="${y+22}" width="68" height="14" rx="7" fill="#C7AF82"/>`}
- if(pr==='bagHold'){const[x,y]=J.hN;post=`<rect x="${x-34}" y="${y-10}" width="70" height="84" rx="14" fill="#D9C49A" stroke="#C7AF82" stroke-width="6"/>`}
+ return {front,head,neck,hip,J,up,shN,shF,hpN,hpF};
+}
+function figSVG(e,t,tPrev){
+ const id='f'+(FIGID++%1000);
+ const P=pose(e,t),{front,head,neck,hip,J,up,shN,shF,hpN,hpF}=P;
+ const w=new Set(e.work),go=.35+.55*t;
+ const glow=(s,pts,wd)=>w.has(s)?`<polyline points="${pts.map(q=>q.map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="url(#${id}g)" stroke-width="${wd+26}" stroke-linecap="round" stroke-linejoin="round" opacity="${go}" filter="url(#${id}b)"/>`:'';
+ const leg=(h,k,f,far)=>{const s=far?C.skinF:C.skin;return seg(k,f,30,s)+seg(h,k,42,s)+seg(h,LP(h,k,.62),46,far?C.shF:C.sh,false)+`<ellipse cx="${f[0]+(front?0:10)}" cy="${f[1]+3}" rx="${front?19:27}" ry="13" fill="${far?'#C9C9D2':C.shoe}" stroke="${C.ink}" stroke-width="3"/>`};
+ const arm=(s,el,h,far)=>{const k=far?C.skinF:C.skin;return seg(el,h,24,k)+seg(s,el,28,k)+seg(s,LP(s,el,.45),34,far?C.teeF:C.tee,false)+`<circle cx="${h[0]}" cy="${h[1]}" r="14" fill="${k}" stroke="${C.ink}" stroke-width="3"/>`};
+ // traînée : silhouette fantôme du membre principal à la phase précédente
+ let trail='';
+ if(tPrev!=null&&Math.abs(tPrev-t)>.01){const Q=pose(e,tPrev);trail=`<g opacity=".18">${ln(Q.shN,Q.J.eN,26,`url(#${id}g)`)}${ln(Q.J.eN,Q.J.hN,22,`url(#${id}g)`)}${ln(Q.hpN,Q.J.kN,36,`url(#${id}g)`)}${ln(Q.J.kN,Q.J.fN,26,`url(#${id}g)`)}</g>`}
+ let pre='',post='';const pr=e.prop;
+ if(pr==='bagHang'){const[x,y]=J.hN;post=`<path d="M ${x-14} ${y+26} Q ${x} ${y-8} ${x+14} ${y+26}" stroke="#2A2A33" stroke-width="7" fill="none"/><rect x="${x-35}" y="${y+21}" width="70" height="76" rx="14" fill="url(#${id}bag)" stroke="${C.ink}" stroke-width="3"/><rect x="${x-20}" y="${y+40}" width="40" height="6" rx="3" fill="#fff" opacity=".25"/>`}
+ if(pr==='bagHold'){const[x,y]=J.hN;post=`<rect x="${x-35}" y="${y-12}" width="72" height="86" rx="16" fill="url(#${id}bag)" stroke="${C.ink}" stroke-width="3"/>`}
  if(pr==='dbs'){post=db(J.hN)+(front||e.id==='ecarteSol'||e.id==='curl'?db(J.hF):'')}
- if(pr==='kb'){const[x,y]=LP(J.hN,J.hF,.5);post=`<circle cx="${x}" cy="${y-30}" r="24" fill="${C.ink}"/><path d="M ${x-14} ${y-46} Q ${x} ${y-72} ${x+14} ${y-46}" stroke="${C.ink}" stroke-width="7" fill="none"/>`}
- if(pr==='band'){const s=Math.hypot(J.hN[0]-J.hF[0],J.hN[1]-J.hF[1]);post=cap(J.hF,J.hN,Math.max(8,16-8*(s-60)/280),C.band)}
- if(pr==='bandPress'){post=cap(J.fN,J.hN,8,C.band)+cap(J.fF,J.hF,8,C.band)}
- if(pr==='bandDoor'){pre=`<rect x="540" y="30" width="16" height="420" rx="4" fill="#E7E2D6"/>`;post=cap(J.hN,[544,196],9,C.band)}
- if(pr==='bandSide'){pre=`<rect x="540" y="30" width="16" height="420" rx="4" fill="#E7E2D6"/>`;post=cap(J.hN,[544,200],9,C.band)}
+ if(pr==='kb'){const[x,y]=LP(J.hN,J.hF,.5);post=`<path d="M ${x-14} ${y-44} Q ${x} ${y-72} ${x+14} ${y-44}" stroke="#3A3D4C" stroke-width="8" fill="none"/><circle cx="${x}" cy="${y-28}" r="25" fill="#3A3D4C" stroke="${C.ink}" stroke-width="3"/><circle cx="${x-8}" cy="${y-36}" r="6" fill="#fff" opacity=".2"/>`}
+ const bandW=(a,b)=>Math.max(7,15-8*(Math.hypot(a[0]-b[0],a[1]-b[1])-60)/280);
+ if(pr==='band')post=ln(J.hF,J.hN,bandW(J.hF,J.hN),C.band,1,`filter="url(#${id}s)"`);
+ if(pr==='bandPress')post=ln(J.fN,J.hN,7,C.band)+ln(J.fF,J.hF,7,C.band);
+ if(pr==='bandDoor'||pr==='bandSide'){pre=`<rect x="538" y="20" width="18" height="430" rx="5" fill="#22222C" stroke="#2E2E3A"/><circle cx="548" cy="${pr==='bandDoor'?196:200}" r="6" fill="#55556A"/>`;post=ln(J.hN,[546,pr==='bandDoor'?196:200],8,C.band)}
  const xs=[head[0],hip[0],J.fN[0],J.fF[0],J.hN[0],J.hF[0]],mn=Math.min(...xs),mx=Math.max(...xs);
  const hair=ad(head,[up[0]*8-(front?0:6),up[1]*8]);
  const tw=front?84:66;
  return `<svg viewBox="0 0 560 480" width="100%" style="display:block;overflow:visible">
-<rect x="20" y="448" width="520" height="18" rx="9" fill="${C.mat}"/>${pre}
-<ellipse cx="${(mn+mx)/2}" cy="452" rx="${(mx-mn)/2+30}" ry="8" fill="#1E2240" opacity=".08"/>
-${halo('legF',[hpF,J.kF,J.fF],40)}${halo('armF',[shF,J.eF,J.hF],28)}${halo('torso',[hip,neck],tw)}${halo('legN',[hpN,J.kN,J.fN],40)}${halo('armN',[shN,J.eN,J.hN],28)}
+<defs>
+ <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient>
+ <linearGradient id="${id}bag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A6078"/><stop offset="1" stop-color="#3A3F52"/></linearGradient>
+ <radialGradient id="${id}fl" cx=".5" cy=".5" r=".5"><stop offset="0" style="stop-color:var(--g1)" stop-opacity=".45"/><stop offset="1" style="stop-color:var(--g1)" stop-opacity="0"/></radialGradient>
+ <filter id="${id}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
+ <filter id="${id}s" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="${C.band}" flood-opacity=".7"/></filter>
+</defs>
+<ellipse cx="280" cy="458" rx="250" ry="26" fill="url(#${id}fl)"/>
+<rect x="30" y="450" width="500" height="12" rx="6" fill="${C.mat}"/>${pre}
+<ellipse cx="${(mn+mx)/2}" cy="454" rx="${(mx-mn)/2+30}" ry="9" fill="#000" opacity=".45"/>
+${trail}
+${glow('legF',[hpF,J.kF,J.fF],40)}${glow('armF',[shF,J.eF,J.hF],28)}${glow('torso',[hip,neck],tw)}${glow('legN',[hpN,J.kN,J.fN],40)}${glow('armN',[shN,J.eN,J.hN],28)}
 ${leg(hpF,J.kF,J.fF,true)}${front?'':arm(shF,J.eF,J.hF,true)}
-${cap(hip,neck,tw,C.tee)}${cap(hip,LP(hip,neck,.12),tw,C.sh)}
+${seg(hip,neck,tw,C.tee)}${ln(LP(hip,neck,.25),LP(hip,neck,.85),tw*.22,`url(#${id}g)`,.9)}${seg(hip,LP(hip,neck,.12),tw,C.sh,false)}
 ${leg(hpN,J.kN,J.fN,false)}${front?arm(shF,J.eF,J.hF,false):''}${arm(shN,J.eN,J.hN,false)}${post}
-${cap(neck,LP(neck,head,.6),22,C.skin)}<circle cx="${hair[0]}" cy="${hair[1]}" r="30" fill="${C.hair}"/><circle cx="${head[0]}" cy="${head[1]}" r="29" fill="${C.skin}"/></svg>`;
+${seg(neck,LP(neck,head,.6),22,C.skin,false)}
+<circle cx="${head[0]}" cy="${head[1]}" r="32" fill="${C.ink}"/><circle cx="${hair[0]}" cy="${hair[1]}" r="30" fill="${C.hair}"/><circle cx="${head[0]}" cy="${head[1]}" r="28" fill="${C.skin}"/><circle cx="${head[0]-8}" cy="${head[1]-10}" r="8" fill="#fff" opacity=".18"/>
+</svg>`;
 }
 const t0=performance.now();
 function animate(now){
+ const s=(now-t0)/1000;
  document.querySelectorAll('[data-fig]').forEach(el=>{
   const e=X[el.dataset.fig];if(!e)return;
-  const s=(now-t0)/1000,t=(1-Math.cos(s/e.period*Math.PI*2))/2;
-  el.innerHTML=figSVG(e,t);
+  const ph=x=>(1-Math.cos(x/e.period*Math.PI*2))/2;
+  el.innerHTML=figSVG(e,ph(s),el.dataset.trail?ph(s-.12):null);
  });
  requestAnimationFrame(animate);
 }
@@ -251,115 +300,136 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmtDate=iso=>new Date(iso).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
 const mmss=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
-const unit=e=>e.unit==='s'?'s':'reps';
 const lastFor=id=>{for(let i=S.sessions.length-1;i>=0;i--){const r=S.sessions[i].results?.[id];if(r&&r.length)return r}return null};
+const bestFor=(id,arr=S.sessions)=>{let m=0;arr.forEach(s=>(s.results?.[id]||[]).forEach(r=>m=Math.max(m,r)));return m};
 const setsOf=(sess,id)=>SESSIONS[sess].list.find(x=>x[0]===id)?.[1]||3;
-// Double progression : toutes les séries au haut de la fourchette → on durcit
 const readyToProgress=(sess,id)=>{const e=X[id],r=lastFor(id),n=setsOf(sess,id)*(e.per?2:1);return r&&r.length>=n&&r.every(x=>x>=e.max)};
 const weekAvg=(key,from,to)=>{const v=S.body.filter(b=>b[key]&&new Date(b.date)>=from&&new Date(b.date)<to).map(b=>b[key]);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
+const monday=d=>{const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+const thisWeek=()=>S.sessions.filter(s=>new Date(s.date)>=monday(new Date()));
+function streakWeeks(){let n=0,m=monday(new Date());if(thisWeek().length<3)m=new Date(+m-6048e5);
+ for(;;){const end=new Date(+m+6048e5),c=S.sessions.filter(s=>new Date(s.date)>=m&&new Date(s.date)<end).length;if(c>=3){n++;m=new Date(+m-6048e5)}else break}return n}
 function waistAdvice(){
  const w=S.body.filter(b=>b.waist);if(w.length<2)return null;
- const first=new Date(w[0].date),now=new Date(),days=(now-first)/864e5;
- if(days<28)return null;
- const start=weekAvg('waist',first,new Date(+first+7*864e5)),end=weekAvg('waist',new Date(+now-7*864e5),new Date(+now+864e5));
+ const first=new Date(w[0].date),now=new Date();if((now-first)/864e5<28)return null;
+ const start=weekAvg('waist',first,new Date(+first+6048e5)),end=weekAvg('waist',new Date(+now-6048e5),new Date(+now+864e5));
  if(start==null||end==null)return null;
  if(end<=start-1)return {ok:true,msg:`Tour de taille : −${(start-end).toFixed(1)} cm depuis le début. Continue exactement comme ça.`};
  return {ok:false,msg:'Ton tour de taille ne baisse pas depuis 4 semaines : enlève environ un tiers de ta portion de riz, garde toutes les protéines.'};
 }
 let AC=null;
-function beep(f=880,d=.12,v=.25){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;o.connect(g);g.connect(AC.destination);const n=AC.currentTime;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.start(n);o.stop(n+d)}catch(e){}}
+function beep(f=880,d=.12,v=.25){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(AC.destination);const n=AC.currentTime;g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.start(n);o.stop(n+d)}catch(e){}}
+const chord=()=>{beep(660,.25,.18);setTimeout(()=>beep(880,.25,.18),90);setTimeout(()=>beep(1320,.4,.2),180)};
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 let wake=null;
 async function keepAwake(on){try{if(on&&navigator.wakeLock)wake=await navigator.wakeLock.request('screen');else if(wake){wake.release();wake=null}}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&RUN){keepAwake(true);renderRun($('#app'))}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&RUN){keepAwake(true);renderRun()}});
+function confetti(){
+ const cv=$('#confetti'),ctx=cv.getContext('2d'),W=cv.width=innerWidth*devicePixelRatio,H=cv.height=innerHeight*devicePixelRatio;
+ const cols=['#FF6A3D','#FF2E7E','#3DD6FF','#7B5CFF','#34E39B','#FFD23D'];
+ const ps=Array.from({length:160},()=>({x:W/2,y:H*.35,vx:(Math.random()-.5)*W*.03,vy:-Math.random()*H*.03-H*.008,r:(4+Math.random()*6)*devicePixelRatio,c:cols[Math.random()*cols.length|0],a:Math.random()*6,s:Math.random()*.3-.15}));
+ let n=0;(function f(){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H);ps.forEach(p=>{p.vy+=H*.0009;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.a+=p.s;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.a);ctx.fillStyle=p.c;ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);ctx.restore()});if(++n<170)requestAnimationFrame(f);else{ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,W,H)}})();
+}
 
 /* ---------- Écrans ---------- */
 let TAB='home',RUN=null,timerId=null;
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render()});
+const setTheme=k=>document.body.classList.toggle('sB',k==='B');
+const todaySess=()=>WEEK[new Date().getDay()].s;
+const nextSess=()=>{const l=S.sessions[S.sessions.length-1];return l&&l.sess==='A'?'B':'A'};
 function render(){
  $('#tabs').style.display=RUN?'none':'flex';
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===TAB));
- const app=$('#app');
- if(RUN)return renderRun(app);
- app.innerHTML=TAB==='home'?homeView():TAB==='prog'?progView():suiviView();
+ if(RUN)return renderRun();
+ setTheme(todaySess()||nextSess());
+ $('#app').innerHTML=`<div class="view">${TAB==='home'?homeView():TAB==='prog'?progView():suiviView()}</div>`;
  bind();window.scrollTo(0,0);
 }
 const estMin=k=>Math.round(SESSIONS[k].list.reduce((a,[id,n])=>{const e=X[id],side=e.per?2:1,work=e.unit==='s'?e.max:e.max*e.period;return a+n*(side*work+e.rest+20)},0)/60);
-const nextSess=()=>{const l=S.sessions[S.sessions.length-1];return l&&l.sess==='A'?'B':'A'};
+function ringSVG(k,size,stroke,id){const r=(size-stroke)/2,c=2*Math.PI*r;return `<svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient></defs><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="url(#${id})" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-Math.min(1,k))}" style="transition:stroke-dashoffset .6s cubic-bezier(.16,1,.3,1)"/></svg>`}
 
-function sessCard(k){
- const s=SESSIONS[k],prog=s.list.filter(([id])=>readyToProgress(k,id));
- return `<div class="card" style="margin-top:16px">
-  <div class="between"><div><div class="display" style="font-size:24px;font-weight:800">${s.name}</div><div class="muted small">${s.sub}</div></div><span class="pill">≈ ${estMin(k)} min</span></div>
-  ${s.list.map(([id,n])=>{const e=X[id];return `<div class="exo"><div class="fig" data-fig="${id}"></div><div><b>${esc(e.name)}</b><span class="muted">${n} × ${e.min}–${e.max} ${e.unit==='s'?'s':''}${e.per?' / '+e.per:''}</span></div></div>`}).join('')}
-  ${prog.length?`<div class="banner">À durcir cette fois : ${prog.map(([id])=>`<b>${esc(X[id].name)}</b>`).join(', ')}</div>`:''}
-  <div style="margin-top:14px"><button class="btn a" data-start="${k}">Commencer la ${s.name.toLowerCase()}</button></div></div>`;
-}
 function homeView(){
- const d=new Date().getDay(),w=WEEK[d];
- const doneToday=S.sessions.some(s=>new Date(s.date).toDateString()===new Date().toDateString());
- const adv=waistAdvice();
- const first=!S.sessions.length;
- return `<div class="muted small">${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</div>
- <h1 style="margin-top:6px">${w.s?SESSIONS[w.s].name:'Jour sans muscu'}</h1>
- <div class="week">${[1,2,3,4,5,6,0].map(i=>{const x=WEEK[i];return `<div class="day ${x.s?'w':''} ${i===d?'today':''}">${x.d}<small>${x.s?'Séance':'Piscine'}</small>${x.s?'<small style="font-size:13px;font-weight:800;opacity:1">'+x.s+'</small>':''}</div>`}).join('')}</div>
+ const d=new Date().getDay(),w=WEEK[d],k=w.s||nextSess(),s=SESSIONS[k];
+ const done=thisWeek(),doneToday=S.sessions.some(x=>new Date(x.date).toDateString()===new Date().toDateString());
+ const prog=s.list.filter(([id])=>readyToProgress(k,id));
+ const adv=waistAdvice(),first=!S.sessions.length;
+ const days=[1,2,3,4,5,6,0].map(i=>{const dt=new Date(+monday(new Date())+((i+6)%7)*864e5);const did=S.sessions.some(x=>new Date(x.date).toDateString()===dt.toDateString());
+  return `<div class="day"><div class="dot ${did?'done':WEEK[i].s?'plan':''} ${i===d?'today':''}">${did?'✓':WEEK[i].s||'·'}</div>${WEEK[i].d}</div>`}).join('');
+ return `<div class="between"><div><div class="kicker">${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</div><h1 style="margin-top:6px">${doneToday?'Bien joué.':w.s?'C’est l’heure.':'Jour piscine.'}</h1></div></div>
+ <div class="hero">
+  <div class="between"><span class="chip g">${s.name}</span><span class="chip">≈ ${estMin(k)} min · ${s.list.length} exos</span></div>
+  <h1 style="margin-top:14px">${esc(s.sub.split(' · ').slice(0,2).join(' & '))}<span class="gtext">.</span></h1>
+  <div class="muted" style="margin-top:4px">${esc(s.sub)}</div>
+  <div class="fig" data-fig="${s.list[0][0]}" data-trail="1"></div>
+  ${!w.s?`<div class="small muted" style="margin:-4px 0 12px">Pas de séance prévue aujourd’hui. Tu peux rattraper celle-ci si tu en as raté une.</div>`:''}
+  <button class="btn" data-start="${k}">${w.s?'Commencer':'Faire la séance '+k}</button>
+ </div>
  ${first?`<div class="banner">Première séance : sur la 1<sup>re</sup> série de pompes, fais le <b>maximum propre</b>. C’est ton point de départ.</div>`:''}
- ${adv?`<div class="banner" style="${adv.ok?'background:#DFF5E9':''}">${adv.msg}</div>`:''}
- ${doneToday?`<div class="banner" style="background:#DFF5E9">Séance d’aujourd’hui enregistrée. Bien joué.</div>`:''}
- ${w.s?sessCard(w.s):`<div class="card" style="margin-top:16px"><div class="display" style="font-size:22px;font-weight:800">${esc(w.t)}</div><p class="muted" style="line-height:1.45;margin-bottom:0">La piscine et les pas font fondre les poignées d’amour. Si tu as raté une séance cette semaine, tu peux la rattraper ici.</p></div>${sessCard(nextSess())}`}
- <div class="status muted">Fonctionne hors connexion · données gardées sur ce téléphone</div>`;
+ ${prog.length?`<div class="banner">À durcir aujourd’hui : ${prog.map(([id])=>`<b>${esc(X[id].name)}</b>`).join(', ')}</div>`:''}
+ ${adv?`<div class="banner ${adv.ok?'ok':''}">${adv.msg}</div>`:''}
+ <div class="stats">
+  <div class="glass stat row" style="gap:14px"><div style="position:relative;width:64px;height:64px">${ringSVG(done.length/4,64,9,'rw')}<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900">${done.length}</div></div><div><div class="kicker">Semaine</div><b style="font-size:22px">${done.length}/4</b></div></div>
+  <div class="glass stat"><div class="kicker">Série en cours</div><b>${streakWeeks()} <span style="font-size:15px" class="muted">sem.</span></b></div>
+ </div>
+ <div class="glass pad" style="margin-top:12px"><div class="week">${days}</div></div>
+ <h2>Au programme</h2>
+ <div class="glass pad">${s.list.map(([id,n])=>{const e=X[id];return `<div class="exo"><div class="fig" data-fig="${id}"></div><div><b>${esc(e.name)}</b><span class="muted">${n} × ${e.min}–${e.max}${e.unit==='s'?' s':''}${e.per?' / '+e.per:''}</span></div></div>`}).join('')}</div>
+ <div class="small muted" style="text-align:center;margin-top:22px">Fonctionne hors connexion · données gardées sur ce téléphone</div>`;
 }
+let PROGK='A';
 function progView(){
- return `<h1>Programme</h1>
- <p class="muted" style="line-height:1.45">4 séances par semaine. Lundi et jeudi : A. Mardi et vendredi : B. La piscine les autres jours, ou après la muscu.</p>
- ${['A','B'].map(k=>`<h2>${SESSIONS[k].name} <span class="muted" style="font-size:15px;font-weight:600">${SESSIONS[k].sub}</span></h2>
-  ${SESSIONS[k].list.map(([id,n])=>{const e=X[id];return `<div class="card" style="margin-top:12px">
-   <div data-fig="${id}" style="max-width:280px;margin:0 auto"></div>
-   <div class="display" style="font-size:20px;font-weight:800;margin-top:8px">${esc(e.name)}</div>
-   <div style="margin:4px 0 6px"><b style="color:var(--accent);font-size:18px">${n} × ${e.min}–${e.max}${e.unit==='s'?' s':''}</b> <span class="muted">${e.per?'par '+e.per+' · ':''}repos ${e.rest>=90?'1 min 30':e.rest+' s'}</span></div>
-   <div class="muted small">${esc(e.muscles)}</div>${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}
-   <div class="small muted" style="margin-top:6px"><b>Pour durcir :</b> ${esc(e.progress)}</div></div>`}).join('')}`).join('')}
- <h2>La règle de progression</h2>
- <div class="card" style="line-height:1.5">Garde ~2 reps propres en réserve à chaque série. Quand tu atteins le <b>haut de la fourchette sur toutes les séries</b>, tu durcis (l’app te le signale). Sinon, tu essaies juste de faire 1 rep de plus que la dernière fois.</div>
- <h2>Poignées d’amour : ce qui marche vraiment</h2>
- <div class="card" style="line-height:1.5">
-  <div class="tip">Aucun exercice ne fait fondre le gras à un endroit précis. Il part quand le gras global baisse.</div>
-  <div class="tip"><b>Protéines : ~140 g par jour.</b> Exemple : 3 œufs (20 g), 1 boîte de thon (25 g), 150 g de poulet (35 g), 1 skyr (15 g), plus le reste de tes repas.</div>
-  <div class="tip">Ne coupe pas tes portions au début. Mesure ton tour de taille chaque semaine. S’il ne bouge pas en 4 semaines, enlève un tiers du riz (l’app te le dira).</div>
-  <div class="tip">8 000 pas par jour en plus de la piscine.</div>
-  <div class="tip">Le muscle se construit en dormant : vise 7 à 8 h.</div>
+ const s=SESSIONS[PROGK];setTheme(PROGK);
+ return `<div class="kicker">4 séances par semaine</div><h1 style="margin-top:6px">Ton <span class="gtext">programme</span></h1>
+ <p class="muted" style="line-height:1.45">Lundi et jeudi : A. Mardi et vendredi : B. Piscine les autres jours ou après la muscu.</p>
+ <div class="seg"><button data-pk="A" class="${PROGK==='A'?'on':''}">Séance A</button><button data-pk="B" class="${PROGK==='B'?'on':''}">Séance B</button></div>
+ ${s.list.map(([id,n])=>{const e=X[id];return `<div class="glass" style="margin-top:14px;overflow:hidden">
+  <div class="stage" style="border:0;border-radius:0"><div class="fig" data-fig="${id}" data-trail="1"></div></div>
+  <div class="pad"><div class="between"><b style="font-size:20px;letter-spacing:-.02em">${esc(e.name)}</b><span class="chip g">${n} × ${e.min}–${e.max}${e.unit==='s'?' s':''}</span></div>
+  <div class="small muted" style="margin:6px 0 4px">${esc(e.muscles)}${e.per?' · par '+e.per:''} · repos ${e.rest>=90?'1 min 30':e.rest+' s'}</div>
+  ${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}
+  <div class="small" style="margin-top:8px;color:#D6D6DE"><span class="gtext" style="font-weight:800">Pour durcir</span> · ${esc(e.progress)}</div></div></div>`}).join('')}
+ <h2>Poignées d’amour : ce qui marche</h2>
+ <div class="glass pad">
+  <div class="tip">Aucun exercice ne fait fondre le gras à un endroit précis : il part quand le gras global baisse.</div>
+  <div class="tip"><b>~140 g de protéines par jour.</b> 3 œufs ≈ 20 g · 1 boîte de thon ≈ 25 g · 150 g de poulet ≈ 35 g · 1 skyr ≈ 15 g.</div>
+  <div class="tip">Ne coupe pas tes portions au début. Tour de taille stable après 4 semaines ? Enlève un tiers du riz (l’app te le dira).</div>
+  <div class="tip">8 000 pas par jour en plus de la piscine, et 7 à 8 h de sommeil.</div>
  </div>`;
 }
 function suiviView(){
- const first=S.sessions[0]?.date;
- const weeks=first?Math.floor((Date.now()-new Date(first))/6048e5):0;
- const best=id=>{let m=0;S.sessions.forEach(s=>(s.results?.[id]||[]).forEach(r=>m=Math.max(m,r)));return m||'–'};
- const now=new Date(),wk=new Date(+now-7*864e5);
- const f=(v,d=1)=>v==null?'–':v.toFixed(d);
- const adv=waistAdvice();
- return `<h1>Suivi</h1>
- <p class="muted" style="line-height:1.45">Le bon résultat : plus fort aux pompes et aux curls, tour de taille qui baisse, poids à peu près stable.</p>
- <div class="card" style="margin-top:10px">
-  <div class="between"><div><div class="muted small">Semaines</div><b style="font-size:28px">${weeks}</b></div><div><div class="muted small">Séances</div><b style="font-size:28px">${S.sessions.length}</b></div><div><div class="muted small">Record pompes</div><b style="font-size:28px">${best('pompes')}</b></div><div><div class="muted small">Record curl</div><b style="font-size:28px">${best('curl')}</b></div></div>
-  <div class="between" style="margin-top:14px"><div><div class="muted small">Poids moyen 7 j</div><b style="font-size:22px">${f(weekAvg('kg',wk,new Date(+now+864e5)))} kg</b></div><div style="text-align:right"><div class="muted small">Tour de taille 7 j</div><b style="font-size:22px">${f(weekAvg('waist',wk,new Date(+now+864e5)))} cm</b></div></div>
-  ${weeks>=4?`<div class="banner">Point des ${weeks>=8?8:4} semaines : refais une photo debout, relâché, même lumière, et compare.</div>`:''}
-  ${adv?`<div class="banner" style="${adv.ok?'background:#DFF5E9':''}">${adv.msg}</div>`:''}
+ const first=S.sessions[0]?.date,weeks=first?Math.floor((Date.now()-new Date(first))/6048e5):0;
+ const now=new Date(),wk=new Date(+now-6048e5),f=(v,d=1)=>v==null?'–':v.toFixed(d);
+ const adv=waistAdvice(),tot=S.sessions.reduce((a,s)=>a+Object.values(s.results||{}).flat().length,0);
+ const ws=S.body.filter(b=>b.waist).slice(-10);
+ let chart='';
+ if(ws.length>=2){const vs=ws.map(b=>b.waist),mn=Math.min(...vs)-1,mx=Math.max(...vs)+1,W=300,H=90;
+  const pts=vs.map((v,i)=>[i*(W/(vs.length-1)),H-(v-mn)/(mx-mn)*H]);
+  chart=`<svg viewBox="-6 -6 ${W+12} ${H+12}" width="100%" style="margin-top:12px"><defs><linearGradient id="cg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient></defs><polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="url(#cg)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>${pts.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4.5" fill="#fff"/>`).join('')}</svg>`}
+ return `<div class="kicker">${weeks} semaine${weeks>1?'s':''} · ${S.sessions.length} séances · ${tot} séries</div><h1 style="margin-top:6px">Tes <span class="gtext">progrès</span></h1>
+ <div class="stats">
+  <div class="glass stat"><div class="kicker">Record pompes</div><b>${bestFor('pompes')||'–'}</b></div>
+  <div class="glass stat"><div class="kicker">Record curl</div><b>${bestFor('curl')||'–'}</b></div>
+  <div class="glass stat"><div class="kicker">Poids 7 j</div><b>${f(weekAvg('kg',wk,new Date(+now+864e5)))} <span class="muted" style="font-size:15px">kg</span></b></div>
+  <div class="glass stat"><div class="kicker">Taille 7 j</div><b>${f(weekAvg('waist',wk,new Date(+now+864e5)))} <span class="muted" style="font-size:15px">cm</span></b></div>
  </div>
- <h2>Mesures</h2>
- <div class="card"><p class="muted small" style="margin-top:0">Le matin, à jeun. Tour de taille au niveau du nombril, 1 fois par semaine.</p>
- <form id="bform"><div class="row"><input id="kg" type="text" inputmode="decimal" placeholder="Poids (kg)"><input id="waist" type="text" inputmode="decimal" placeholder="Taille (cm)"></div><button class="btn" style="margin-top:10px">Enregistrer</button></form>
- ${S.body.slice(-8).reverse().map(b=>`<div class="between small" style="padding:8px 0"><span class="muted">${fmtDate(b.date)}</span><span>${b.kg?`<b>${b.kg} kg</b>`:''}${b.kg&&b.waist?' · ':''}${b.waist?`<b>${b.waist} cm</b>`:''} <button data-delb="${b.id}" style="background:none;color:var(--muted)">✕</button></span></div>`).join('')}</div>
- <h2>Séances</h2>
- <div class="card">${S.sessions.length?S.sessions.slice().reverse().map(s=>`<div class="hist"><div class="between"><b>${fmtDate(s.date)}</b><span class="muted small">Séance ${s.sess}${s.partial?' · partielle':''}</span></div>
-  <div class="small muted" style="margin-top:6px;line-height:1.6">${Object.keys(s.results||{}).filter(id=>X[id]).map(id=>`${esc(X[id].name)} : <b style="color:var(--fg)">${s.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b>`).join('<br>')}</div></div>`).join(''):'<div class="muted">Pas encore de séance.</div>'}</div>
+ ${adv?`<div class="banner ${adv.ok?'ok':''}">${adv.msg}</div>`:''}
+ ${weeks>=4?`<div class="banner">Point des ${weeks>=8?8:4} semaines : refais une photo debout, relâché, même lumière, et compare.</div>`:''}
+ <h2>Tour de taille</h2>
+ <div class="glass pad">${chart||'<div class="muted small">La courbe apparaît après 2 mesures. Mesure au nombril, le matin, 1 fois par semaine.</div>'}
+ <form id="bform" style="margin-top:14px"><div class="row"><input id="kg" type="text" inputmode="decimal" placeholder="Poids (kg)"><input id="waist" type="text" inputmode="decimal" placeholder="Taille (cm)"></div><button class="btn" style="margin-top:10px">Enregistrer</button></form>
+ ${S.body.slice(-6).reverse().map(b=>`<div class="between small" style="padding:10px 0;border-bottom:1px solid var(--line)"><span class="muted">${fmtDate(b.date)}</span><span>${b.kg?`<b>${b.kg} kg</b>`:''}${b.kg&&b.waist?' · ':''}${b.waist?`<b>${b.waist} cm</b>`:''} <button data-delb="${b.id}" style="background:none;color:var(--muted)">✕</button></span></div>`).join('')}</div>
+ <h2>Historique</h2>
+ <div class="glass pad">${S.sessions.length?S.sessions.slice().reverse().map(s=>`<div class="hist"><div class="between"><b>${fmtDate(s.date)}</b><span class="chip ${s.sess==='B'?'':'g'}">Séance ${s.sess}${s.partial?' · partielle':''}</span></div>
+  <div class="small muted" style="margin-top:8px;line-height:1.7">${Object.keys(s.results||{}).filter(id=>X[id]).map(id=>`${esc(X[id].name)} · <b style="color:var(--fg)">${s.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b>`).join('<br>')}</div></div>`).join(''):'<div class="muted">Pas encore de séance. Ta première t’attend.</div>'}</div>
  <h2>Sauvegarde</h2>
- <div class="card"><p class="muted small" style="margin-top:0;line-height:1.45">Tes données restent sur ce téléphone. Copie ta sauvegarde de temps en temps (dans Notes) pour ne rien perdre.</p>
- <button class="btn ghost" data-act="export">Copier ma sauvegarde</button>
- <textarea id="imp" placeholder="Colle une sauvegarde ici pour la restaurer" style="width:100%;min-height:70px;font:inherit;padding:12px;border-radius:14px;border:2px solid var(--soft);margin-top:10px"></textarea>
- <button class="btn" data-act="import" style="margin-top:8px">Restaurer</button><div id="bk" class="muted small" style="margin-top:8px"></div></div>`;
+ <div class="glass pad"><p class="muted small" style="margin-top:0;line-height:1.45">Tes données restent sur ce téléphone. Copie ta sauvegarde de temps en temps (dans Notes).</p>
+ <button class="btn dark" data-act="export">Copier ma sauvegarde</button>
+ <textarea id="imp" placeholder="Colle une sauvegarde ici pour la restaurer" style="min-height:70px;margin-top:10px"></textarea>
+ <button class="btn dark" data-act="import" style="margin-top:8px">Restaurer</button><div id="bk" class="muted small" style="margin-top:8px"></div></div>`;
 }
 function bind(){
  document.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>startRun(b.dataset.start));
+ document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PROGK=b.dataset.pk;render()});
  const num=v=>{const x=parseFloat(String(v).replace(',','.'));return isFinite(x)?x:null};
  const bf=$('#bform');if(bf)bf.onsubmit=ev=>{ev.preventDefault();const kg=num($('#kg').value),waist=num($('#waist').value);
   const ok={kg:kg>30&&kg<250?kg:null,waist:waist>40&&waist<200?waist:null};if(!ok.kg&&!ok.waist)return;
@@ -371,64 +441,63 @@ function bind(){
 
 /* ---------- Séance guidée ---------- */
 function startRun(k){
- beep(660,.05,.01);
+ beep(660,.05,.01);setTheme(k);
  const steps=[];
  SESSIONS[k].list.forEach(([id,n])=>{const e=X[id];for(let s=1;s<=n;s++){(e.per?(e.per==='côté'?['côté droit','côté gauche']:[e.per]):[null]).forEach((side,i,arr)=>steps.push({e,set:s,sets:n,side,lastSide:i===arr.length-1}))}});
- RUN={k,steps,i:0,phase:'work',results:{},val:null,hold:null};
+ RUN={k,steps,i:0,phase:'work',results:{},val:null,hold:null,anim:true,before:S.sessions.slice()};
  keepAwake(true);render();
 }
 const cur=()=>RUN.steps[RUN.i];
 function suggested(st){const l=lastFor(st.e.id);const idx=(RUN.results[st.e.id]||[]).length;return l?.[idx]??st.e.min}
 function topBar(){const ids=SESSIONS[RUN.k].list.map(x=>x[0]),ei=ids.indexOf(cur().e.id);return `<div class="top">${ids.map((_,k)=>`<i class="${k<ei?'d':k===ei?'c':''}"></i>`).join('')}</div>`}
-function renderRun(app){
- const st=cur();
+const quitBtn=`<button data-act="quit" class="chip">Quitter</button>`;
+function renderRun(bump){
+ const app=$('#app'),st=cur(),anim=RUN.anim;RUN.anim=false;
+ const wrap=h=>`<div class="${anim?'view':''}">${h}</div>`;
  if(RUN.phase==='work'){
   const e=st.e,timed=e.unit==='s';
   if(RUN.val==null)RUN.val=suggested(st);
   const firstOfExo=st.set===1&&(!st.side||st.side==='côté droit');
   const hard=firstOfExo&&readyToProgress(RUN.k,e.id);
   const test=e.id==='pompes'&&st.set===1&&!lastFor('pompes');
-  let ctrl;
-  if(timed){
-   const el=RUN.hold?Math.floor((Date.now()-RUN.hold)/1000):null;
-   const shown=el??RUN.val;
-   ctrl=`<div class="stepper"><button data-d="-5" ${RUN.hold?'disabled':''}>−</button><div class="n">${shown}<span style="font-size:32px">s</span></div><button data-d="5" ${RUN.hold?'disabled':''}>+</button></div>
-   <div class="range">${Array.from({length:e.max},(_,k)=>`<i class="${k<shown?(k<e.min?'min':'on'):''}"></i>`).join('')}</div>
-   <div style="margin-top:20px">${RUN.hold?`<button class="btn a" data-act="stophold">Stop</button>`:`<button class="btn" data-act="hold">Lancer le chrono</button><div style="height:10px"></div><button class="btn a" data-act="done">Série faite</button>`}</div>`;
-  } else {
-   ctrl=`<div class="stepper"><button data-d="-1">−</button><div class="n">${RUN.val}</div><button data-d="1">+</button></div>
-   <div class="range">${Array.from({length:e.max},(_,k)=>`<i class="${k<RUN.val?(k<e.min?'min':'on'):''}"></i>`).join('')}</div>
-   <div style="margin-top:20px"><button class="btn a" data-act="done">Série faite</button></div>`;
-  }
-  app.innerHTML=`${topBar()}
-  <div class="between"><div class="row" style="flex-wrap:wrap;gap:6px"><span class="pill a">Série ${st.set}/${st.sets}</span>${st.side&&st.side!=='côté'?`<span class="pill">${st.side}</span>`:''}</div><button data-act="quit" class="muted" style="background:none;font-weight:600">Quitter</button></div>
-  <h1 style="margin:12px 0 10px;font-size:32px">${esc(e.name)}</h1>
-  <div class="card"><div data-fig="${e.id}"></div></div>
-  ${firstOfExo?e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join(''):''}
+  const el=RUN.hold?Math.floor((Date.now()-RUN.hold)/1000):null,shown=timed?(el??RUN.val):RUN.val;
+  app.innerHTML=wrap(`${topBar()}
+  <div class="between"><div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip g">Série ${st.set}/${st.sets}</span>${st.side&&st.side!=='côté'?`<span class="chip">${st.side}</span>`:''}</div>${quitBtn}</div>
+  <h1 style="margin:14px 0 12px;font-size:34px">${esc(e.name)}</h1>
+  <div class="stage"><div class="fig" data-fig="${e.id}" data-trail="1"></div></div>
   ${test?`<div class="banner">Test : fais le maximum de pompes propres. Moins de 6 ? Fais les séries suivantes sur les genoux.</div>`:''}
   ${hard?`<div class="banner">Haut de fourchette partout la dernière fois : ${esc(e.progress)}</div>`:''}
-  <div class="muted small" style="text-align:center;margin-top:16px">Objectif ${e.min}–${e.max} ${timed?'secondes':'reps'} · garde ~2 reps en réserve</div>
-  ${ctrl}`;
-  app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{RUN.val=Math.max(0,Math.min(300,RUN.val+ +b.dataset.d));beep(1200,.03,.08);renderRun(app)});
-  const h=app.querySelector('[data-act=hold]');if(h)h.onclick=()=>{RUN.hold=Date.now();beep(1320,.2,.3);clearInterval(timerId);timerId=setInterval(()=>{const s=Math.floor((Date.now()-RUN.hold)/1000);if(s===e.min&&RUN.lastBeep!==s){RUN.lastBeep=s;beep(990,.12,.25)}if(s===e.max&&RUN.lastBeep!==s){RUN.lastBeep=s;beep(1320,.3,.3);buzz(200)}renderRun(app)},250);renderRun(app)};
+  ${firstOfExo?`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}</div>`:''}
+  <div class="counter"><button data-d="${timed?-5:-1}" ${RUN.hold?'disabled style="opacity:.3"':''}>−</button><div class="big gtext ${bump?'bump':''}">${shown}${timed?'<span style="font-size:40px">s</span>':''}</div><button data-d="${timed?5:1}" ${RUN.hold?'disabled style="opacity:.3"':''}>+</button></div>
+  <div class="small muted" style="text-align:center">Objectif ${e.min}–${e.max} ${timed?'secondes':'reps'} · garde ~2 reps en réserve</div>
+  <div class="range">${Array.from({length:e.max},(_,k)=>`<i class="${k<shown?(k<e.min?'min':'on'):''}"></i>`).join('')}</div>
+  <div style="margin-top:20px">${timed?(RUN.hold?`<button class="btn" data-act="stophold">Stop</button>`:`<button class="btn dark" data-act="hold">▶︎ Lancer le chrono</button><div style="height:10px"></div><button class="btn" data-act="done">Série faite</button>`):`<button class="btn" data-act="done">Série faite</button>`}</div>`);
+  app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{RUN.val=Math.max(0,Math.min(300,RUN.val+ +b.dataset.d));beep(1200,.03,.06);renderRun(true)});
+  const h=app.querySelector('[data-act=hold]');if(h)h.onclick=()=>{RUN.hold=Date.now();beep(1320,.2,.3);clearInterval(timerId);timerId=setInterval(()=>{const s=Math.floor((Date.now()-RUN.hold)/1000);if(s===e.min&&RUN.lastBeep!==s){RUN.lastBeep=s;beep(990,.12,.25)}if(s===e.max&&RUN.lastBeep!==s){RUN.lastBeep=s;chord();buzz(200)}renderRun()},250);renderRun()};
   const sh=app.querySelector('[data-act=stophold]');if(sh)sh.onclick=()=>{clearInterval(timerId);RUN.val=Math.floor((Date.now()-RUN.hold)/1000);RUN.hold=null;finishSet()};
   const dn=app.querySelector('[data-act=done]');if(dn)dn.onclick=finishSet;
  } else if(RUN.phase==='rest'){
-  const left=Math.max(0,Math.ceil((RUN.restEnd-Date.now())/1000));
-  const nx=cur(),k=left/RUN.restTotal,R=110,Lc=2*Math.PI*R;
-  app.innerHTML=`${topBar()}
-  <div class="between"><h1 style="font-size:34px">${left<=3?'Prépare-toi':RUN.switching?'Change de côté':'Repos'}</h1><button data-act="quit" class="muted" style="background:none;font-weight:600">Quitter</button></div>
-  <div class="ring"><svg width="250" height="250"><circle cx="125" cy="125" r="${R}" fill="none" stroke="#E7E2D6" stroke-width="18"/><circle cx="125" cy="125" r="${R}" fill="none" stroke="#FF5B2E" stroke-width="18" stroke-linecap="round" stroke-dasharray="${Lc}" stroke-dashoffset="${Lc*(1-k)}"/></svg><div class="t" style="${left<=3?'color:var(--accent);font-size:90px':''}">${left<=3?left:mmss(left)}</div></div>
-  <div class="row" style="justify-content:center;gap:10px"><button class="pill" data-add="-15">−15 s</button><button class="pill" data-add="15">+15 s</button><button class="pill a" data-act="skip">Passer</button></div>
-  <div class="muted small" style="margin-top:22px">Ensuite</div>
-  <div class="card row" style="margin-top:8px"><div data-fig="${nx.e.id}" style="width:120px;flex-shrink:0"></div><div><b class="display" style="font-size:19px">${esc(nx.e.name)}</b><div style="color:var(--accent);font-weight:700;margin-top:4px">Série ${nx.set}/${nx.sets}${nx.side&&nx.side!=='côté'?' · '+nx.side:''}</div></div></div>`;
-  app.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{RUN.restEnd+= +b.dataset.add*1000;RUN.restTotal=Math.max(RUN.restTotal,(RUN.restEnd-Date.now())/1000);renderRun(app)});
+  const left=Math.max(0,Math.ceil((RUN.restEnd-Date.now())/1000)),nx=cur();
+  app.innerHTML=wrap(`${topBar()}
+  <div class="between"><div><div class="kicker">${RUN.switching?'Change de côté':'Récupère'}</div><h1 style="font-size:34px;margin-top:4px">${left<=3?'Prépare-toi':RUN.switching?'Autre côté':'Repos'}</h1></div>${quitBtn}</div>
+  <div class="ring">${ringSVG(left/RUN.restTotal,270,16,'rr')}<div class="t"><b class="${left<=3?'gtext pulse':''}" style="${left<=3?'font-size:110px':''}">${left<=3?left:mmss(left)}</b>${left>3?'<span class="muted small">restant</span>':''}</div></div>
+  <div class="row" style="justify-content:center;gap:10px"><button class="chip" data-add="-15">−15 s</button><button class="chip" data-add="15">+15 s</button><button class="chip g" data-act="skip">Passer ›</button></div>
+  <div class="kicker" style="margin-top:26px">Ensuite</div>
+  <div class="glass row" style="margin-top:10px;padding:12px;overflow:hidden"><div class="stage" style="width:130px;flex-shrink:0;border-radius:20px"><div data-fig="${nx.e.id}"></div></div><div><b style="font-size:19px;letter-spacing:-.02em">${esc(nx.e.name)}</b><div class="gtext" style="font-weight:800;margin-top:4px">Série ${nx.set}/${nx.sets}${nx.side&&nx.side!=='côté'?' · '+nx.side:''}</div><div class="small muted" style="margin-top:2px">${nx.e.min}–${nx.e.max} ${nx.e.unit==='s'?'s':'reps'}</div></div></div>`);
+  app.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{RUN.restEnd+= +b.dataset.add*1000;RUN.restTotal=Math.max(RUN.restTotal,(RUN.restEnd-Date.now())/1000);renderRun()});
   app.querySelector('[data-act=skip]').onclick=()=>endRest();
  } else {
-  app.innerHTML=`<h1 style="font-size:52px;margin-top:40px">Séance <span style="color:var(--accent)">finie.</span></h1>
-  <div class="card" style="margin-top:20px">${SESSIONS[RUN.k].list.map(([id])=>RUN.results[id]?`<div class="between" style="padding:8px 0"><span>${esc(X[id].name)}</span><b>${RUN.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b></div>`:'').join('')}</div>
-  <p class="muted" style="line-height:1.45">Pense à ton shake ou ton repas protéiné. La piscine, c’est après la muscu ou un autre jour.</p>
-  <button class="btn a" data-act="close">Terminer</button>`;
+  const ids=SESSIONS[RUN.k].list.map(x=>x[0]).filter(id=>RUN.results[id]);
+  const sets=ids.reduce((a,id)=>a+RUN.results[id].length,0),reps=ids.reduce((a,id)=>a+(X[id].unit==='s'?0:RUN.results[id].reduce((x,y)=>x+y,0)),0);
+  const mins=Math.max(1,Math.round((Date.now()-RUN.started)/60000));
+  const prs=ids.filter(id=>X[id].unit!=='s'&&Math.max(...RUN.results[id])>bestFor(id,RUN.before)&&bestFor(id,RUN.before)>0);
+  app.innerHTML=wrap(`<div style="text-align:center;margin-top:30px"><div class="kicker">${SESSIONS[RUN.k].name} terminée</div><h1 style="font-size:58px;margin-top:8px">Séance <span class="gtext">finie.</span></h1></div>
+  <div class="stats"><div class="glass stat" style="text-align:center"><div class="kicker">Séries</div><b>${sets}</b></div><div class="glass stat" style="text-align:center"><div class="kicker">Reps</div><b>${reps}</b></div></div>
+  <div class="glass stat" style="margin-top:12px;text-align:center"><div class="kicker">Durée</div><b>${mins} min</b></div>
+  ${prs.length?`<div class="banner">Nouveau record : ${prs.map(id=>`<b>${esc(X[id].name)}</b>`).join(', ')} 🔥</div>`:''}
+  <div class="glass pad" style="margin-top:12px">${ids.map(id=>`<div class="between" style="padding:9px 0;border-bottom:1px solid var(--line)"><span>${esc(X[id].name)}${prs.includes(id)?'<span class="pr">Record</span>':''}</span><b>${RUN.results[id].join(' · ')}${X[id].unit==='s'?' s':''}</b></div>`).join('')}</div>
+  <p class="muted" style="line-height:1.45">Un repas riche en protéines maintenant. La piscine : après la muscu ou un autre jour.</p>
+  <button class="btn" data-act="close">Terminer</button>`);
   app.querySelector('[data-act=close]').onclick=()=>{RUN=null;TAB='home';render()};
  }
  const q=app.querySelector('[data-act=quit]');if(q)q.onclick=showQuit;
@@ -438,7 +507,7 @@ function finishSet(){
  (RUN.results[st.e.id]=RUN.results[st.e.id]||[]).push(RUN.val);
  beep(990,.15,.2);buzz(80);RUN.val=null;
  if(RUN.i===RUN.steps.length-1)return endRun();
- RUN.i++;
+ RUN.i++;RUN.anim=true;
  if(st.side&&!st.lastSide)startRest(10,true);else startRest(st.e.rest,false);
 }
 function startRest(sec,switching){
@@ -446,18 +515,19 @@ function startRest(sec,switching){
  clearInterval(timerId);
  timerId=setInterval(()=>{const left=Math.ceil((RUN.restEnd-Date.now())/1000);
   if(left<=3&&left>0&&RUN.lastBeep!==left){RUN.lastBeep=left;beep(880,.12,.25);buzz(40)}
-  if(left<=0)return endRest(true);renderRun($('#app'))},250);
- renderRun($('#app'));
+  if(left<=0)return endRest(true);renderRun()},250);
+ renderRun();
 }
-function endRest(go){clearInterval(timerId);if(go){beep(1320,.25,.3);buzz([80,60,80])}RUN.phase='work';renderRun($('#app'))}
+function endRest(go){clearInterval(timerId);if(go){beep(1320,.25,.3);buzz([80,60,80])}RUN.phase='work';RUN.anim=true;renderRun()}
 function record(partial){S.sessions.push({id:'s'+Date.now(),date:new Date().toISOString(),sess:RUN.k,results:RUN.results,partial});saveSessions()}
-function endRun(){clearInterval(timerId);keepAwake(false);record(false);RUN.phase='end';renderRun($('#app'))}
+function endRun(){clearInterval(timerId);keepAwake(false);record(false);RUN.phase='end';RUN.anim=true;renderRun();chord();buzz([100,50,100,50,200]);confetti()}
 function showQuit(){
- $('#modal').innerHTML=`<div class="modal"><div class="card"><h2 style="margin-top:0">Arrêter la séance ?</h2><p class="muted">Les séries déjà faites seront enregistrées.</p>
- <button class="btn a" id="mq1">Enregistrer et arrêter</button><div style="height:10px"></div><button class="btn ghost" id="mq2">Continuer</button></div></div>`;
+ $('#modal').innerHTML=`<div class="modal"><div class="glass"><h2 style="margin-top:0">Arrêter la séance ?</h2><p class="muted">Les séries déjà faites seront enregistrées.</p>
+ <button class="btn" id="mq1">Enregistrer et arrêter</button><div style="height:10px"></div><button class="btn dark" id="mq2">Continuer</button></div></div>`;
  $('#mq1').onclick=()=>{$('#modal').innerHTML='';clearInterval(timerId);keepAwake(false);if(Object.keys(RUN.results).length)record(true);RUN=null;render()};
  $('#mq2').onclick=()=>{$('#modal').innerHTML=''};
 }
+const _start=startRun;startRun=k=>{_start(k);RUN.started=Date.now()};
 
 render();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
