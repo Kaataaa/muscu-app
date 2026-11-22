@@ -148,6 +148,8 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opac
 #splash.out{opacity:0;visibility:hidden}
 #splash .logo{width:96px;height:96px;border-radius:28px;background:linear-gradient(135deg,#FF6A3D,#FF2E7E);display:flex;align-items:center;justify-content:center;box-shadow:0 20px 60px -10px rgba(255,46,126,.7);animation:pop .7s cubic-bezier(.2,1.6,.4,1) both}
 #splash b{font-size:28px;letter-spacing:-.03em;animation:in .6s .2s both}
+.dock{position:sticky;bottom:0;z-index:5;margin:6px -18px 0;padding:6px 18px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(8,8,12,0),rgba(8,8,12,.92) 22%,#08080C);backdrop-filter:blur(6px)}
+.dock .counter{margin:6px 0 4px}.dock .big{font-size:84px}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 </style>
 </head>
@@ -454,15 +456,19 @@ ${seg(neck,LP(neck,head,.6),22,C.skin,false)}
 ${labels?overlay(e,t,P,id):''}</svg>`;
 }
 let CLOCK=0,SLOW=false;
+const IO='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(x=>x.target._vis=x.isIntersecting),{rootMargin:'80px'}):null;
 function animate(now){
- const dt=(now-(animate.last||now))/1000;animate.last=now;CLOCK+=dt*(SLOW?.4:1);const s=CLOCK;
+ requestAnimationFrame(animate);
+ if(animate.last&&now-animate.last<32)return;
+ const dt=Math.min(.1,(now-(animate.last||now))/1000);animate.last=now;CLOCK+=dt*(SLOW?.4:1);const s=CLOCK;
+ if(document.hidden)return;
  document.querySelectorAll('[data-fig]').forEach(el=>{
   const e=X[el.dataset.fig];if(!e)return;
+  if(IO){if(!el._obs){el._obs=1;el._vis=true;IO.observe(el)}if(!el._vis)return}
   const ph=x=>(1-Math.cos(x/e.period*Math.PI*2))/2;
   el.innerHTML=figSVG(e,ph(s),el.dataset.trail?ph(s-.12):null,el.dataset.labels==='1');
   if(el.dataset.labels==='1'){const cap=el.parentElement.querySelector('[data-cap]');if(cap&&e.phase){const go=Math.sin(s/e.period*Math.PI*2)>=0||e.unit==='s';const txt=(e.unit==='s'?'⏱ ':'▸ ')+e.phase[go?0:1];if(cap.textContent!==txt)cap.textContent=txt}}
  });
- requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
 
@@ -517,7 +523,8 @@ const chord=()=>{beep(660,.25,.18);setTimeout(()=>beep(880,.25,.18),90);setTimeo
 const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
 let wake=null;
 async function keepAwake(on){try{if(on&&navigator.wakeLock)wake=await navigator.wakeLock.request('screen');else if(wake){wake.release();wake=null}}catch(e){}}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&RUN){keepAwake(true);renderRun()}});
+document.addEventListener('touchstart',()=>{try{AC&&AC.state!=='running'&&AC.resume()}catch(e){}},{passive:true});
+document.addEventListener('visibilitychange',()=>{try{AC&&AC.resume()}catch(e){};if(!document.hidden&&RUN){keepAwake(true);renderRun()}});
 function confetti(){
  const cv=$('#confetti'),ctx=cv.getContext('2d'),W=cv.width=innerWidth*devicePixelRatio,H=cv.height=innerHeight*devicePixelRatio;
  const cols=['#FF6A3D','#FF2E7E','#3DD6FF','#7B5CFF','#34E39B','#FFD23D'];
@@ -570,7 +577,8 @@ function render(){
  bind();countUp();window.scrollTo(0,0);
 }
 const estMin=k=>Math.round(SESSIONS[k].list.reduce((a,[id,n])=>{const e=X[id],side=e.per?2:1,work=e.unit==='s'?e.max:e.max*e.period;return a+n*(side*work+e.rest+20)},0)/60);
-function ringSVG(k,size,stroke,id){const r=(size-stroke)/2,c=2*Math.PI*r;return `<svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient></defs><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="url(#${id})" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-Math.min(1,k))}" style="transition:stroke-dashoffset .6s cubic-bezier(.16,1,.3,1)"/></svg>`}
+const setRing=k=>{const c=document.querySelector('.ring .rp');if(c)c.setAttribute('stroke-dashoffset',c.dataset.c*(1-Math.max(0,Math.min(1,k))))};
+function ringSVG(k,size,stroke,id){const r=(size-stroke)/2,c=2*Math.PI*r;return `<svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient></defs><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="url(#${id})" stroke-width="${stroke}" stroke-linecap="round" class="rp" data-c="${c}" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-Math.min(1,k))}" style="transition:stroke-dashoffset .6s cubic-bezier(.16,1,.3,1)"/></svg>`}
 
 function homeView(){
  const d=new Date().getDay(),w=WEEK[d],k=w.s||nextSess(),s=SESSIONS[k];
@@ -588,6 +596,7 @@ function homeView(){
   ${!w.s?`<div class="small muted" style="margin:-4px 0 12px">Pas de séance prévue aujourd’hui. Tu peux rattraper celle-ci si tu en as raté une.</div>`:''}
   <button class="btn" data-start="${k}">${w.s?'Commencer':'Faire la séance '+k}</button>
  </div>
+ ${pendingRun()?`<div class="banner"><b>Séance ${pendingRun().k} en cours</b> (${Object.values(pendingRun().results||{}).flat().length} séries faites). Reprends là où tu t’étais arrêté.<div class="row" style="margin-top:10px;gap:8px"><button class="chip g" data-resume>Reprendre</button><button class="chip" data-drop>Abandonner</button></div></div>`:''}
  ${first?`<div class="banner">Première séance : sur la 1<sup>re</sup> série de pompes, fais le <b>maximum propre</b>. C’est ton point de départ.</div>`:''}
  ${prog.length?`<div class="banner">À durcir aujourd’hui : ${prog.map(([id])=>`<b>${esc(X[id].name)}</b>`).join(', ')}</div>`:''}
  ${adv?`<div class="banner ${adv.ok?'ok':''}">${adv.msg}</div>`:''}
@@ -681,6 +690,7 @@ function suiviView(){
 function bind(){
  document.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>startRun(b.dataset.start));
  const gb=$('[data-gobk]');if(gb)gb.onclick=()=>{TAB='suivi';render();setTimeout(()=>$('[data-act=file]')?.scrollIntoView({behavior:'smooth',block:'center'}),100)};
+ const rs=$('[data-resume]');if(rs)rs.onclick=resumeRun;const dr=$('[data-drop]');if(dr)dr.onclick=()=>{const r=pendingRun();clearRun();if(r&&Object.keys(r.results||{}).length){S.sessions.push({id:'s'+Date.now(),date:new Date(r.at).toISOString(),sess:r.k,results:r.results,loads:r.loads,partial:true});saveSessions()}render()};
  const sw=$('[data-swim]');if(sw)sw.onclick=()=>{if(swamToday())S.swims=S.swims.filter(d=>new Date(d).toDateString()!==new Date().toDateString());else{S.swims.push(new Date().toISOString());beep(990,.12,.15)}saveSwims();render()};
  const tu=$('[data-act=tuto]');if(tu)tu.onclick=()=>{OB=0;render()};
  document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PROGK=b.dataset.pk;render()});
@@ -706,7 +716,7 @@ function startRun(k){
  SESSIONS[k].list.forEach(([id,n0])=>{const n=light?Math.min(2,n0):n0;const e=X[id];for(let s=1;s<=n;s++){(e.per?(e.per==='côté'?['côté droit','côté gauche']:[e.per]):[null]).forEach((side,i,arr)=>steps.push({e,set:s,sets:n,side,lastSide:i===arr.length-1}))}});
  RUN={k,steps,loads,bumped,light,i:0,phase:'warmup',wuEnd:Date.now()+180000,results:{},val:null,hold:null,anim:true,before:S.sessions.slice()};
  keepAwake(true);render();
- clearInterval(timerId);timerId=setInterval(()=>{if(RUN&&RUN.phase==='warmup')renderRun();else clearInterval(timerId)},1000);
+ clearInterval(timerId);timerId=setInterval(()=>{if(!RUN||RUN.phase!=='warmup')return clearInterval(timerId);const left=Math.max(0,Math.ceil((RUN.wuEnd-Date.now())/1000)),el=$('#wt');if(!el)return;el.textContent=mmss(left);setRing(left/180);if(left===0&&!RUN.wuDone){RUN.wuDone=true;chord();renderRun()}},500);
 }
 const cur=()=>RUN.steps[RUN.i];
 function suggested(st){const l=lastFor(st.e.id);const idx=(RUN.results[st.e.id]||[]).length;return l?.[idx]??st.e.min}
@@ -720,10 +730,10 @@ function renderRun(bump){
   if(left===0&&!RUN.wuDone){RUN.wuDone=true;chord()}
   app.innerHTML=wrap(`<div class="between"><div><div class="kicker">Avant de commencer</div><h1 style="font-size:34px;margin-top:4px">Échauffement</h1></div>${quitBtn}</div>
   <p class="muted" style="line-height:1.45">3 minutes pour préparer tes articulations. Enchaîne les mouvements tranquillement, sans forcer.</p>
-  <div class="ring" style="width:200px;height:200px">${ringSVG(left/180,200,14,'wr')}<div class="t"><b style="font-size:52px">${mmss(left)}</b></div></div>
+  <div class="ring" style="width:200px;height:200px">${ringSVG(left/180,200,14,'wr')}<div class="t"><b id="wt" style="font-size:52px">${mmss(left)}</b></div></div>
   <div class="glass pad"><ol class="steps">${WARMUP.map(([a,b])=>`<li><span style="display:flex;justify-content:space-between;gap:10px"><span>${esc(a)}</span><b class="gtext" style="white-space:nowrap">${b}</b></span></li>`).join('')}</ol></div>
   <div style="margin-top:18px"><button class="btn" data-act="gowork">${left?'Je suis prêt, on commence':'C’est parti'}</button></div>`);
-  app.querySelector('[data-act=gowork]').onclick=()=>{clearInterval(timerId);RUN.phase='work';RUN.anim=true;beep(1320,.2,.3);renderRun()};
+  app.querySelector('[data-act=gowork]').onclick=()=>{clearInterval(timerId);saveRun();RUN.phase='work';RUN.anim=true;beep(1320,.2,.3);renderRun()};
  } else if(RUN.phase==='work'){
   const e=st.e,timed=e.unit==='s';
   if(RUN.val==null)RUN.val=suggested(st);
@@ -739,20 +749,20 @@ function renderRun(bump){
   ${hard?`<div class="banner">Haut de fourchette partout la dernière fois : ${esc(e.progress)}</div>`:''}
   ${firstOfExo?`<div class="glass pad" style="margin-top:12px"><div class="kicker">Mise en place</div><ol class="steps">${e.setup.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><div class="tip" style="margin-top:10px"><b>Respire :</b> ${esc(e.breath)}</div></div>`:`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}</div>`}
   ${LOADS[e.id]?`<div class="load glass"><span class="kicker" style="font-size:11px">Charge</span><button data-ld="-1">−</button><b>${loadLabel(e.id,RUN.loads[e.id])}</b><button data-ld="1">+</button></div>${RUN.bumped[e.id]&&firstOfExo?`<div class="banner ok">Charge augmentée automatiquement : tu as tout réussi la dernière fois. 💪</div>`:''}`:''}
-  <div class="counter"><button data-d="${timed?-5:-1}" ${RUN.hold?'disabled style="opacity:.3"':''}>−</button><div class="big gtext ${bump?'bump':''}">${shown}${timed?'<span style="font-size:40px">s</span>':''}</div><button data-d="${timed?5:1}" ${RUN.hold?'disabled style="opacity:.3"':''}>+</button></div>
+  <div class="dock"><div class="counter"><button data-d="${timed?-5:-1}" ${RUN.hold?'disabled style="opacity:.3"':''}>−</button><div class="big gtext ${bump?'bump':''}">${shown}${timed?'<span style="font-size:40px">s</span>':''}</div><button data-d="${timed?5:1}" ${RUN.hold?'disabled style="opacity:.3"':''}>+</button></div>
   <div class="small muted" style="text-align:center">Objectif ${e.min}–${e.max} ${timed?'secondes':'reps'} · garde ~2 reps en réserve</div>
   <div class="range">${Array.from({length:e.max},(_,k)=>`<i class="${k<shown?(k<e.min?'min':'on'):''}"></i>`).join('')}</div>
-  <div style="margin-top:20px">${timed?(RUN.hold?`<button class="btn" data-act="stophold">Stop</button>`:`<button class="btn dark" data-act="hold">▶︎ Lancer le chrono</button><div style="height:10px"></div><button class="btn" data-act="done">Série faite</button>`):`<button class="btn" data-act="done">Série faite</button>`}</div>`);
+  <div style="margin-top:20px">${timed?(RUN.hold?`<button class="btn" data-act="stophold">Stop</button>`:`<button class="btn dark" data-act="hold">▶︎ Lancer le chrono</button><div style="height:10px"></div><button class="btn" data-act="done">Série faite</button>`):`<button class="btn" data-act="done">Série faite</button>`}</div></div>`);
   app.querySelectorAll('[data-ld]').forEach(b=>b.onclick=()=>{const l=LOADS[e.id],d=+b.dataset.ld;RUN.loads[e.id]=l.L?Math.max(0,Math.min(25,RUN.loads[e.id]+d*.5)):Math.max(0,Math.min(l.opts.length-1,RUN.loads[e.id]+d));RUN.bumped[e.id]=false;beep(900,.04,.06);renderRun()});
   app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{RUN.val=Math.max(0,Math.min(300,RUN.val+ +b.dataset.d));beep(1200,.03,.06);renderRun(true)});
-  const h=app.querySelector('[data-act=hold]');if(h)h.onclick=()=>{RUN.hold=Date.now();beep(1320,.2,.3);clearInterval(timerId);timerId=setInterval(()=>{const s=Math.floor((Date.now()-RUN.hold)/1000);if(s===e.min&&RUN.lastBeep!==s){RUN.lastBeep=s;beep(990,.12,.25)}if(s===e.max&&RUN.lastBeep!==s){RUN.lastBeep=s;chord();buzz(200)}renderRun()},250);renderRun()};
+  const h=app.querySelector('[data-act=hold]');if(h)h.onclick=()=>{RUN.hold=Date.now();beep(1320,.2,.3);clearInterval(timerId);timerId=setInterval(()=>{const s=Math.floor((Date.now()-RUN.hold)/1000);if(s===e.min&&RUN.lastBeep!==s){RUN.lastBeep=s;beep(990,.12,.25)}if(s===e.max&&RUN.lastBeep!==s){RUN.lastBeep=s;chord();buzz(200)}const b=document.querySelector('.big');if(b)b.innerHTML=s+'<span style="font-size:40px">s</span>';document.querySelectorAll('.range i').forEach((x,k)=>x.className=k<s?(k<e.min?'min':'on'):'')},250);renderRun()};
   const sh=app.querySelector('[data-act=stophold]');if(sh)sh.onclick=()=>{clearInterval(timerId);RUN.val=Math.floor((Date.now()-RUN.hold)/1000);RUN.hold=null;finishSet()};
   const dn=app.querySelector('[data-act=done]');if(dn)dn.onclick=finishSet;
  } else if(RUN.phase==='rest'){
   const left=Math.max(0,Math.ceil((RUN.restEnd-Date.now())/1000)),nx=cur();
   app.innerHTML=wrap(`${topBar()}
   <div class="between"><div><div class="kicker">${RUN.switching?'Change de côté':'Récupère'}</div><h1 style="font-size:34px;margin-top:4px">${left<=3?'Prépare-toi':RUN.switching?'Autre côté':'Repos'}</h1></div>${quitBtn}</div>
-  <div class="ring">${ringSVG(left/RUN.restTotal,270,16,'rr')}<div class="t"><b class="${left<=3?'gtext pulse':''}" style="${left<=3?'font-size:110px':''}">${left<=3?left:mmss(left)}</b>${left>3?'<span class="muted small">restant</span>':''}</div></div>
+  <div class="ring">${ringSVG(left/RUN.restTotal,270,16,'rr')}<div class="t"><b id="rt" class="${left<=3?'gtext pulse':''}" style="${left<=3?'font-size:110px':''}">${left<=3?left:mmss(left)}</b>${left>3?'<span class="muted small">restant</span>':''}</div></div>
   <div class="row" style="justify-content:center;gap:10px"><button class="chip" data-add="-15">−15 s</button><button class="chip" data-add="15">+15 s</button><button class="chip g" data-act="skip">Passer ›</button></div>
   <div class="small muted" style="text-align:center;margin-top:12px">Garde l’app ouverte : le bip ne sonne pas écran verrouillé.</div>
   <div class="kicker" style="margin-top:22px">Ensuite</div>
@@ -782,7 +792,7 @@ function finishSet(){
  (RUN.results[st.e.id]=RUN.results[st.e.id]||[]).push(RUN.val);
  beep(990,.15,.2);buzz(80);RUN.val=null;
  if(RUN.i===RUN.steps.length-1)return endRun();
- RUN.i++;RUN.anim=true;
+ RUN.i++;RUN.anim=true;saveRun();
  if(st.side&&!st.lastSide)startRest(10,true);else startRest(st.e.rest,false);
 }
 function startRest(sec,switching){
@@ -790,16 +800,21 @@ function startRest(sec,switching){
  clearInterval(timerId);
  timerId=setInterval(()=>{const left=Math.ceil((RUN.restEnd-Date.now())/1000);
   if(left<=3&&left>0&&RUN.lastBeep!==left){RUN.lastBeep=left;beep(880,.12,.25);buzz(40)}
-  if(left<=0)return endRest(true);renderRun()},250);
+  if(left<=0)return endRest(true);
+  const last=left<=3,el=$('#rt');if(!el||RUN.lastMode!==last){RUN.lastMode=last;renderRun()}else{const t=last?String(left):mmss(left);if(el.textContent!==t)el.textContent=t;setRing(left/RUN.restTotal)}},250);
  renderRun();
 }
 function endRest(go){clearInterval(timerId);if(go){beep(1320,.25,.3);buzz([80,60,80])}RUN.phase='work';RUN.anim=true;renderRun()}
-function record(partial){const used={};Object.keys(RUN.results).forEach(id=>{if(RUN.loads[id]!=null)used[id]=RUN.loads[id]});S.sessions.push({id:'s'+Date.now(),date:new Date().toISOString(),sess:RUN.k,results:RUN.results,loads:used,feel:RUN.feel||null,light:RUN.light||false,partial});saveSessions()}
+const saveRun=()=>{if(RUN&&RUN.phase!=='end')lsSet('mm2_run',{k:RUN.k,i:RUN.i,results:RUN.results,loads:RUN.loads,light:RUN.light,started:RUN.started,at:Date.now()})};
+const clearRun=()=>{try{localStorage.removeItem('mm2_run')}catch(e){}};
+const pendingRun=()=>{const r=lsGet('mm2_run',null);return r&&Date.now()-r.at<6*3600e3?r:null};
+function resumeRun(){const r=pendingRun();if(!r)return;startRun(r.k);Object.assign(RUN,{i:Math.min(r.i,RUN.steps.length-1),results:r.results||{},loads:{...RUN.loads,...r.loads},started:r.started||Date.now(),phase:'work',anim:true,bumped:{}});clearInterval(timerId);saveRun();renderRun()}
+function record(partial){clearRun();const used={};Object.keys(RUN.results).forEach(id=>{if(RUN.loads[id]!=null)used[id]=RUN.loads[id]});S.sessions.push({id:'s'+Date.now(),date:new Date().toISOString(),sess:RUN.k,results:RUN.results,loads:used,feel:RUN.feel||null,light:RUN.light||false,partial});saveSessions()}
 function endRun(){clearInterval(timerId);keepAwake(false);record(false);RUN.phase='end';RUN.anim=true;renderRun();countUp();chord();buzz([100,50,100,50,200]);confetti()}
 function showQuit(){
  $('#modal').innerHTML=`<div class="modal"><div class="glass"><h2 style="margin-top:0">Arrêter la séance ?</h2><p class="muted">Les séries déjà faites seront enregistrées.</p>
  <button class="btn" id="mq1">Enregistrer et arrêter</button><div style="height:10px"></div><button class="btn dark" id="mq2">Continuer</button></div></div>`;
- $('#mq1').onclick=()=>{$('#modal').innerHTML='';clearInterval(timerId);keepAwake(false);if(Object.keys(RUN.results).length)record(true);RUN=null;render()};
+ $('#mq1').onclick=()=>{$('#modal').innerHTML='';clearInterval(timerId);keepAwake(false);clearRun();if(Object.keys(RUN.results).length)record(true);RUN=null;render()};
  $('#mq2').onclick=()=>{$('#modal').innerHTML=''};
 }
 const _start=startRun;startRun=k=>{_start(k);RUN.started=Date.now()};
