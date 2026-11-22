@@ -73,7 +73,7 @@ button:active{transform:scale(.97)}
 .tip:before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--grad)}
 /* scène du personnage */
 .stage{position:relative;border-radius:30px;overflow:hidden;background:radial-gradient(70% 60% at 50% 85%,color-mix(in srgb,var(--g1) 22%,transparent),transparent 70%),linear-gradient(180deg,#15151D,#0D0D13);border:1px solid var(--line)}
-.stage .fig{padding:20px 14px 6px}
+.stage .fig{padding:56px 10px 4px}
 /* séance */
 .top{display:flex;gap:5px;margin-bottom:14px}
 .top i{flex:1;height:5px;border-radius:3px;background:var(--glass2)}
@@ -150,6 +150,13 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opac
 #splash b{font-size:28px;letter-spacing:-.03em;animation:in .6s .2s both}
 .dock{position:sticky;bottom:0;z-index:5;margin:6px -18px 0;padding:6px 18px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(8,8,12,0),rgba(8,8,12,.92) 22%,#08080C);backdrop-filter:blur(6px)}
 .dock .counter{margin:6px 0 4px}.dock .big{font-size:84px}
+[data-fig]{aspect-ratio:4/3}
+.stage .fig{aspect-ratio:auto;height:290px}
+.hero .fig{aspect-ratio:auto;height:240px}
+.exo .fig{aspect-ratio:auto;height:64px}
+.sbtn{display:flex;gap:6px;pointer-events:auto}
+.sbtn button{width:40px;height:40px;border-radius:50%;background:rgba(8,8,12,.72);backdrop-filter:blur(10px);border:1px solid var(--line);font-size:17px;display:flex;align-items:center;justify-content:center}
+.sbtn button.on{background:var(--grad);border:0}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 </style>
 </head>
@@ -398,32 +405,55 @@ function face(P){const h=P.head,u=P.up;
  if(P.front)return `<circle cx="${h[0]-10}" cy="${h[1]-1}" r="3.6" fill="${C.ink}"/><circle cx="${h[0]+10}" cy="${h[1]-1}" r="3.6" fill="${C.ink}"/><path d="M ${h[0]-7} ${h[1]+11} Q ${h[0]} ${h[1]+16} ${h[0]+7} ${h[1]+11}" stroke="${C.ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
  let f=[-u[1],u[0]];if(f[0]-f[1]*.5<0)f=[-f[0],-f[1]];
  const ex=h[0]+f[0]*16+u[0]*5,ey=h[1]+f[1]*16+u[1]*5;
- return `<circle cx="${ex}" cy="${ey}" r="3.6" fill="${C.ink}"/><circle cx="${h[0]-f[0]*4-u[0]*2}" cy="${h[1]-f[1]*4-u[1]*2}" r="6" fill="${C.skinD}"/>`}
-function overlay(e,t,P,id){
- const Jm={head:P.head,neck:P.neck,hip:P.hip,...P.J};let o='';
+ return `<circle cx="${ex}" cy="${ey}" r="3.6" fill="${C.ink}"/><line x1="${ex-f[0]*5+u[0]*8}" y1="${ey-f[1]*5+u[1]*8}" x2="${ex+f[0]*5+u[0]*9}" y2="${ey+f[1]*5+u[1]*9}" stroke="${C.hair}" stroke-width="3" stroke-linecap="round"/>`}
+function overlay(e,t,P,id,vb){
+ const K=Math.max(vb.h,vb.w/1.5)/400;const Jm={head:P.head,neck:P.neck,hip:P.hip,...P.J};let o='';
  const cl=(v,a,b)=>Math.max(a,Math.min(b,v)),placed=[];
  if(e.move){const A=pose(e,0),B=pose(e,1),pk=(Q,k)=>Q[k]||Q.J[k],a=pk(A,e.move),b=pk(B,e.move),dx=b[0]-a[0],dy=b[1]-a[1],Ln=Math.hypot(dx,dy);
   if(Ln>20){const nx=-dy/Ln,ny=dx/Ln,sh=34,a2=[a[0]+nx*sh,a[1]+ny*sh],b2=[b[0]+nx*sh,b[1]+ny*sh],c=[(a2[0]+b2[0])/2+nx*28,(a2[1]+b2[1])/2+ny*28];
   o+=`<path d="M ${a2[0]} ${a2[1]} Q ${c[0]} ${c[1]} ${b2[0]} ${b2[1]}" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" opacity=".55" marker-end="url(#${id}ar)" marker-start="url(#${id}ar2)"/>`}}
  (e.cues||[]).forEach(c=>{const v=c.ph==='a'?cl((.4-t)/.2,0,1):c.ph==='b'?cl((t-.6)/.2,0,1):1;if(v<=0)return;const p=Jm[c.j];if(!p)return;
-  const w=c.t.length*13.6+34,lx=cl(p[0]+c.o[0],w/2+6,560-w/2-6);let ly=cl(p[1]+c.o[1],24,420);
-  for(let k=0;k<4&&placed.some(r=>Math.abs(r[0]-lx)<(r[2]+w)/2+6&&Math.abs(r[1]-ly)<50);k++)ly=cl(ly+52,24,430);placed.push([lx,ly,w]);
-  o+=`<g opacity="${v}"><line x1="${p[0]}" y1="${p[1]}" x2="${lx}" y2="${ly}" stroke="#fff" stroke-width="2.5" opacity=".7"/><circle cx="${p[0]}" cy="${p[1]}" r="9" fill="#fff" stroke="url(#${id}g)" stroke-width="5"/><rect x="${lx-w/2}" y="${ly-22}" width="${w}" height="44" rx="22" fill="rgba(8,8,12,.88)" stroke="url(#${id}g)" stroke-width="2.5"/><text x="${lx}" y="${ly+8}" text-anchor="middle" font-size="24" font-weight="800" fill="#fff" font-family="-apple-system,system-ui,sans-serif">${c.t}</text></g>`});
+  const w=(c.t.length*13.6+34)*K,lx=cl(p[0]+c.o[0],vb.x0+w/2+6,vb.x1-w/2-6);let ly=cl(p[1]+c.o[1],vb.y0+26,vb.y1-40);
+  for(let k=0;k<4&&placed.some(r=>Math.abs(r[0]-lx)<(r[2]+w)/2+6&&Math.abs(r[1]-ly)<50*K);k++)ly=cl(ly+52*K,vb.y0+26,vb.y1-30);placed.push([lx,ly,w]);
+  o+=`<g opacity="${v}"><line x1="${p[0]}" y1="${p[1]}" x2="${lx}" y2="${ly}" stroke="#fff" stroke-width="${2.5*K}" opacity=".7"/><circle cx="${p[0]}" cy="${p[1]}" r="${9*K}" fill="#fff" stroke="url(#${id}g)" stroke-width="${5*K}"/><rect x="${lx-w/2}" y="${ly-22*K}" width="${w}" height="${44*K}" rx="${22*K}" fill="rgba(8,8,12,.88)" stroke="url(#${id}g)" stroke-width="2.5"/><text x="${lx}" y="${ly+8*K}" text-anchor="middle" font-size="${24*K}" font-weight="800" fill="#fff" font-family="-apple-system,system-ui,sans-serif">${c.t}</text></g>`});
  return o;
 }
+/* Membre fuselé (contour + remplissage), plus naturel que des tubes */
+function limb(a,b,wa,wb,c,o={}){
+ const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L;
+ const q=(p,w,sg)=>[p[0]+nx*w/2*sg,p[1]+ny*w/2*sg];
+ const path=(wa2,wb2)=>{const p1=q(a,wa2,1),p2=q(b,wb2,1),p3=q(b,wb2,-1),p4=q(a,wa2,-1);return `M ${p1.map(v=>v.toFixed(1))} L ${p2.map(v=>v.toFixed(1))} L ${p3.map(v=>v.toFixed(1))} L ${p4.map(v=>v.toFixed(1))} Z`};
+ const ends=(r1,r2,f)=>(o.noA?'':`<circle cx="${a[0].toFixed(1)}" cy="${a[1].toFixed(1)}" r="${r1}" fill="${f}"/>`)+(o.noB?'':`<circle cx="${b[0].toFixed(1)}" cy="${b[1].toFixed(1)}" r="${r2}" fill="${f}"/>`);
+ const outl=o.noOutline?'':`<path d="${path(wa+6,wb+6)}" fill="${C.ink}"/>${ends(wa/2+3,wb/2+3,C.ink)}`;
+ const hl=o.hl===false?'':`<line x1="${(a[0]+dx*.18-nx*wa*.22).toFixed(1)}" y1="${(a[1]+dy*.18-ny*wa*.22).toFixed(1)}" x2="${(a[0]+dx*.78-nx*wb*.22).toFixed(1)}" y2="${(a[1]+dy*.78-ny*wb*.22).toFixed(1)}" stroke="#fff" stroke-width="${Math.max(2.5,wb*.16)}" stroke-linecap="round" opacity=".14"/>`;
+ return outl+`<path d="${path(wa,wb)}" fill="${c}"/>${ends(wa/2,wb/2,c)}`+hl;
+}
+const BOX={};
+function fitBox(e,labels){
+ const key=e.id+(labels?'L':'');if(BOX[key])return BOX[key];
+ const xs=[],ys=[];
+ [0,.5,1].forEach(t=>{const P=pose(e,t);[P.head,P.neck,P.hip,P.shN,P.shF,...Object.values(P.J)].forEach(q=>{xs.push(q[0]);ys.push(q[1])});
+  if(e.prop==='bagHang')ys.push(P.J.hN[1]+100);if(e.prop==='kb')ys.push(P.J.hN[1]-80);});
+ if(e.prop==='bandDoor'||e.prop==='bandSide')xs.push(560);
+ if(e.top){xs.push(165,435);ys.push(44,472)}
+ let x0=Math.min(...xs)-55,x1=Math.max(...xs)+55,y0=Math.min(...ys)-(labels?95:50),y1=Math.max(474,Math.max(...ys)+30);
+ if(e.cues&&labels){(e.cues||[]).forEach(c=>{})}
+ const minW=320,minH=250;if(x1-x0<minW){const m=(x0+x1)/2;x0=m-minW/2;x1=m+minW/2}if(y1-y0<minH)y0=y1-minH;
+ return BOX[key]={x0,y0,x1,y1,w:x1-x0,h:y1-y0};
+}
 function figSVG(e,t,tPrev,labels){
- const id='f'+(FIGID++%1000);
+ const id='f'+(FIGID++%1000),vb=fitBox(e,labels);
  const P=pose(e,t),{front,head,neck,hip,J,up,shN,shF,hpN,hpF}=P;
  const w=new Set(e.work),go=.35+.55*t;
  const glow=(s,pts,wd)=>w.has(s)?`<polyline points="${pts.map(q=>q.map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="url(#${id}g)" stroke-width="${wd+26}" stroke-linecap="round" stroke-linejoin="round" opacity="${go}" filter="url(#${id}b)"/>`:'';
- const leg=(h,k,f,far)=>{const s=far?C.skinF:C.skin;return seg(k,f,30,s)+seg(h,k,42,s)+seg(h,LP(h,k,.62),46,far?C.shF:C.sh,false)+`<ellipse cx="${f[0]+(front?0:10)}" cy="${f[1]+3}" rx="${front?19:27}" ry="13" fill="${far?'#C9C9D2':C.shoe}" stroke="${C.ink}" stroke-width="3"/>`};
- const arm=(s,el,h,far)=>{const k=far?C.skinF:C.skin;return seg(el,h,24,k)+seg(s,el,28,k)+seg(s,LP(s,el,.45),34,far?C.teeF:C.tee,false)+`<circle cx="${h[0]}" cy="${h[1]}" r="14" fill="${k}" stroke="${C.ink}" stroke-width="3"/>`};
- // traînée : silhouette fantôme du membre principal à la phase précédente
+ const shoe=(f,far)=>`<path d="M ${f[0]-(front?14:12)} ${f[1]+12} Q ${f[0]-(front?16:14)} ${f[1]-8} ${f[0]} ${f[1]-8} L ${f[0]+(front?12:26)} ${f[1]+2} Q ${f[0]+(front?16:32)} ${f[1]+12} ${f[0]+(front?12:24)} ${f[1]+14} Z" fill="${far?'#C9C9D2':C.shoe}" stroke="${C.ink}" stroke-width="3" stroke-linejoin="round"/><line x1="${f[0]-(front?13:11)}" y1="${f[1]+12}" x2="${f[0]+(front?13:26)}" y2="${f[1]+12}" stroke="${C.sole}" stroke-width="3"/>`;
+ const leg=(h,k,f,far)=>{const s=far?C.skinF:C.skin;return limb(k,f,32,24,s)+limb(h,k,44,33,s)+limb(h,LP(h,k,.55),50,42,far?C.shF:C.sh,{noB:true,hl:false})+shoe(f,far)};
+ const arm=(sh,el,h,far)=>{const k=far?C.skinF:C.skin;return limb(el,h,24,19,k)+limb(sh,el,30,24,k)+limb(sh,LP(sh,el,.42),36,31,far?C.teeF:C.tee,{noB:true,hl:false})+`<circle cx="${h[0]}" cy="${h[1]}" r="15" fill="${C.ink}"/><circle cx="${h[0]}" cy="${h[1]}" r="12" fill="${k}"/>`};
  let trail='';
- if(tPrev!=null&&Math.abs(tPrev-t)>.01){const Q=pose(e,tPrev);trail=`<g opacity=".18">${ln(Q.shN,Q.J.eN,26,`url(#${id}g)`)}${ln(Q.J.eN,Q.J.hN,22,`url(#${id}g)`)}${ln(Q.hpN,Q.J.kN,36,`url(#${id}g)`)}${ln(Q.J.kN,Q.J.fN,26,`url(#${id}g)`)}</g>`}
+ if(tPrev!=null&&Math.abs(tPrev-t)>.01){const Q=pose(e,tPrev);trail=`<g opacity=".16">${ln(Q.shN,Q.J.eN,26,`url(#${id}g)`)}${ln(Q.J.eN,Q.J.hN,22,`url(#${id}g)`)}${ln(Q.hpN,Q.J.kN,36,`url(#${id}g)`)}${ln(Q.J.kN,Q.J.fN,26,`url(#${id}g)`)}</g>`}
  let pre='',post='';const pr=e.prop;
- if(pr==='bagHang'){const[x,y]=J.hN;post=`<path d="M ${x-14} ${y+26} Q ${x} ${y-8} ${x+14} ${y+26}" stroke="#2A2A33" stroke-width="7" fill="none"/><rect x="${x-35}" y="${y+21}" width="70" height="76" rx="14" fill="url(#${id}bag)" stroke="${C.ink}" stroke-width="3"/><rect x="${x-20}" y="${y+40}" width="40" height="6" rx="3" fill="#fff" opacity=".25"/>`}
- if(pr==='bagHold'){const[x,y]=J.hN;post=`<rect x="${x-35}" y="${y-12}" width="72" height="86" rx="16" fill="url(#${id}bag)" stroke="${C.ink}" stroke-width="3"/>`}
+ if(pr==='bagHang'){const[x,y]=J.hN;post=`<path d="M ${x-14} ${y+26} Q ${x} ${y-8} ${x+14} ${y+26}" stroke="#2A2A33" stroke-width="7" fill="none"/><rect x="${x-35}" y="${y+21}" width="70" height="76" rx="14" fill="url(#${id}bag)" stroke="${C.ink}" stroke-width="3"/><rect x="${x-24}" y="${y+48}" width="48" height="30" rx="8" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>`}
+ if(pr==='bagHold'){const[x,y]=J.hN;post=`<rect x="${x-35}" y="${y-12}" width="72" height="86" rx="16" fill="url(#${id}bag)" stroke="${C.ink}" stroke-width="3"/><rect x="${x-23}" y="${y+18}" width="48" height="32" rx="8" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>`}
  if(pr==='dbs'){post=db(J.hN)+(front||e.id==='ecarteSol'||e.id==='curl'?db(J.hF):'')}
  if(pr==='kb'){const[x,y]=LP(J.hN,J.hF,.5);post=`<path d="M ${x-14} ${y-44} Q ${x} ${y-72} ${x+14} ${y-44}" stroke="#3A3D4C" stroke-width="8" fill="none"/><circle cx="${x}" cy="${y-28}" r="25" fill="#3A3D4C" stroke="${C.ink}" stroke-width="3"/><circle cx="${x-8}" cy="${y-36}" r="6" fill="#fff" opacity=".2"/>`}
  const bandW=(a,b)=>Math.max(7,15-8*(Math.hypot(a[0]-b[0],a[1]-b[1])-60)/280);
@@ -431,29 +461,37 @@ function figSVG(e,t,tPrev,labels){
  if(pr==='bandPress')post=ln(J.fN,J.hN,7,C.band)+ln(J.fF,J.hF,7,C.band);
  if(pr==='bandDoor'||pr==='bandSide'){pre=`<rect x="538" y="20" width="18" height="430" rx="5" fill="#22222C" stroke="#2E2E3A"/><circle cx="548" cy="${pr==='bandDoor'?196:200}" r="6" fill="#55556A"/>`;post=ln(J.hN,[546,pr==='bandDoor'?196:200],8,C.band)}
  const xs=[head[0],hip[0],J.fN[0],J.fF[0],J.hN[0],J.hF[0]],mn=Math.min(...xs),mx=Math.max(...xs);
- const hair=ad(head,[up[0]*8-(front?0:6),up[1]*8]);
- const tw=front?84:66;
- return `<svg viewBox="0 0 560 480" width="100%" style="display:block;overflow:visible">
+ // buste en V : taille fine, épaules larges
+ const top=LP(hip,neck,1.04);
+ const torso=front?limb(hip,top,80,112,C.tee):limb(hip,top,60,72,C.tee);
+ const belt=front?limb(hip,LP(hip,neck,.13),84,82,C.sh,{noB:true,hl:false}):limb(hip,LP(hip,neck,.13),64,62,C.sh,{noB:true,hl:false});
+ const stripe=ln(LP(hip,neck,.25),LP(hip,neck,.86),front?18:13,`url(#${id}g)`,.9);
+ // tête : cheveux visibles sur le dessus et l'arrière
+ let f=[-up[1],up[0]];if(f[0]-f[1]*.5<0)f=[-f[0],-f[1]];
+ const hairC=front?ad(head,[up[0]*8,up[1]*8]):ad(head,[up[0]*7-f[0]*7,up[1]*7-f[1]*7]);
+ const faceC=front?ad(head,[-up[0]*3,-up[1]*3]):ad(head,[-up[0]*3+f[0]*4,-up[1]*3+f[1]*4]);
+ const headSvg=`<circle cx="${head[0]}" cy="${head[1]}" r="33" fill="${C.ink}"/><circle cx="${hairC[0]}" cy="${hairC[1]}" r="30" fill="${C.hair}"/><circle cx="${faceC[0]}" cy="${faceC[1]}" r="26" fill="${C.skin}"/><circle cx="${faceC[0]-7}" cy="${faceC[1]-9}" r="7" fill="#fff" opacity=".16"/>`;
+ const fl=vb.x0+20,fw=vb.w-40;
+ return `<svg viewBox="${vb.x0} ${vb.y0} ${vb.w} ${vb.h}" width="100%" height="100%" preserveAspectRatio="xMidYMax meet" style="display:block;overflow:visible">
 <defs>
  <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--g1)"/><stop offset="1" style="stop-color:var(--g2)"/></linearGradient>
  <linearGradient id="${id}bag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A6078"/><stop offset="1" stop-color="#3A3F52"/></linearGradient>
- <radialGradient id="${id}fl" cx=".5" cy=".5" r=".5"><stop offset="0" style="stop-color:var(--g1)" stop-opacity=".45"/><stop offset="1" style="stop-color:var(--g1)" stop-opacity="0"/></radialGradient>
- <filter id="${id}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
+ <radialGradient id="${id}fl" cx=".5" cy=".5" r=".5"><stop offset="0" style="stop-color:var(--g1);stop-opacity:.45"/><stop offset="1" style="stop-color:var(--g1);stop-opacity:0"/></radialGradient>
+ <filter id="${id}b" filterUnits="userSpaceOnUse" x="-400" y="-400" width="1400" height="1300"><feGaussianBlur stdDeviation="9"/></filter>
  <marker id="${id}ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#fff"/></marker>
  <marker id="${id}ar2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#fff"/></marker>
- <filter id="${id}s" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="${C.band}" flood-opacity=".7"/></filter>
+ <filter id="${id}s" filterUnits="userSpaceOnUse" x="-400" y="-400" width="1400" height="1300"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="${C.band}" flood-opacity=".7"/></filter>
 </defs>
-<ellipse cx="280" cy="458" rx="250" ry="26" fill="url(#${id}fl)"/>
-${e.top?`<rect x="170" y="48" width="260" height="420" rx="28" fill="#1A1A24" stroke="#2C2C3A" stroke-width="3"/>`:`<rect x="30" y="450" width="500" height="12" rx="6" fill="${C.mat}"/>`}${pre}
-${e.top?'':'<!--'}<ellipse cx="${(mn+mx)/2}" cy="454" rx="${(mx-mn)/2+30}" ry="9" fill="#000" opacity=".45"/>${e.top?'':'-->'}
+<ellipse cx="${(mn+mx)/2}" cy="462" rx="${Math.max(160,(mx-mn)/2+90)}" ry="24" fill="url(#${id}fl)"/>
+${e.top?`<rect x="170" y="48" width="260" height="420" rx="28" fill="#1A1A24" stroke="#2C2C3A" stroke-width="3"/>`:`<rect x="${fl}" y="452" width="${fw}" height="10" rx="5" fill="${C.mat}"/><ellipse cx="${(mn+mx)/2}" cy="455" rx="${(mx-mn)/2+30}" ry="8" fill="#000" opacity=".45"/>`}${pre}
 ${trail}
-${glow('legF',[hpF,J.kF,J.fF],40)}${glow('armF',[shF,J.eF,J.hF],28)}${glow('torso',[hip,neck],tw)}${glow('legN',[hpN,J.kN,J.fN],40)}${glow('armN',[shN,J.eN,J.hN],28)}
+${glow('legF',[hpF,J.kF,J.fF],40)}${glow('armF',[shF,J.eF,J.hF],28)}${glow('torso',[hip,neck],front?96:66)}${glow('legN',[hpN,J.kN,J.fN],40)}${glow('armN',[shN,J.eN,J.hN],28)}
 ${leg(hpF,J.kF,J.fF,true)}${front?'':arm(shF,J.eF,J.hF,true)}
-${seg(hip,neck,tw,C.tee)}${ln(LP(hip,neck,.25),LP(hip,neck,.85),tw*.22,`url(#${id}g)`,.9)}${seg(hip,LP(hip,neck,.12),tw,C.sh,false)}
+${limb(neck,LP(neck,head,.55),24,22,C.skin,{hl:false})}
+${torso}${stripe}${belt}
 ${leg(hpN,J.kN,J.fN,false)}${front?arm(shF,J.eF,J.hF,false):''}${arm(shN,J.eN,J.hN,false)}${post}
-${seg(neck,LP(neck,head,.6),22,C.skin,false)}
-<circle cx="${head[0]}" cy="${head[1]}" r="32" fill="${C.ink}"/><circle cx="${hair[0]}" cy="${hair[1]}" r="30" fill="${C.hair}"/><circle cx="${head[0]}" cy="${head[1]}" r="28" fill="${C.skin}"/><circle cx="${head[0]-8}" cy="${head[1]-10}" r="8" fill="#fff" opacity=".18"/>${face(P)}
-${labels?overlay(e,t,P,id):''}</svg>`;
+${headSvg}${face({...P,head:faceC})}
+${labels?overlay(e,t,P,id,vb):''}</svg>`;
 }
 let CLOCK=0,SLOW=false;
 const IO='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(x=>x.target._vis=x.isIntersecting),{rootMargin:'80px'}):null;
@@ -472,9 +510,9 @@ function animate(now){
 }
 requestAnimationFrame(animate);
 
-const stageHTML=(e,extra='')=>`<div class="stage" ${extra}><div class="cap"><span data-cap="${e.id}"></span></div><div class="fig" data-fig="${e.id}" data-trail="1" data-labels="1"></div><div class="stagebar"><button data-slow class="${SLOW?'on':''}">${SLOW?'Vitesse normale':'🐢 Ralenti'}</button><button data-info="${e.id}">📋 Mise en place</button></div></div>`;
+const stageHTML=(e,extra='')=>`<div class="stage" ${extra}><div class="cap"><span data-cap="${e.id}"></span><div class="sbtn"><button data-slow class="${SLOW?'on':''}" aria-label="Ralenti">🐢</button><button data-info="${e.id}" aria-label="Mise en place">📋</button></div></div><div class="fig" data-fig="${e.id}" data-trail="1" data-labels="1"></div><div class="small muted" style="text-align:center;padding:0 0 10px">🐢 ralenti · 📋 mise en place</div></div>`;
 document.addEventListener('click',ev=>{
- const sl=ev.target.closest('[data-slow]');if(sl){SLOW=!SLOW;document.querySelectorAll('[data-slow]').forEach(b=>{b.classList.toggle('on',SLOW);b.textContent=SLOW?'Vitesse normale':'🐢 Ralenti'});return}
+ const sl=ev.target.closest('[data-slow]');if(sl){SLOW=!SLOW;document.querySelectorAll('[data-slow]').forEach(b=>b.classList.toggle('on',SLOW));return}
  const inf=ev.target.closest('[data-info]');if(inf)showInfo(inf.dataset.info);
 });
 function showInfo(id){const e=X[id];
