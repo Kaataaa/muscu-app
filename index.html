@@ -69,8 +69,8 @@ button:active{transform:scale(.97)}
 .exo b{display:block;font-size:16px}.exo span{font-size:13px}
 .banner{border-radius:20px;padding:14px 16px;font-weight:600;line-height:1.4;margin-top:14px;background:color-mix(in srgb,var(--g1) 16%,transparent);border:1px solid color-mix(in srgb,var(--g1) 35%,transparent)}
 .banner.ok{background:rgba(52,227,155,.12);border-color:rgba(52,227,155,.35)}
-.tip{display:flex;gap:10px;font-size:15px;line-height:1.4;margin:7px 0;color:#D6D6DE}
-.tip:before{content:"";flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:8px;background:var(--grad)}
+.tip{display:block;position:relative;padding-left:16px;font-size:15px;line-height:1.45;margin:8px 0;color:#D6D6DE}
+.tip:before{content:"";position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--grad)}
 /* scène du personnage */
 .stage{position:relative;border-radius:30px;overflow:hidden;background:radial-gradient(70% 60% at 50% 85%,color-mix(in srgb,var(--g1) 22%,transparent),transparent 70%),linear-gradient(180deg,#15151D,#0D0D13);border:1px solid var(--line)}
 .stage .fig{padding:20px 14px 6px}
@@ -101,6 +101,22 @@ input::placeholder,textarea::placeholder{color:#6E6E7A}
 .seg button{flex:1;padding:11px;border-radius:12px;background:none;font-weight:700;color:var(--muted)}
 .seg button.on{background:var(--glass2);color:var(--fg)}
 .pr{display:inline-block;margin-left:6px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:800;background:var(--grad);color:#fff;vertical-align:middle}
+.stage{position:relative}
+.cap{position:absolute;top:12px;left:12px;right:12px;z-index:2;display:flex;justify-content:space-between;gap:8px;pointer-events:none}
+.cap span{padding:8px 14px;border-radius:999px;font-weight:800;font-size:14px;background:rgba(8,8,12,.72);backdrop-filter:blur(10px);border:1px solid var(--line)}
+.cap .dirA{color:#fff}.cap .dirB{color:#fff}
+.stagebar{display:flex;gap:8px;padding:0 12px 12px;position:relative;z-index:2}
+.stagebar button{flex:1;padding:11px;border-radius:14px;font-weight:700;font-size:14px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+.stagebar button.on{background:var(--grad);border:0}
+.steps{counter-reset:st;margin:8px 0 0;padding:0;list-style:none}
+.steps li{counter-increment:st;display:block;position:relative;padding-left:38px;min-height:26px;margin:12px 0;font-size:16px;line-height:1.45}
+.steps li:before{content:counter(st);position:absolute;left:0;top:-1px;width:26px;height:26px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff}
+.bad{display:block;position:relative;padding-left:22px;margin:8px 0;font-size:15px;line-height:1.4;color:#D6D6DE}
+.bad:before{content:"✕";position:absolute;left:0;color:#FF5A6E;font-weight:900}
+.sheet{max-height:88vh;overflow:auto}
+.ob{min-height:calc(100vh - 60px);display:flex;flex-direction:column}
+.obdots{display:flex;gap:6px;justify-content:center;margin:18px 0}
+.obdots i{width:7px;height:7px;border-radius:4px;background:var(--glass2);transition:all .3s}.obdots i.on{width:26px;background:var(--grad)}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 </style>
 </head>
@@ -216,6 +232,98 @@ const WEEK=[ // index = getDay()
 ];
 
 
+/* ---------- Fiches techniques (débutant) ----------
+   setup : mise en place étape par étape · mistakes : erreurs à éviter
+   breath : respiration · easier : version plus facile
+   phase : [consigne aller, consigne retour] · move : articulation qui porte la flèche
+   cues : repères affichés sur le personnage {j: articulation, t: texte, ph: 'a'|'b'|'all', o: décalage} */
+const GUIDE={
+pompes:{setup:['Mains au sol, un peu plus écartées que les épaules, doigts vers l’avant','Jambes tendues derrière toi, sur la pointe des pieds','Serre les fesses et le ventre : ton corps est une planche droite de la tête aux talons'],
+ mistakes:['Fesses en l’air ou ventre qui s’affaisse','Coudes écartés sur les côtés : garde-les à environ 45° du corps','Tête qui plonge vers le sol'],
+ breath:'Inspire en descendant, souffle en poussant.',easier:'Genoux au sol, ou mains posées sur une chaise ou un plan de travail.',
+ phase:['Descends en 2 s','Pousse fort'],move:'neck',
+ cues:[{j:'hip',t:'Corps bien droit',ph:'all',o:[-60,-80]},{j:'eN',t:'Coudes à 45°',ph:'b',o:[0,-160]}]},
+dev:{setup:['Debout au milieu de l’élastique, pieds largeur de hanches','Attrape les deux brins, mains à hauteur d’épaules, paumes vers l’avant','Ventre et fesses serrés'],
+ mistakes:['Cambrer le bas du dos','Pousser vers l’avant au lieu de vers le haut'],
+ breath:'Souffle en poussant vers le haut.',easier:'Pieds plus rapprochés : l’élastique est moins tendu.',
+ phase:['Pousse vers le plafond','Redescends lentement'],move:'hN',
+ cues:[{j:'hN',t:'Bras tendus en haut',ph:'b',o:[70,30]},{j:'hip',t:'Pas de cambrure',ph:'all',o:[110,-20]}]},
+ecarteSol:{setup:['Allongé sur le dos, genoux pliés, pieds à plat','Un haltère de 3 kg par main pour commencer, 2 par main quand c’est facile','Bras tendus au-dessus de la poitrine, coudes à peine pliés'],
+ mistakes:['Plier les coudes comme un développé','Laisser tomber les bras d’un coup'],
+ breath:'Inspire en ouvrant, souffle en refermant.',easier:'Un seul haltère de 3 kg par main.',
+ phase:['Ouvre lentement vers le sol','Referme en serrant les pecs'],move:'hN',
+ cues:[{j:'hN',t:'Bras presque tendus',ph:'a',o:[70,-30]},{j:'hN',t:'Pose en douceur',ph:'b',o:[90,-70]}]},
+lat:{setup:['Debout, un haltère de 3 kg dans chaque main, bras le long du corps','Coudes très légèrement pliés, buste droit, ventre serré'],
+ mistakes:['Monter plus haut que les épaules','Hausser les épaules vers les oreilles','Se balancer pour monter'],
+ breath:'Souffle en montant.',easier:'Monte un bras à la fois.',
+ phase:['Monte jusqu’aux épaules','Redescends en 2 s'],move:'hN',
+ cues:[{j:'hN',t:'Stop à hauteur d’épaules',ph:'b',o:[-80,-110]},{j:'neck',t:'Épaules basses',ph:'all',o:[-160,-110]}]},
+triceps:{setup:['Debout, kettlebell tenue à deux mains par les côtés de la poignée','Monte-la au-dessus de la tête, bras tendus','Coudes serrés, pointés vers le plafond'],
+ mistakes:['Coudes qui s’écartent','Cambrer le dos'],
+ breath:'Inspire en descendant, souffle en tendant les bras.',easier:'Assis sur une chaise, dos droit.',
+ phase:['Descends derrière la tête','Tends les bras'],move:'hN',
+ cues:[{j:'eN',t:'Coudes fixes',ph:'all',o:[90,20]}]},
+crunch:{setup:['Allongé sur le dos, bras le long du corps, paumes au sol','Jambes levées, genoux pliés à 90°'],
+ mistakes:['Balancer les jambes pour prendre de l’élan','Redescendre d’un coup'],
+ breath:'Souffle en enroulant le bassin.',easier:'Mouvement plus petit : décolle juste un peu le bassin.',
+ phase:['Enroule le bassin','Redescends en 3 s'],move:'kN',
+ cues:[{j:'hip',t:'Le bassin décolle',ph:'b',o:[-60,-200]},{j:'kN',t:'Genoux vers la poitrine',ph:'b',o:[150,-200]}]},
+planche:{setup:['Allongé sur le côté, coude juste sous l’épaule','Jambes tendues, pieds l’un sur l’autre (ou l’un devant l’autre, plus stable)','Soulève la hanche : ton corps forme une ligne droite'],
+ mistakes:['Hanche qui tombe vers le sol','Épaule écrasée : pousse le sol avec l’avant-bras'],
+ breath:'Respire normalement, ne bloque pas ta respiration.',easier:'Genoux au sol, jambes pliées.',
+ phase:['Tiens, hanche haute','Respire'],move:null,
+ cues:[{j:'hip',t:'Hanche haute',ph:'all',o:[0,-100]},{j:'eN',t:'Coude sous l’épaule',ph:'all',o:[60,-120]}]},
+rowing:{setup:['Remplis le sac d’eau et ferme-le bien','Pieds largeur de hanches, genoux un peu pliés','Penche le buste à 45° en reculant les fesses, dos bien plat','Le sac pend sous tes épaules, tenu par la poignée ou les bretelles'],
+ mistakes:['Dos rond : c’est l’erreur à éviter absolument','Tirer seulement avec les bras sans serrer les omoplates','Se redresser pour tirer'],
+ breath:'Souffle en tirant.',easier:'Moins d’eau dans le sac.',
+ phase:['Tire vers le nombril','Redescends lentement'],move:'hN',
+ cues:[{j:'hip',t:'Dos plat',ph:'all',o:[-100,-120]},{j:'eN',t:'Coudes vers l’arrière',ph:'b',o:[60,-160]}]},
+tirage:{setup:['Fais un nœud à l’élastique et coince-le dans la porte fermée, à hauteur de poitrine','Recule jusqu’à ce que l’élastique soit tendu, bras tendus devant toi','Genoux un peu pliés, poitrine sortie'],
+ mistakes:['Pencher le buste en arrière pour tirer','Hausser les épaules'],
+ breath:'Souffle en tirant.',easier:'Avance d’un pas vers la porte.',
+ phase:['Tire les coudes derrière toi','Laisse revenir lentement'],move:'hN',
+ cues:[{j:'eN',t:'Serre les omoplates',ph:'b',o:[-60,-90]},{j:'hip',t:'Buste droit',ph:'all',o:[-150,20]}]},
+ecarte:{setup:['Debout, élastique tenu à deux mains devant toi','Bras tendus à hauteur d’épaules, mains écartées de la largeur des épaules'],
+ mistakes:['Plier les coudes','Lever les épaules','Cambrer le dos'],
+ breath:'Souffle en ouvrant.',easier:'Mains plus écartées sur l’élastique.',
+ phase:['Ouvre jusqu’à la poitrine','Reviens lentement'],move:'hN',
+ cues:[{j:'hN',t:'Bras tendus',ph:'b',o:[-40,-60]},{j:'hip',t:'Omoplates serrées',ph:'b',o:[130,-60]}]},
+curl:{setup:['Debout, 2 haltères de 3 kg dans chaque main (6 kg par main)','Bras le long du corps, paumes vers l’avant','Coudes collés contre les côtes'],
+ mistakes:['Avancer les coudes','Se balancer avec le dos'],
+ breath:'Souffle en montant.',easier:'Un seul haltère de 3 kg par main.',
+ phase:['Monte','Redescends en 2 s'],move:'hN',
+ cues:[{j:'eN',t:'Coude collé au corps',ph:'all',o:[-180,0]}]},
+squat:{setup:['Pieds un peu plus écartés que les hanches, pointes légèrement ouvertes','Sac serré contre la poitrine','Regard droit devant toi'],
+ mistakes:['Talons qui décollent','Genoux qui rentrent vers l’intérieur','Dos qui s’arrondit'],
+ breath:'Inspire en descendant, souffle en remontant.',easier:'Sans le sac, ou descends jusqu’à toucher une chaise.',
+ phase:['Descends, fesses en arrière','Pousse dans les talons'],move:'hip',
+ cues:[{j:'kN',t:'Genoux dans l’axe des pieds',ph:'b',o:[60,-70]},{j:'fN',t:'Talons au sol',ph:'all',o:[90,-40]}]},
+sdt:{setup:['Debout, sac tenu devant les cuisses à deux mains','Genoux à peine pliés, et ils ne bougent plus','Dos plat, épaules en arrière'],
+ mistakes:['Arrondir le dos : c’est le plus important','Plier les genoux comme pour un squat','Descendre trop bas si ton dos commence à s’arrondir'],
+ breath:'Inspire en descendant, souffle en remontant.',easier:'Moins d’eau, et descends seulement jusqu’aux genoux.',
+ phase:['Recule les fesses','Remonte en serrant les fessiers'],move:'hip',
+ cues:[{j:'hip',t:'Fesses en arrière',ph:'b',o:[-150,-50]},{j:'neck',t:'Dos plat',ph:'b',o:[20,-110]}]},
+rotation:{setup:['Élastique coincé dans la porte, à hauteur de poitrine','Mets-toi de profil par rapport à la porte, pieds écartés','Bras tendus devant toi, mains jointes sur l’élastique'],
+ mistakes:['Tourner les hanches : seul le buste tourne','Laisser l’élastique te ramener d’un coup'],
+ breath:'Souffle en tournant.',easier:'Rapproche-toi de la porte.',
+ phase:['Tourne le buste','Freine le retour'],move:'hN',
+ cues:[{j:'hip',t:'Hanches fixes',ph:'all',o:[120,40]},{j:'hN',t:'Bras tendus',ph:'all',o:[0,-70]}]},
+deadbug:{setup:['Allongé sur le dos, bras tendus vers le plafond','Jambes levées, genoux pliés à 90° au-dessus des hanches','Plaque le bas du dos contre le sol'],
+ mistakes:['Le bas du dos se décolle du sol','Aller trop vite'],
+ breath:'Souffle en tendant le bras et la jambe.',easier:'Tends seulement la jambe, bras immobiles.',
+ phase:['Tends bras et jambe opposés','Reviens au centre'],move:'fN',
+ cues:[{j:'hip',t:'Bas du dos collé au sol',ph:'all',o:[20,-140]}]},
+};
+Object.entries(GUIDE).forEach(([id,g])=>Object.assign(X[id],g));
+
+const WARMUP=[
+ ['Marche sur place en montant les genoux','45 s'],
+ ['Grands cercles de bras, vers l’avant puis l’arrière','10 + 10'],
+ ['Squats sans charge, lents','10'],
+ ['Pompes faciles (sur les genoux)','6'],
+ ['Rotations du buste, bras croisés','10'],
+];
+
 /* ---------- Personnage (illustré, relief + traînée de mouvement) ---------- */
 const C={skin:'#F0B892',skinD:'#C98763',skinF:'#B8805F',tee:'#2A2D3A',teeF:'#1E2029',sh:'#3B3F55',shF:'#2B2E3E',shoe:'#F5F5F7',sole:'#8E8E9A',hair:'#1B1512',ink:'#0B0B10',mat:'#1D1D27',band:'#34E39B'};
 const L=(a,b,t)=>a+(b-a)*t, LP=(a,b,t)=>[L(a[0],b[0],t),L(a[1],b[1],t)], ad=(p,d)=>[p[0]+d[0],p[1]+d[1]];
@@ -234,7 +342,19 @@ function pose(e,t){
  const hpN=front?ad(hip,[20,0]):hip,hpF=front?ad(hip,[-20,0]):hip;
  return {front,head,neck,hip,J,up,shN,shF,hpN,hpF};
 }
-function figSVG(e,t,tPrev){
+function overlay(e,t,P,id){
+ const Jm={head:P.head,neck:P.neck,hip:P.hip,...P.J};let o='';
+ const cl=(v,a,b)=>Math.max(a,Math.min(b,v)),placed=[];
+ if(e.move){const A=pose(e,0),B=pose(e,1),pk=(Q,k)=>Q[k]||Q.J[k],a=pk(A,e.move),b=pk(B,e.move),dx=b[0]-a[0],dy=b[1]-a[1],Ln=Math.hypot(dx,dy);
+  if(Ln>20){const nx=-dy/Ln,ny=dx/Ln,sh=34,a2=[a[0]+nx*sh,a[1]+ny*sh],b2=[b[0]+nx*sh,b[1]+ny*sh],c=[(a2[0]+b2[0])/2+nx*28,(a2[1]+b2[1])/2+ny*28];
+  o+=`<path d="M ${a2[0]} ${a2[1]} Q ${c[0]} ${c[1]} ${b2[0]} ${b2[1]}" fill="none" stroke="#fff" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round" opacity=".55" marker-end="url(#${id}ar)" marker-start="url(#${id}ar2)"/>`}}
+ (e.cues||[]).forEach(c=>{const v=c.ph==='a'?cl((.4-t)/.2,0,1):c.ph==='b'?cl((t-.6)/.2,0,1):1;if(v<=0)return;const p=Jm[c.j];if(!p)return;
+  const w=c.t.length*13.6+34,lx=cl(p[0]+c.o[0],w/2+6,560-w/2-6);let ly=cl(p[1]+c.o[1],24,420);
+  for(let k=0;k<4&&placed.some(r=>Math.abs(r[0]-lx)<(r[2]+w)/2+6&&Math.abs(r[1]-ly)<50);k++)ly=cl(ly+52,24,430);placed.push([lx,ly,w]);
+  o+=`<g opacity="${v}"><line x1="${p[0]}" y1="${p[1]}" x2="${lx}" y2="${ly}" stroke="#fff" stroke-width="2.5" opacity=".7"/><circle cx="${p[0]}" cy="${p[1]}" r="9" fill="#fff" stroke="url(#${id}g)" stroke-width="5"/><rect x="${lx-w/2}" y="${ly-22}" width="${w}" height="44" rx="22" fill="rgba(8,8,12,.88)" stroke="url(#${id}g)" stroke-width="2.5"/><text x="${lx}" y="${ly+8}" text-anchor="middle" font-size="24" font-weight="800" fill="#fff" font-family="-apple-system,system-ui,sans-serif">${c.t}</text></g>`});
+ return o;
+}
+function figSVG(e,t,tPrev,labels){
  const id='f'+(FIGID++%1000);
  const P=pose(e,t),{front,head,neck,hip,J,up,shN,shF,hpN,hpF}=P;
  const w=new Set(e.work),go=.35+.55*t;
@@ -262,6 +382,8 @@ function figSVG(e,t,tPrev){
  <linearGradient id="${id}bag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5A6078"/><stop offset="1" stop-color="#3A3F52"/></linearGradient>
  <radialGradient id="${id}fl" cx=".5" cy=".5" r=".5"><stop offset="0" style="stop-color:var(--g1)" stop-opacity=".45"/><stop offset="1" style="stop-color:var(--g1)" stop-opacity="0"/></radialGradient>
  <filter id="${id}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
+ <marker id="${id}ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#fff"/></marker>
+ <marker id="${id}ar2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#fff"/></marker>
  <filter id="${id}s" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="${C.band}" flood-opacity=".7"/></filter>
 </defs>
 <ellipse cx="280" cy="458" rx="250" ry="26" fill="url(#${id}fl)"/>
@@ -274,20 +396,37 @@ ${seg(hip,neck,tw,C.tee)}${ln(LP(hip,neck,.25),LP(hip,neck,.85),tw*.22,`url(#${i
 ${leg(hpN,J.kN,J.fN,false)}${front?arm(shF,J.eF,J.hF,false):''}${arm(shN,J.eN,J.hN,false)}${post}
 ${seg(neck,LP(neck,head,.6),22,C.skin,false)}
 <circle cx="${head[0]}" cy="${head[1]}" r="32" fill="${C.ink}"/><circle cx="${hair[0]}" cy="${hair[1]}" r="30" fill="${C.hair}"/><circle cx="${head[0]}" cy="${head[1]}" r="28" fill="${C.skin}"/><circle cx="${head[0]-8}" cy="${head[1]-10}" r="8" fill="#fff" opacity=".18"/>
-</svg>`;
+${labels?overlay(e,t,P,id):''}</svg>`;
 }
-const t0=performance.now();
+let CLOCK=0,SLOW=false;
 function animate(now){
- const s=(now-t0)/1000;
+ const dt=(now-(animate.last||now))/1000;animate.last=now;CLOCK+=dt*(SLOW?.4:1);const s=CLOCK;
  document.querySelectorAll('[data-fig]').forEach(el=>{
   const e=X[el.dataset.fig];if(!e)return;
   const ph=x=>(1-Math.cos(x/e.period*Math.PI*2))/2;
-  el.innerHTML=figSVG(e,ph(s),el.dataset.trail?ph(s-.12):null);
+  el.innerHTML=figSVG(e,ph(s),el.dataset.trail?ph(s-.12):null,el.dataset.labels==='1');
+  if(el.dataset.labels==='1'){const cap=el.parentElement.querySelector('[data-cap]');if(cap&&e.phase){const go=Math.sin(s/e.period*Math.PI*2)>=0||e.unit==='s';const txt=(e.unit==='s'?'⏱ ':'▸ ')+e.phase[go?0:1];if(cap.textContent!==txt)cap.textContent=txt}}
  });
  requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
 
+const stageHTML=(e,extra='')=>`<div class="stage" ${extra}><div class="cap"><span data-cap="${e.id}"></span></div><div class="fig" data-fig="${e.id}" data-trail="1" data-labels="1"></div><div class="stagebar"><button data-slow class="${SLOW?'on':''}">${SLOW?'Vitesse normale':'🐢 Ralenti'}</button><button data-info="${e.id}">📋 Mise en place</button></div></div>`;
+document.addEventListener('click',ev=>{
+ const sl=ev.target.closest('[data-slow]');if(sl){SLOW=!SLOW;document.querySelectorAll('[data-slow]').forEach(b=>{b.classList.toggle('on',SLOW);b.textContent=SLOW?'Vitesse normale':'🐢 Ralenti'});return}
+ const inf=ev.target.closest('[data-info]');if(inf)showInfo(inf.dataset.info);
+});
+function showInfo(id){const e=X[id];
+ $('#modal').innerHTML=`<div class="modal" id="mi"><div class="glass sheet"><div class="between"><h2 style="margin:0">${esc(e.name)}</h2><button class="chip" id="mic">Fermer</button></div>
+ <div style="margin-top:14px">${stageHTML(e).replace('data-info','data-x')}</div>
+ <h2 style="font-size:18px">Mise en place</h2><ol class="steps">${e.setup.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>
+ <h2 style="font-size:18px">Pendant le mouvement</h2>${e.tips.map(x=>`<div class="tip">${esc(x)}</div>`).join('')}<div class="tip"><b>Respiration :</b> ${esc(e.breath)}</div>
+ <h2 style="font-size:18px">Erreurs à éviter</h2>${e.mistakes.map(x=>`<div class="bad">${esc(x)}</div>`).join('')}
+ <h2 style="font-size:18px">Trop dur ?</h2><div class="tip">${esc(e.easier)}</div>
+ <h2 style="font-size:18px">Trop facile ?</h2><div class="tip">${esc(e.progress)}</div>
+ <div style="height:14px"></div><button class="btn" id="mic2">J’ai compris</button></div></div>`;
+ const close=()=>$('#modal').innerHTML='';$('#mic').onclick=close;$('#mic2').onclick=close;$('#mi').onclick=ev=>{if(ev.target.id==='mi')close()};
+}
 /* ---------- Stockage (sur le téléphone) ---------- */
 const lsGet=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
 const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
@@ -337,7 +476,30 @@ document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{TAB=b.datase
 const setTheme=k=>document.body.classList.toggle('sB',k==='B');
 const todaySess=()=>WEEK[new Date().getDay()].s;
 const nextSess=()=>{const l=S.sessions[S.sessions.length-1];return l&&l.sess==='A'?'B':'A'};
+let OB=lsGet('mm2_onb',false)?-1:0;
+const SLIDES=[
+ {k:'Bienvenue',h:'Ton plan <span class="gtext">sur mesure.</span>',fig:'pompes',body:`<p>Objectif : <b>garder tes pecs et tes bras</b>, <b>dessiner tes abdos</b> et <b>affiner ta taille</b>.</p><p class="muted">Tout se fait chez toi avec ton sac à dos, ton élastique et tes haltères. L’app te guide à chaque répétition.</p>`},
+ {k:'Ta semaine',h:'4 séances, <span class="gtext">~45 min.</span>',body:`<div class="glass pad">${[['Lun','Séance A','Pecs · épaules · triceps · abdos'],['Mar','Séance B','Dos · biceps · jambes · obliques'],['Mer','Piscine',''],['Jeu','Séance A',''],['Ven','Séance B',''],['Sam · Dim','Piscine ou repos','']].map(([d,a,b])=>`<div class="between" style="padding:9px 0;border-bottom:1px solid var(--line)"><b>${d}</b><span style="text-align:right">${a}${b?`<br><span class="small muted">${b}</span>`:''}</span></div>`).join('')}</div><p class="muted">Raté une séance ? Fais-la le lendemain, l’app te la propose.</p>`},
+ {k:'Les bases',h:'Jamais fait de muscu ? <span class="gtext">Voilà l’essentiel.</span>',body:`<ol class="steps"><li>Toujours l’échauffement guidé de 3 min avant.</li><li>La technique d’abord, la charge ensuite. Commence léger.</li><li>Descends lentement (2 s), remonte avec contrôle.</li><li>Souffle pendant l’effort, ne bloque jamais ta respiration.</li><li>Arrête une série quand il te reste environ 2 répétitions propres.</li><li>Douleur dans une articulation = tu arrêtes l’exercice. Des courbatures les jours suivants, c’est normal.</li></ol>`},
+ {k:'Pendant la séance',h:'Regarde, place-toi, <span class="gtext">fais.</span>',fig:'rowing',labels:true,body:`<ol class="steps"><li>Le personnage te montre le mouvement. Les <b>repères</b> indiquent ce qui compte, la <b>flèche</b> le trajet, la consigne en haut le moment.</li><li><b>📋 Mise en place</b> explique comment te positionner, les erreurs à éviter et une version plus facile. <b>🐢 Ralenti</b> pour bien voir.</li><li>Fais ta série, règle ton nombre avec − et +, puis <b>Série faite</b>.</li><li>Le repos se lance tout seul. 3 bips = c’est reparti.</li></ol>`},
+ {k:'Progresser',h:'Un peu plus <span class="gtext">chaque semaine.</span>',body:`<p>Chaque exercice a une fourchette, par exemple <b>8–12 reps</b>.</p><ol class="steps"><li>Essaie de faire 1 rep de plus que la dernière fois (l’app te rappelle tes chiffres).</li><li>Quand tu atteins le haut de la fourchette sur toutes les séries, l’app te dit de <b>durcir</b> : +0,5 L d’eau dans le sac, élastique plus court, ou descente plus lente.</li></ol>`},
+ {k:'Poignées d’amour',h:'Le gras part <span class="gtext">partout à la fois.</span>',body:`<ol class="steps"><li>Aucun exercice ne fait fondre le gras d’un endroit précis. Les abdos se voient quand le gras global baisse.</li><li>Mange environ <b>140 g de protéines</b> par jour (œufs, thon, poulet, skyr).</li><li>Chaque lundi matin, note ton <b>poids</b> et ton <b>tour de taille</b> au nombril (onglet Progrès).</li><li>Si ta taille ne baisse pas en 4 semaines, l’app te dira de réduire un peu le riz.</li></ol>`},
+ {k:'Ton matériel',h:'Prépare <span class="gtext">ton coin.</span>',body:`<ol class="steps"><li><b>Sac à dos</b> avec des bouteilles d’eau bien calées. Commence avec environ 5 L (≈ 5 kg).</li><li><b>Élastique</b> et une porte qui ferme bien (pour les tirages).</li><li><b>Haltères de 3 kg</b> et <b>kettlebell de 4 kg</b>.</li><li>Une serviette ou un tapis pour les exercices au sol.</li><li>Mode silencieux désactivé pour entendre les bips.</li></ol>`},
+];
+function obView(){
+ const sl=SLIDES[OB],last=OB===SLIDES.length-1;
+ return `<div class="ob"><div class="between"><span class="kicker">${OB+1} / ${SLIDES.length} · ${sl.k}</span>${last?'':'<button class="chip" data-ob="skip">Passer</button>'}</div>
+ <h1 style="margin-top:18px;font-size:38px">${sl.h}</h1>
+ ${sl.fig?`<div style="margin-top:16px">${sl.labels?stageHTML(X[sl.fig]):`<div class="stage"><div class="fig" data-fig="${sl.fig}" data-trail="1"></div></div>`}</div>`:''}
+ <div style="margin-top:16px;line-height:1.5;font-size:16px">${sl.body}</div>
+ <div style="flex:1"></div>
+ <div class="obdots">${SLIDES.map((_,i)=>`<i class="${i===OB?'on':''}"></i>`).join('')}</div>
+ <div class="row">${OB?'<button class="btn dark" data-ob="prev" style="width:auto;padding:19px 22px">‹</button>':''}<button class="btn" data-ob="next">${last?'C’est parti':'Suivant'}</button></div></div>`;
+}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ob]');if(!b)return;const a=b.dataset.ob;
+ if(a==='prev')OB=Math.max(0,OB-1);else if(a==='next'&&OB<SLIDES.length-1)OB++;else{OB=-1;lsSet('mm2_onb',true);TAB='home'}render()});
 function render(){
+ if(OB>=0&&!RUN){$('#tabs').style.display='none';$('#app').innerHTML=`<div class="view">${obView()}</div>`;window.scrollTo(0,0);return}
  $('#tabs').style.display=RUN?'none':'flex';
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===TAB));
  if(RUN)return renderRun();
@@ -383,11 +545,12 @@ function progView(){
  <p class="muted" style="line-height:1.45">Lundi et jeudi : A. Mardi et vendredi : B. Piscine les autres jours ou après la muscu.</p>
  <div class="seg"><button data-pk="A" class="${PROGK==='A'?'on':''}">Séance A</button><button data-pk="B" class="${PROGK==='B'?'on':''}">Séance B</button></div>
  ${s.list.map(([id,n])=>{const e=X[id];return `<div class="glass" style="margin-top:14px;overflow:hidden">
-  <div class="stage" style="border:0;border-radius:0"><div class="fig" data-fig="${id}" data-trail="1"></div></div>
+  ${stageHTML(e,'style="border:0;border-radius:0"')}
   <div class="pad"><div class="between"><b style="font-size:20px;letter-spacing:-.02em">${esc(e.name)}</b><span class="chip g">${n} × ${e.min}–${e.max}${e.unit==='s'?' s':''}</span></div>
   <div class="small muted" style="margin:6px 0 4px">${esc(e.muscles)}${e.per?' · par '+e.per:''} · repos ${e.rest>=90?'1 min 30':e.rest+' s'}</div>
   ${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}
   <div class="small" style="margin-top:8px;color:#D6D6DE"><span class="gtext" style="font-weight:800">Pour durcir</span> · ${esc(e.progress)}</div></div></div>`}).join('')}
+ <div style="height:14px"></div><button class="btn dark" data-act="tuto">Revoir le tutoriel</button>
  <h2>Poignées d’amour : ce qui marche</h2>
  <div class="glass pad">
   <div class="tip">Aucun exercice ne fait fondre le gras à un endroit précis : il part quand le gras global baisse.</div>
@@ -429,6 +592,7 @@ function suiviView(){
 }
 function bind(){
  document.querySelectorAll('[data-start]').forEach(b=>b.onclick=()=>startRun(b.dataset.start));
+ const tu=$('[data-act=tuto]');if(tu)tu.onclick=()=>{OB=0;render()};
  document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{PROGK=b.dataset.pk;render()});
  const num=v=>{const x=parseFloat(String(v).replace(',','.'));return isFinite(x)?x:null};
  const bf=$('#bform');if(bf)bf.onsubmit=ev=>{ev.preventDefault();const kg=num($('#kg').value),waist=num($('#waist').value);
@@ -444,8 +608,9 @@ function startRun(k){
  beep(660,.05,.01);setTheme(k);
  const steps=[];
  SESSIONS[k].list.forEach(([id,n])=>{const e=X[id];for(let s=1;s<=n;s++){(e.per?(e.per==='côté'?['côté droit','côté gauche']:[e.per]):[null]).forEach((side,i,arr)=>steps.push({e,set:s,sets:n,side,lastSide:i===arr.length-1}))}});
- RUN={k,steps,i:0,phase:'work',results:{},val:null,hold:null,anim:true,before:S.sessions.slice()};
+ RUN={k,steps,i:0,phase:'warmup',wuEnd:Date.now()+180000,results:{},val:null,hold:null,anim:true,before:S.sessions.slice()};
  keepAwake(true);render();
+ clearInterval(timerId);timerId=setInterval(()=>{if(RUN&&RUN.phase==='warmup')renderRun();else clearInterval(timerId)},1000);
 }
 const cur=()=>RUN.steps[RUN.i];
 function suggested(st){const l=lastFor(st.e.id);const idx=(RUN.results[st.e.id]||[]).length;return l?.[idx]??st.e.min}
@@ -454,7 +619,16 @@ const quitBtn=`<button data-act="quit" class="chip">Quitter</button>`;
 function renderRun(bump){
  const app=$('#app'),st=cur(),anim=RUN.anim;RUN.anim=false;
  const wrap=h=>`<div class="${anim?'view':''}">${h}</div>`;
- if(RUN.phase==='work'){
+ if(RUN.phase==='warmup'){
+  const left=Math.max(0,Math.ceil((RUN.wuEnd-Date.now())/1000));
+  if(left===0&&!RUN.wuDone){RUN.wuDone=true;chord()}
+  app.innerHTML=wrap(`<div class="between"><div><div class="kicker">Avant de commencer</div><h1 style="font-size:34px;margin-top:4px">Échauffement</h1></div>${quitBtn}</div>
+  <p class="muted" style="line-height:1.45">3 minutes pour préparer tes articulations. Enchaîne les mouvements tranquillement, sans forcer.</p>
+  <div class="ring" style="width:200px;height:200px">${ringSVG(left/180,200,14,'wr')}<div class="t"><b style="font-size:52px">${mmss(left)}</b></div></div>
+  <div class="glass pad"><ol class="steps">${WARMUP.map(([a,b])=>`<li><span style="display:flex;justify-content:space-between;gap:10px"><span>${esc(a)}</span><b class="gtext" style="white-space:nowrap">${b}</b></span></li>`).join('')}</ol></div>
+  <div style="margin-top:18px"><button class="btn" data-act="gowork">${left?'Je suis prêt, on commence':'C’est parti'}</button></div>`);
+  app.querySelector('[data-act=gowork]').onclick=()=>{clearInterval(timerId);RUN.phase='work';RUN.anim=true;beep(1320,.2,.3);renderRun()};
+ } else if(RUN.phase==='work'){
   const e=st.e,timed=e.unit==='s';
   if(RUN.val==null)RUN.val=suggested(st);
   const firstOfExo=st.set===1&&(!st.side||st.side==='côté droit');
@@ -464,10 +638,10 @@ function renderRun(bump){
   app.innerHTML=wrap(`${topBar()}
   <div class="between"><div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip g">Série ${st.set}/${st.sets}</span>${st.side&&st.side!=='côté'?`<span class="chip">${st.side}</span>`:''}</div>${quitBtn}</div>
   <h1 style="margin:14px 0 12px;font-size:34px">${esc(e.name)}</h1>
-  <div class="stage"><div class="fig" data-fig="${e.id}" data-trail="1"></div></div>
+  ${stageHTML(e)}
   ${test?`<div class="banner">Test : fais le maximum de pompes propres. Moins de 6 ? Fais les séries suivantes sur les genoux.</div>`:''}
   ${hard?`<div class="banner">Haut de fourchette partout la dernière fois : ${esc(e.progress)}</div>`:''}
-  ${firstOfExo?`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}</div>`:''}
+  ${firstOfExo?`<div class="glass pad" style="margin-top:12px"><div class="kicker">Mise en place</div><ol class="steps">${e.setup.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><div class="tip" style="margin-top:10px"><b>Respire :</b> ${esc(e.breath)}</div></div>`:`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}</div>`}
   <div class="counter"><button data-d="${timed?-5:-1}" ${RUN.hold?'disabled style="opacity:.3"':''}>−</button><div class="big gtext ${bump?'bump':''}">${shown}${timed?'<span style="font-size:40px">s</span>':''}</div><button data-d="${timed?5:1}" ${RUN.hold?'disabled style="opacity:.3"':''}>+</button></div>
   <div class="small muted" style="text-align:center">Objectif ${e.min}–${e.max} ${timed?'secondes':'reps'} · garde ~2 reps en réserve</div>
   <div class="range">${Array.from({length:e.max},(_,k)=>`<i class="${k<shown?(k<e.min?'min':'on'):''}"></i>`).join('')}</div>
