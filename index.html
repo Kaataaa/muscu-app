@@ -460,7 +460,7 @@ function pose(e,t){
 }
 function face(P){const h=P.head,u=P.up;
  if(P.front)return `<circle cx="${h[0]-10}" cy="${h[1]-1}" r="3.6" fill="${C.ink}"/><circle cx="${h[0]+10}" cy="${h[1]-1}" r="3.6" fill="${C.ink}"/><path d="M ${h[0]-7} ${h[1]+11} Q ${h[0]} ${h[1]+16} ${h[0]+7} ${h[1]+11}" stroke="${C.ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
- let f=[-u[1],u[0]];if(f[0]-f[1]*.5<0)f=[-f[0],-f[1]];
+ let f=[-u[1],u[0]];
  const ex=h[0]+f[0]*16+u[0]*5,ey=h[1]+f[1]*16+u[1]*5;
  return `<circle cx="${ex}" cy="${ey}" r="3.6" fill="${C.ink}"/><line x1="${ex-f[0]*5+u[0]*8}" y1="${ey-f[1]*5+u[1]*8}" x2="${ex+f[0]*5+u[0]*9}" y2="${ey+f[1]*5+u[1]*9}" stroke="${C.hair}" stroke-width="3" stroke-linecap="round"/>`}
 function overlay(e,t,P,id,vb){
@@ -524,7 +524,7 @@ function figSVG(e,t,tPrev,labels){
  const belt=front?limb(hip,LP(hip,neck,.13),84,82,C.sh,{noB:true,hl:false}):limb(hip,LP(hip,neck,.13),64,62,C.sh,{noB:true,hl:false});
  const stripe=ln(LP(hip,neck,.25),LP(hip,neck,.86),front?18:13,`url(#${id}g)`,.9);
  // tête : cheveux visibles sur le dessus et l'arrière
- let f=[-up[1],up[0]];if(f[0]-f[1]*.5<0)f=[-f[0],-f[1]];
+ let f=[-up[1],up[0]];
  const hairC=front?ad(head,[up[0]*8,up[1]*8]):ad(head,[up[0]*7-f[0]*7,up[1]*7-f[1]*7]);
  const faceC=front?ad(head,[-up[0]*3,-up[1]*3]):ad(head,[-up[0]*3+f[0]*4,-up[1]*3+f[1]*4]);
  const headSvg=`<circle cx="${head[0]}" cy="${head[1]}" r="33" fill="${C.ink}"/><circle cx="${hairC[0]}" cy="${hairC[1]}" r="30" fill="${C.hair}"/><circle cx="${faceC[0]}" cy="${faceC[1]}" r="26" fill="${C.skin}"/><circle cx="${faceC[0]-7}" cy="${faceC[1]-9}" r="7" fill="#fff" opacity=".16"/>`;
