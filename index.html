@@ -167,6 +167,15 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opac
 .bl-1 i:nth-child(-n+1),.bl-2 i:nth-child(-n+2),.bl-3 i{background:var(--grad)}
 .last{font-size:13px;color:var(--muted);text-align:center;margin-top:2px}.last b{color:var(--fg)}
 .undo{display:block;margin:14px auto 0;background:none;color:var(--muted);font-weight:700;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+body{--grad:linear-gradient(135deg,var(--g1),var(--g2))}
+body.resting{--g1:#2FD3C2;--g2:#3D8BFF}
+.restword{font-size:64px;font-weight:900;letter-spacing:-.04em;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.status{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-radius:16px;font-weight:800;margin-top:8px}
+.status.going{background:rgba(52,227,155,.14);color:#34E39B;border:1px solid rgba(52,227,155,.35)}
+.status.paused{background:rgba(255,200,60,.12);color:#FFC83C;border:1px solid rgba(255,200,60,.35)}
+.status b{font-size:22px;font-variant-numeric:tabular-nums;color:var(--fg)}
+.pausecov{position:absolute;inset:0;border-radius:30px;background:rgba(8,8,12,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#FFC83C}
+.btn.go{font-size:20px;padding:22px}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 </style>
 </head>
@@ -267,13 +276,19 @@ deadbug:{name:'Dead bug',min:8,max:12,per:'côté',rest:45,muscles:'Abdos profon
  a:{...LYING,kN:[300,330],fN:[392,336],kF:[294,334],fF:[386,340],...ARMS_UP},
  b:{...LYING,kN:[388,398],fN:[486,420],kF:[294,334],fF:[386,340],eN:[172,350],hN:[176,292],eF:[96,384],hF:[46,410]},
  work:['torso'],period:4},
+climber:{name:'Mountain climbers',min:20,max:30,unit:'s',rest:45,muscles:'Abdos · Cardio',
+ tips:['Bras tendus, épaules au-dessus des mains','Ramène les genoux vers la poitrine, en alternant, à ton rythme'],
+ progress:'Accélère le rythme, puis passe à 40 s.',
+ a:{head:[478,292],neck:[432,314],hip:[276,350],kN:[352,392],fN:[318,432],kF:[178,392],fF:[84,430],eN:[434,372],hN:[436,440]},
+ b:{head:[478,292],neck:[432,314],hip:[276,350],kN:[178,392],fN:[84,430],kF:[352,392],fF:[318,432],eN:[434,372],hN:[436,440]},
+ work:['torso','legN','legF'],period:.9},
 };
 Object.entries(X).forEach(([id,e])=>e.id=id);
 
 /* ---------- Séances ---------- */
 const SESSIONS={
  A:{name:'Séance A',sub:'Pecs · Épaules · Triceps · Abdos',list:[['pompes',4],['dev',3],['ecarteSol',3],['lat',3],['triceps',3],['crunch',3],['planche',3]]},
- B:{name:'Séance B',sub:'Dos · Biceps · Jambes · Obliques',list:[['rowing',4],['tirage',3],['ecarte',3],['curl',3],['squat',3],['sdt',3],['rotation',3],['deadbug',2]]},
+ B:{name:'Séance B',sub:'Abdos · Taille · Jambes · Bras',list:[['squat',3],['sdt',3],['rowing',3],['curl',2],['rotation',3],['planche',3],['deadbug',3],['climber',3]]},
 };
 const WEEK=[ // index = getDay()
  {d:'Dim',s:null,t:'Piscine ou repos, et 8 000 pas'},
@@ -360,6 +375,11 @@ rotation:{setup:['Élastique coincé dans la porte, à hauteur de poitrine','Met
  breath:'Souffle en tournant.',easier:'Rapproche-toi de la porte.',
  phase:['Tourne le buste','Freine le retour'],move:'hN',
  cues:[{j:'hip',t:'Hanches fixes',ph:'all',o:[120,40]},{j:'hN',t:'Bras tendus',ph:'all',o:[0,-70]}]},
+climber:{setup:['Mets-toi en haut d’une pompe : mains sous les épaules, bras tendus','Corps droit de la tête aux talons','Ramène un genou vers la poitrine, puis l’autre, en alternant'],
+ mistakes:['Fesses trop hautes','Mains qui avancent devant les épaules','Aller si vite que le corps se tord'],
+ breath:'Respire en rythme, ne bloque pas.',easier:'Mains sur une chaise ou un canapé, et rythme lent.',
+ phase:['Genoux vers la poitrine','En rythme'],move:'kN',
+ cues:[{j:'hip',t:'Fesses basses',ph:'all',o:[-60,-110]},{j:'kN',t:'Genou vers la poitrine',ph:'a',o:[90,-150]}]},
 deadbug:{setup:['Allongé sur le dos, bras tendus vers le plafond','Jambes levées, genoux pliés à 90° au-dessus des hanches','Plaque le bas du dos contre le sol'],
  mistakes:['Le bas du dos se décolle du sol','Aller trop vite'],
  breath:'Souffle en tendant le bras et la jambe.',easier:'Tends seulement la jambe, bras immobiles.',
@@ -383,6 +403,7 @@ const BRACE={
  sdt:['fort','Ventre verrouillé du début à la fin : c’est ce qui protège ton dos.'],
  rotation:['fort','Les abdos freinent la rotation : c’est tout le travail.'],
  deadbug:['fort','Bas du dos plaqué au sol en permanence.'],
+ climber:['fort','Garde le corps en planche : ce sont les abdos qui tiennent tout pendant que les jambes bougent.'],
 };
 Object.entries(GUIDE).forEach(([id,g])=>Object.assign(X[id],g,{brace:BRACE[id]}));
 const braceHTML=e=>e.brace?`<div class="brace"><span class="bl bl-${e.brace[0]==='léger'?1:e.brace[0]==='moyen'?2:3}"><i></i><i></i><i></i></span><div><b>Gainage ${e.brace[0]==='abdos'?'· ce sont les abdos qui travaillent':e.brace[0]}</b><div>${esc(e.brace[1])}</div></div></div>`:'';
@@ -400,6 +421,7 @@ const LOADS={
  crunch:{opts:['Genoux pliés','Descente 3 s','Jambes tendues'],def:0},
  planche:{opts:['Genoux au sol','Jambes tendues','Jambe du dessus levée'],def:1},
  deadbug:{opts:['Sans charge','Haltère 3 kg'],def:0},
+ climber:{opts:['Mains sur une chaise, lent','Au sol, rythme lent','Au sol, rythme rapide'],def:1},
 };
 const loadLabel=(id,v)=>{const l=LOADS[id];if(!l||v==null)return '';return l.L?`Sac ${String(v).replace('.',',')} L`:l.opts[Math.max(0,Math.min(l.opts.length-1,v))]};
 const lastLoad=id=>{for(let i=S.sessions.length-1;i>=0;i--){const v=S.sessions[i].loads?.[id];if(v!=null)return v}return null};
@@ -635,6 +657,7 @@ function confetti(){
 let TAB='home',RUN=null,timerId=null;
 document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render()});
 const setTheme=k=>document.body.classList.toggle('sB',k==='B');
+const setRestTheme=on=>document.body.classList.toggle('resting',!!on);
 const todaySess=()=>WEEK[new Date().getDay()].s;
 const nextSess=()=>{const l=S.sessions[S.sessions.length-1];return l&&l.sess==='A'?'B':'A'};
 const weeksSince=()=>{const f=S.sessions[0]?.date;return f?Math.floor((monday(new Date())-monday(new Date(f)))/6048e5):0};
@@ -646,7 +669,7 @@ const tired=()=>{const l=S.sessions.slice(-2);return l.length===2&&l.every(x=>x.
 let OB=lsGet('mm2_onb',false)?-1:0;
 const SLIDES=[
  {k:'Bienvenue',h:'Ton plan <span class="gtext">sur mesure.</span>',fig:'pompes',body:`<p>Objectif : <b>garder tes pecs et tes bras</b>, <b>dessiner tes abdos</b> et <b>affiner ta taille</b>.</p><p class="muted">Tout se fait chez toi avec ton sac à dos, ton élastique et tes haltères. L’app te guide à chaque répétition.</p>`},
- {k:'Ta semaine',h:'4 séances, <span class="gtext">~50 min.</span>',body:`<div class="glass pad">${[['Lun','Séance A','Pecs · épaules · triceps · abdos'],['Mar','Séance B','Dos · biceps · jambes · obliques'],['Mer','Piscine',''],['Jeu','Séance A',''],['Ven','Séance B',''],['Sam · Dim','Piscine ou repos','']].map(([d,a,b])=>`<div class="between" style="padding:9px 0;border-bottom:1px solid var(--line)"><b>${d}</b><span style="text-align:right">${a}${b?`<br><span class="small muted">${b}</span>`:''}</span></div>`).join('')}</div><p class="muted">Raté une séance ? Fais-la le lendemain, l’app te la propose.</p>`},
+ {k:'Ta semaine',h:'4 séances, <span class="gtext">~50 min.</span>',body:`<div class="glass pad">${[['Lun','Séance A','Pecs · épaules · triceps · abdos'],['Mar','Séance B','Abdos · taille · jambes · bras'],['Mer','Piscine',''],['Jeu','Séance A',''],['Ven','Séance B',''],['Sam · Dim','Piscine ou repos','']].map(([d,a,b])=>`<div class="between" style="padding:9px 0;border-bottom:1px solid var(--line)"><b>${d}</b><span style="text-align:right">${a}${b?`<br><span class="small muted">${b}</span>`:''}</span></div>`).join('')}</div><p class="muted">Raté une séance ? Fais-la le lendemain, l’app te la propose.</p>`},
  {k:'Le gainage',h:'Ventre gainé, <span class="gtext">pas bloqué.</span>',fig:'planche',body:`<ol class="steps"><li><b>Gainer</b>, c’est serrer le ventre comme si quelqu’un allait te donner une petite tape dessus, et serrer légèrement les fesses.</li><li>Ce n’est <b>pas</b> rentrer le ventre, et tu ne bloques <b>pas</b> ta respiration : tu continues de respirer.</li><li><b>Fort</b> (environ 70 %) sur les exercices qui chargent le dos : rowing, squat, soulevé de terre, pompes, planche.</li><li><b>Léger</b> sur les bras : curl, élévations, écartés.</li><li>Chaque exercice t’indique le bon niveau avec cette jauge : <span class="bl bl-3" style="display:inline-flex;vertical-align:middle"><i></i><i></i><i></i></span></li></ol>`},
  {k:'Les bases',h:'Jamais fait de muscu ? <span class="gtext">Voilà l’essentiel.</span>',body:`<ol class="steps"><li>Toujours l’échauffement guidé de 3 min avant.</li><li>La technique d’abord, la charge ensuite. Commence léger.</li><li>Descends lentement (2 s), remonte avec contrôle.</li><li>Souffle pendant l’effort, ne bloque jamais ta respiration.</li><li>Arrête une série quand il te reste environ 2 répétitions propres.</li><li>Douleur dans une articulation = tu arrêtes l’exercice. Des courbatures les jours suivants, c’est normal.</li></ol>`},
  {k:'Pendant la séance',h:'Regarde, place-toi, <span class="gtext">fais.</span>',fig:'rowing',labels:true,body:`<ol class="steps"><li>Le personnage te montre le mouvement. Les <b>repères</b> indiquent ce qui compte, la <b>flèche</b> le trajet, la consigne en haut le moment.</li><li>Le bouton <b>ⓘ</b> ouvre la fiche : mise en place, gainage, erreurs à éviter, version plus facile. Le bouton <b>½×</b> passe au ralenti.</li><li>Fais ta série, règle ton nombre avec − et +, puis <b>Série faite</b>.</li><li>Le repos se lance tout seul. 3 bips = c’est reparti.</li></ol>`},
@@ -668,6 +691,7 @@ document.addEventListener('click',ev=>{const b=ev.target.closest('[data-ob]');if
  if(a==='prev')OB=Math.max(0,OB-1);else if(a==='next'&&OB<SLIDES.length-1)OB++;else{OB=-1;lsSet('mm2_onb',true);TAB='home'}render()});
 function countUp(){document.querySelectorAll('[data-count]').forEach(el=>{if(el.dataset.done)return;el.dataset.done=1;const to=+el.dataset.count,t0=performance.now();(function f(n){const k=Math.min(1,(n-t0)/900),e=1-Math.pow(1-k,3);el.textContent=Math.round(to*e);if(k<1)requestAnimationFrame(f)})(t0)})}
 function render(){
+ if(!RUN)setRestTheme(false);
  if(OB>=0&&!RUN){$('#tabs').style.display='none';$('#app').innerHTML=`<div class="view">${obView()}</div>`;window.scrollTo(0,0);return}
  $('#tabs').style.display=RUN?'none':'flex';
  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===TAB));
@@ -839,7 +863,7 @@ function suggested(st){const l=lastFor(st.e.id);const idx=(RUN.results[st.e.id]|
 function topBar(){const ids=SESSIONS[RUN.k].list.map(x=>x[0]),ei=ids.indexOf(cur().e.id);return `<div class="top">${ids.map((_,k)=>`<i class="${k<ei?'d':k===ei?'c':''}"></i>`).join('')}</div>`}
 const quitBtn=`<button data-act="quit" class="chip">Quitter</button>`;
 function renderRun(bump){
- const app=$('#app'),st=cur(),anim=RUN.anim;RUN.anim=false;
+ const app=$('#app'),st=cur(),anim=RUN.anim;RUN.anim=false;setRestTheme(RUN.phase==='rest');
  if(anim)window.scrollTo(0,0);
  const wrap=h=>`<div class="${anim?'view':''}">${h}</div>`;
  if(RUN.phase==='warmup'){
@@ -854,41 +878,57 @@ function renderRun(bump){
   const nx=app.querySelector('[data-act=nextwu]');if(nx)nx.onclick=()=>nextWu(false);
   app.querySelector('[data-act=gowork]').onclick=()=>{clearInterval(timerId);saveRun();RUN.phase='work';RUN.anim=true;beep(1320,.2,.3);renderRun()};
  } else if(RUN.phase==='work'){
-  const e=st.e,timed=e.unit==='s';
+  const e=st.e,timed=e.unit==='s',G=RUN.go,state=!G?'ready':G.pausedAt?'paused':'going';
   if(RUN.val==null)RUN.val=suggested(st);
   const firstOfExo=st.set===1&&(!st.side||st.side==='côté droit');
   const hard=firstOfExo&&readyToProgress(RUN.k,e.id)&&!LOADS[e.id];
   const test=e.id==='pompes'&&st.set===1&&!lastFor('pompes');
-  const el=RUN.hold?Math.floor((Date.now()-RUN.hold)/1000):null,shown=timed?(el??RUN.val):RUN.val;
+  const el=Math.floor(elapsed()),shown=timed&&state!=='ready'?el:RUN.val;
+  const loadHTML=LOADS[e.id]?`<div class="load glass"><span class="kicker" style="font-size:11px">Charge</span><button data-ld="-1">−</button><b>${loadLabel(e.id,RUN.loads[e.id])}</b><button data-ld="1">+</button></div>${RUN.bumped[e.id]&&firstOfExo&&state==='ready'?`<div class="banner ok">Charge augmentée automatiquement : tu as tout réussi la dernière fois. 💪</div>`:''}`:'';
+  const lastHTML=(()=>{const l=lastFor(e.id),idx=(RUN.results[e.id]||[]).length;return l?`<div class="last">Dernière fois : <b>${l.join(' · ')}${timed?' s':''}</b>${l[idx]!=null?` · vise <b>${l[idx]+(timed?5:1)}</b>`:''}</div>`:''})();
+  const goal=`<div class="small muted" style="text-align:center">${timed?`Objectif ${e.min}–${e.max} s · arrête dès que la position se dégrade`:`Objectif ${e.min}–${e.max} reps · garde ~2 reps en réserve`}</div>`;
+  const range=`<div class="range">${Array.from({length:e.max},(_,k)=>`<i class="${k<shown?(k<e.min?'min':'on'):''}"></i>`).join('')}</div>`;
+  const counter=timed?`<div class="counter"><div class="big gtext">${shown}<span style="font-size:40px">s</span></div></div>`
+   :`<div class="counter"><button data-d="-1">−</button><div class="big gtext ${bump?'bump':''}">${RUN.val}</div><button data-d="1">+</button></div>`;
+  let dock;
+  if(state==='ready')dock=`${loadHTML}${lastHTML}<button class="btn go" data-act="start" style="margin-top:12px">▶ Démarrer la série</button>`;
+  else dock=`<div class="status ${state}"><span>${state==='going'?'● En cours':'❚❚ En pause'}</span><b id="el">${mmss(el)}</b></div>
+   ${timed?counter+range:`<div class="small muted" style="text-align:center;margin-top:8px">Compte tes reps, puis règle le nombre :</div>`+counter+range}
+   ${goal}
+   <div class="row" style="gap:10px;margin-top:14px"><button class="btn dark" data-act="${state==='going'?'pause':'resume'}" style="width:auto;flex:0 0 40%;white-space:nowrap;padding:19px 10px">${state==='going'?'❚❚ Pause':'▶ Reprendre'}</button><button class="btn" data-act="done">✓ Série terminée</button></div>`;
   app.innerHTML=wrap(`<div class="dockpage">${topBar()}
   <div class="between"><div class="row" style="gap:6px;flex-wrap:wrap"><span class="chip g">Série ${st.set}/${st.sets}</span>${st.side&&st.side!=='côté'?`<span class="chip">${st.side}</span>`:''}</div>${quitBtn}</div>
   <h1 style="margin:14px 0 12px;font-size:34px">${esc(e.name)}</h1>
-  ${stageHTML(e)}
-  ${test?`<div class="banner">Test : fais le maximum de pompes propres. Moins de 6 ? Fais les séries suivantes sur les genoux, et règle la charge sur « Sur les genoux ».</div>`:''}
-  ${hard?`<div class="banner">Haut de fourchette partout la dernière fois : ${esc(e.progress)}</div>`:''}
-  <div class="dock">${LOADS[e.id]?`<div class="load glass"><span class="kicker" style="font-size:11px">Charge</span><button data-ld="-1">−</button><b>${loadLabel(e.id,RUN.loads[e.id])}</b><button data-ld="1">+</button></div>${RUN.bumped[e.id]&&firstOfExo?`<div class="banner ok">Charge augmentée automatiquement : tu as tout réussi la dernière fois. 💪</div>`:''}`:''}<div class="counter"><button data-d="${timed?-5:-1}" ${RUN.hold?'disabled style="opacity:.3"':''}>−</button><div class="big gtext ${bump?'bump':''}">${shown}${timed?'<span style="font-size:40px">s</span>':''}</div><button data-d="${timed?5:1}" ${RUN.hold?'disabled style="opacity:.3"':''}>+</button></div>
-  <div class="small muted" style="text-align:center">${timed?`Objectif ${e.min}–${e.max} s · arrête dès que la hanche descend`:`Objectif ${e.min}–${e.max} reps · garde ~2 reps en réserve`}</div>
-  ${(()=>{const l=lastFor(e.id),idx=(RUN.results[e.id]||[]).length;return l?`<div class="last">Dernière fois : <b>${l.join(' · ')}${timed?' s':''}</b>${l[idx]!=null?` · vise <b>${l[idx]+(timed?5:1)}</b>`:''}</div>`:''})()}
-  <div class="range">${Array.from({length:e.max},(_,k)=>`<i class="${k<shown?(k<e.min?'min':'on'):''}"></i>`).join('')}</div>
-  <div style="margin-top:20px">${timed?(RUN.hold?`<button class="btn" data-act="stophold">Stop</button>`:`<button class="btn dark" data-act="hold">▶︎ Lancer le chrono</button><div style="height:10px"></div><button class="btn" data-act="done">Série faite</button>`):`<button class="btn" data-act="done">Série faite</button>`}</div></div>
-  ${firstOfExo?`<div class="glass pad" style="margin-top:12px"><div class="kicker">Mise en place</div><ol class="steps">${e.setup.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><div class="tip" style="margin-top:10px"><b>Respire :</b> ${esc(e.breath)}</div>${braceHTML(e)}</div>`:`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}</div>`}</div>`);
+  <div style="position:relative">${stageHTML(e)}${state==='paused'?'<div class="pausecov">❚❚ En pause</div>':''}</div>
+  ${RUN.readyMsg&&state==='ready'?`<div class="banner ok"><b>C’est à toi !</b> Mets-toi en place, puis appuie sur Démarrer.</div>`:''}
+  ${test&&state==='ready'?`<div class="banner">Test : fais le maximum de pompes propres. Moins de 6 ? Fais les séries suivantes sur les genoux, et règle la charge sur « Sur les genoux ».</div>`:''}
+  ${hard&&state==='ready'?`<div class="banner">Haut de fourchette partout la dernière fois : ${esc(e.progress)}</div>`:''}
+  <div class="dock">${dock}</div>
+  ${state==='ready'?(firstOfExo?`<div class="glass pad" style="margin-top:12px"><div class="kicker">Mise en place</div><ol class="steps">${e.setup.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><div class="tip" style="margin-top:10px"><b>Respire :</b> ${esc(e.breath)}</div>${braceHTML(e)}</div>`:`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}${braceHTML(e)}</div>`):''}</div>`);
   app.querySelectorAll('[data-ld]').forEach(b=>b.onclick=()=>{const l=LOADS[e.id],d=+b.dataset.ld;RUN.loads[e.id]=l.L?Math.max(0,Math.min(25,RUN.loads[e.id]+d*.5)):Math.max(0,Math.min(l.opts.length-1,RUN.loads[e.id]+d));RUN.bumped[e.id]=false;beep(900,.04,.06);renderRun()});
   app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{RUN.val=Math.max(0,Math.min(300,RUN.val+ +b.dataset.d));beep(1200,.03,.06);renderRun(true)});
-  const h=app.querySelector('[data-act=hold]');if(h)h.onclick=()=>{RUN.hold=Date.now();beep(1320,.2,.3);clearInterval(timerId);timerId=setInterval(()=>{const s=Math.floor((Date.now()-RUN.hold)/1000);if(s===e.min&&RUN.lastBeep!==s){RUN.lastBeep=s;beep(990,.12,.25)}if(s===e.max&&RUN.lastBeep!==s){RUN.lastBeep=s;chord();buzz(200)}const b=document.querySelector('.big');if(b)b.innerHTML=s+'<span style="font-size:40px">s</span>';document.querySelectorAll('.range i').forEach((x,k)=>x.className=k<s?(k<e.min?'min':'on'):'')},250);renderRun()};
-  const sh=app.querySelector('[data-act=stophold]');if(sh)sh.onclick=()=>{clearInterval(timerId);RUN.val=Math.floor((Date.now()-RUN.hold)/1000);RUN.hold=null;finishSet()};
-  const dn=app.querySelector('[data-act=done]');if(dn)dn.onclick=finishSet;
+  const on=(a,f)=>{const x=app.querySelector(`[data-act=${a}]`);if(x)x.onclick=f};
+  on('start',()=>{RUN.go={t0:Date.now(),paused:0,pausedAt:null};RUN.readyMsg=false;RUN.lastBeep=null;beep(1320,.2,.3);buzz(60);startSetTimer();renderRun()});
+  on('pause',()=>{RUN.go.pausedAt=Date.now();beep(700,.1,.2);renderRun()});
+  on('resume',()=>{RUN.go.paused+=Date.now()-RUN.go.pausedAt;RUN.go.pausedAt=null;beep(1100,.1,.2);renderRun()});
+  on('done',()=>{if(timed)RUN.val=Math.floor(elapsed());clearInterval(timerId);RUN.go=null;finishSet()});
  } else if(RUN.phase==='rest'){
-  const left=Math.max(0,Math.ceil((RUN.restEnd-Date.now())/1000)),nx=cur();
+  const left=restLeft(),nx=cur(),paused=!!RUN.restPausedLeft;
   app.innerHTML=wrap(`${topBar()}
-  <div class="between"><div><div class="kicker">${RUN.switching?'Change de côté':'Récupère'}</div><h1 style="font-size:34px;margin-top:4px">${left<=3?'Prépare-toi':RUN.switching?'Autre côté':'Repos'}</h1></div>${quitBtn}</div>
-  <div class="ring">${ringSVG(left/RUN.restTotal,270,16,'rr')}<div class="t"><b id="rt" class="${left<=3?'gtext pulse':''}" style="${left<=3?'font-size:110px':''}">${left<=3?left:mmss(left)}</b>${left>3?'<span class="muted small">restant</span>':''}</div></div>
+  <div class="between"><div class="kicker">${RUN.switching?'Change de côté':'Entre deux séries'}</div>${quitBtn}</div>
+  <div style="text-align:center;margin-top:10px"><div class="restword">${RUN.switching?'AUTRE CÔTÉ':'REPOS'}</div>
+  <div class="muted" style="margin-top:2px">${RUN.switching?'Installe-toi de l’autre côté.':'Souffle, bois une gorgée d’eau. Tu ne fais rien.'}</div></div>
+  <div class="ring">${ringSVG(left/RUN.restTotal,250,16,'rr')}<div class="t"><b id="rt" class="${left<=3&&!paused?'pulse':''}">${paused?'❚❚':left<=3?left:mmss(left)}</b><span class="muted small" id="rs">${paused?'en pause · '+mmss(left):'avant la prochaine série'}</span></div></div>
+  <div class="row" style="justify-content:center;gap:8px"><button class="chip" data-add="-15">−15 s</button><button class="chip" data-act="${paused?'rresume':'rpause'}">${paused?'▶ Reprendre':'❚❚ Pause'}</button><button class="chip" data-add="15">+15 s</button></div>
+  <button class="btn dark" data-act="skip" style="margin-top:16px">J’ai récupéré, passer le repos ›</button>
   ${RUN.i>0?'<button class="undo" data-act="undo">↶ Corriger la série précédente</button>':''}
-  <div class="row" style="justify-content:center;gap:10px;margin-top:10px"><button class="chip" data-add="-15">−15 s</button><button class="chip" data-add="15">+15 s</button><button class="chip g" data-act="skip">Passer ›</button></div>
-  <div class="small muted" style="text-align:center;margin-top:12px">Garde l’app ouverte : le bip ne sonne pas écran verrouillé.</div>
-  <div class="kicker" style="margin-top:22px">Ensuite</div>
-  <div class="glass row" style="margin-top:10px;padding:12px;overflow:hidden"><div class="stage" style="width:130px;flex-shrink:0;border-radius:20px"><div data-fig="${nx.e.id}"></div></div><div><b style="font-size:19px;letter-spacing:-.02em">${esc(nx.e.name)}</b><div class="gtext" style="font-weight:800;margin-top:4px">Série ${nx.set}/${nx.sets}${nx.side&&nx.side!=='côté'?' · '+nx.side:''}</div><div class="small muted" style="margin-top:2px">${nx.e.min}–${nx.e.max} ${nx.e.unit==='s'?'s':'reps'}</div></div></div>`);
-  app.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{RUN.restEnd+= +b.dataset.add*1000;RUN.restTotal=Math.max(RUN.restTotal,(RUN.restEnd-Date.now())/1000);renderRun()});
+  <div class="kicker" style="margin-top:22px">Prochaine série</div>
+  <div class="glass row" style="margin-top:10px;padding:12px"><div style="width:96px;height:72px;flex-shrink:0;opacity:.75">${figSVG(nx.e,0,null,false)}</div><div><b style="font-size:17px;letter-spacing:-.02em">${esc(nx.e.name)}</b><div class="small" style="margin-top:4px;color:#D6D6DE">Série ${nx.set}/${nx.sets}${nx.side&&nx.side!=='côté'?' · '+nx.side:''} · ${nx.e.min}–${nx.e.max} ${nx.e.unit==='s'?'s':'reps'}</div></div></div>
+  <div class="small muted" style="text-align:center;margin-top:14px">À la fin du repos, l’app bipe et attend que tu appuies sur Démarrer.</div>`);
+  app.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{if(RUN.restPausedLeft){RUN.restPausedLeft=Math.max(1000,RUN.restPausedLeft+ +b.dataset.add*1000)}else RUN.restEnd+= +b.dataset.add*1000;RUN.restTotal=Math.max(RUN.restTotal,restLeft());renderRun()});
   app.querySelector('[data-act=skip]').onclick=()=>endRest();
+  const rp=app.querySelector('[data-act=rpause]');if(rp)rp.onclick=()=>{RUN.restPausedLeft=Math.max(1000,RUN.restEnd-Date.now());renderRun()};
+  const rr=app.querySelector('[data-act=rresume]');if(rr)rr.onclick=()=>{RUN.restEnd=Date.now()+RUN.restPausedLeft;RUN.restPausedLeft=null;RUN.lastMode=null;renderRun()};
   const un=app.querySelector('[data-act=undo]');if(un)un.onclick=undoSet;
  } else {
   const ids=SESSIONS[RUN.k].list.map(x=>x[0]).filter(id=>RUN.results[id]);
@@ -917,17 +957,23 @@ function finishSet(){
  if(st.side&&!st.lastSide)startRest(10,true);else startRest(st.e.rest,false);
 }
 function undoSet(){const prev=RUN.steps[RUN.i-1];if(!prev)return;const arr=RUN.results[prev.e.id]||[];const v=arr.pop();if(!arr.length)delete RUN.results[prev.e.id];
- clearInterval(timerId);RUN.i--;RUN.val=v??null;RUN.phase='work';RUN.anim=true;saveRun();renderRun()}
+ clearInterval(timerId);RUN.i--;RUN.val=v??null;RUN.go=null;RUN.phase='work';RUN.anim=true;saveRun();renderRun()}
+const elapsed=()=>{const G=RUN&&RUN.go;if(!G)return 0;return Math.max(0,((G.pausedAt||Date.now())-G.t0-G.paused)/1000)};
+const restLeft=()=>Math.max(0,Math.ceil((RUN.restPausedLeft||(RUN.restEnd-Date.now()))/1000));
+function startSetTimer(){clearInterval(timerId);timerId=setInterval(()=>{if(!RUN||RUN.phase!=='work'||!RUN.go)return clearInterval(timerId);
+ const e=cur().e,s=Math.floor(elapsed()),x=$('#el');if(x)x.textContent=mmss(s);
+ if(e.unit==='s'&&!RUN.go.pausedAt){if(s===e.min&&RUN.lastBeep!==s){RUN.lastBeep=s;beep(990,.12,.25)}if(s===e.max&&RUN.lastBeep!==s){RUN.lastBeep=s;chord();buzz(200)}
+  const b=document.querySelector('.big');if(b)b.innerHTML=s+'<span style="font-size:40px">s</span>';document.querySelectorAll('.range i').forEach((r,k)=>r.className=k<s?(k<e.min?'min':'on'):'')}},250)}
 function startRest(sec,switching){
- RUN.phase='rest';RUN.switching=switching;RUN.restTotal=sec;RUN.restEnd=Date.now()+sec*1000;RUN.lastBeep=null;
+ RUN.phase='rest';RUN.switching=switching;RUN.restTotal=sec;RUN.restEnd=Date.now()+sec*1000;RUN.restPausedLeft=null;RUN.lastBeep=null;RUN.lastMode=null;
  clearInterval(timerId);
- timerId=setInterval(()=>{const left=Math.ceil((RUN.restEnd-Date.now())/1000);
+ timerId=setInterval(()=>{if(RUN.restPausedLeft)return;const left=Math.ceil((RUN.restEnd-Date.now())/1000);
   if(left<=3&&left>0&&RUN.lastBeep!==left){RUN.lastBeep=left;beep(880,.12,.25);buzz(40)}
   if(left<=0)return endRest(true);
   const last=left<=3,el=$('#rt');if(!el||RUN.lastMode!==last){RUN.lastMode=last;renderRun()}else{const t=last?String(left):mmss(left);if(el.textContent!==t)el.textContent=t;setRing(left/RUN.restTotal)}},250);
  renderRun();
 }
-function endRest(go){clearInterval(timerId);if(go){beep(1320,.25,.3);buzz([80,60,80])}RUN.phase='work';RUN.anim=true;renderRun()}
+function endRest(go){clearInterval(timerId);if(go){chord();buzz([80,60,80])}RUN.phase='work';RUN.go=null;RUN.readyMsg=true;RUN.restPausedLeft=null;RUN.anim=true;renderRun()}
 const saveRun=()=>{if(RUN&&RUN.phase!=='end')lsSet('mm2_run',{k:RUN.k,i:RUN.i,results:RUN.results,loads:RUN.loads,light:RUN.light,started:RUN.started,at:Date.now()})};
 const clearRun=()=>{try{localStorage.removeItem('mm2_run')}catch(e){}};
 const pendingRun=()=>{const r=lsGet('mm2_run',null);return r&&Date.now()-r.at<6*3600e3?r:null};
