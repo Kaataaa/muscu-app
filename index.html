@@ -184,6 +184,12 @@ body.resting{--g1:#2FD3C2;--g2:#3D8BFF}
 .after{margin-top:10px;text-align:center;font-size:13.5px;color:var(--muted);line-height:1.4}.after b{color:var(--fg)}
 .restinfo{display:flex;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap}
 .restinfo span{padding:8px 14px;border-radius:999px;background:var(--glass2);border:1px solid var(--line);font-size:14px;color:var(--muted)}.restinfo b{color:var(--fg)}
+.brth{position:absolute;left:12px;bottom:12px;z-index:2;padding:8px 14px;border-radius:999px;font-weight:900;font-size:15px;letter-spacing:.01em;transition:background .3s,color .3s;pointer-events:none}
+.brth:empty{display:none}
+.brth.bi{background:rgba(61,214,255,.2);color:#7FE3FF;border:1px solid rgba(61,214,255,.5)}
+.brth.bo{background:rgba(255,106,61,.2);color:#FFB08F;border:1px solid rgba(255,106,61,.5)}
+.brth.bc{background:rgba(255,255,255,.08);color:#D6D6DE;border:1px solid var(--line)}
+.post{margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:14px;line-height:1.45;color:#D6D6DE}.post b{color:var(--fg)}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
 </style>
 </head>
@@ -341,42 +347,42 @@ const isTrainDay=d=>d>=1&&d<=5;
 const GUIDE={
 pompes:{setup:['Mains au sol, un peu plus écartées que les épaules, doigts vers l’avant','Jambes tendues derrière toi, sur la pointe des pieds','Serre les fesses et le ventre : ton corps est une planche droite de la tête aux talons'],
  mistakes:['Fesses en l’air ou ventre qui s’affaisse','Coudes écartés sur les côtés : garde-les à environ 45° du corps','Tête qui plonge vers le sol'],
- breath:'Inspire en descendant, souffle en poussant.',easier:'Genoux au sol, ou mains posées sur une chaise ou un plan de travail.',
+ breath:'Inspire en descendant. Souffle en poussant.',easier:'Genoux au sol, ou mains posées sur une chaise ou un plan de travail.',
  phase:['Descends en 2 s','Pousse fort'],move:'neck',
  cues:[{j:'midback',t:'Corps bien droit',ph:'all',o:[-70,-110]},{j:'eN',t:'Coudes à 45°',ph:'b',o:[0,-160]}]},
 dev:{setup:['Debout au milieu de l’élastique, pieds largeur de hanches','Attrape les deux brins, mains à hauteur d’épaules, paumes vers l’avant','Ventre et fesses serrés'],
  mistakes:['Cambrer le bas du dos','Pousser vers l’avant au lieu de vers le haut'],
- breath:'Souffle en poussant vers le haut.',easier:'Pieds plus rapprochés : l’élastique est moins tendu.',
+ breath:'Inspire en bas. Souffle en poussant vers le haut.',easier:'Pieds plus rapprochés : l’élastique est moins tendu.',
  phase:['Pousse vers le plafond','Redescends lentement'],move:'hN',
  cues:[{j:'hN',t:'Bras tendus en haut',ph:'b',o:[70,30]},{j:'lowback',t:'Pas de cambrure',ph:'all',o:[120,-10]}]},
 ecarteSol:{setup:['Allongé sur le dos, genoux pliés, pieds à plat','Un haltère de 3 kg par main pour commencer, 2 par main quand c’est facile','Bras tendus au-dessus de la poitrine, coudes à peine pliés'],
  mistakes:['Plier les coudes comme un développé','Laisser tomber les bras d’un coup'],
- breath:'Inspire en ouvrant, souffle en refermant.',easier:'Un seul haltère de 3 kg par main.',
+ breath:'Inspire en ouvrant les bras. Souffle en les refermant.',easier:'Un seul haltère de 3 kg par main.',
  phase:['Ouvre lentement vers le sol','Referme en serrant les pecs'],move:'hN',
  cues:[{j:'head',t:'Vue de dessus',ph:'all',o:[0,-80]},{j:'hN',t:'Bras au-dessus de la poitrine',ph:'a',o:[60,90]},{j:'hN',t:'Ouvre jusqu’au sol',ph:'b',o:[-40,90]}]},
 lat:{setup:['Debout, un haltère de 3 kg dans chaque main, bras le long du corps','Coudes très légèrement pliés, buste droit, ventre serré'],
  mistakes:['Monter plus haut que les épaules','Hausser les épaules vers les oreilles','Se balancer pour monter'],
- breath:'Souffle en montant.',easier:'Monte un bras à la fois.',
+ breath:'Souffle en montant les bras. Inspire en les redescendant.',easier:'Monte un bras à la fois.',
  phase:['Monte jusqu’aux épaules','Redescends en 2 s'],move:'hN',
  cues:[{j:'hN',t:'Stop à hauteur d’épaules',ph:'b',o:[-80,-110]},{j:'shoulder',t:'Épaules basses',ph:'all',o:[-160,-110]}]},
 triceps:{setup:['Debout, kettlebell tenue à deux mains par les côtés de la poignée','Monte-la au-dessus de la tête, bras tendus','Coudes serrés, pointés vers le plafond'],
  mistakes:['Coudes qui s’écartent','Cambrer le dos'],
- breath:'Inspire en descendant, souffle en tendant les bras.',easier:'Assis sur une chaise, dos droit.',
+ breath:'Inspire en descendant derrière la tête. Souffle en tendant les bras.',easier:'Assis sur une chaise, dos droit.',
  phase:['Descends derrière la tête','Tends les bras'],move:'hN',
  cues:[{j:'eN',t:'Coudes fixes',ph:'all',o:[90,20]}]},
 crunch:{setup:['Allongé sur le dos, bras le long du corps, paumes au sol','Jambes levées, genoux pliés à 90°'],
  mistakes:['Balancer les jambes pour prendre de l’élan','Redescendre d’un coup'],
- breath:'Souffle en enroulant le bassin.',easier:'Mouvement plus petit : décolle juste un peu le bassin.',
+ breath:'Souffle en enroulant le bassin. Inspire en redescendant.',easier:'Mouvement plus petit : décolle juste un peu le bassin.',
  phase:['Enroule le bassin','Redescends en 3 s'],move:'kN',
  cues:[{j:'hip',t:'Le bassin décolle',ph:'b',o:[-60,-200]},{j:'kN',t:'Genoux vers la poitrine',ph:'b',o:[150,-200]}]},
 planche:{setup:['Allongé sur le côté, coude juste sous l’épaule','Jambes tendues, pieds l’un sur l’autre (ou l’un devant l’autre, plus stable)','Soulève la hanche : ton corps forme une ligne droite'],
  mistakes:['Hanche qui tombe vers le sol','Épaule écrasée : pousse le sol avec l’avant-bras'],
- breath:'Respire normalement, ne bloque pas ta respiration.',easier:'Genoux au sol, jambes pliées.',
+ breath:'Respire calmement par le nez, sans jamais bloquer.',easier:'Genoux au sol, jambes pliées.',
  phase:['Tiens, hanche haute','Respire'],move:null,
  cues:[{j:'hip',t:'Hanche haute',ph:'all',o:[110,-150]},{j:'eN',t:'Coude sous l’épaule',ph:'all',o:[-20,-230]}]},
 rowing:{setup:['Remplis le sac d’eau et ferme-le bien','Pieds largeur de hanches, genoux un peu pliés','Penche le buste à 45° en reculant les fesses, dos bien plat','Le sac pend sous tes épaules, tenu par la poignée ou les bretelles'],
  mistakes:['Dos rond : c’est l’erreur à éviter absolument','Tirer seulement avec les bras sans serrer les omoplates','Se redresser pour tirer'],
- breath:'Souffle en tirant.',easier:'Moins d’eau dans le sac.',
+ breath:'Souffle en tirant le sac. Inspire en le redescendant.',easier:'Moins d’eau dans le sac.',
  phase:['Tire vers le nombril','Redescends lentement'],move:'hN',
  cues:[{j:'midback',t:'Dos plat',ph:'all',o:[-100,-120]},{j:'eN',t:'Coudes vers l’arrière',ph:'b',o:[130,-150]}]},
 tirage:{setup:['Fais un nœud à l’élastique et coince-le dans la porte fermée, à hauteur de poitrine','Recule jusqu’à ce que l’élastique soit tendu, bras tendus devant toi','Genoux un peu pliés, poitrine sortie'],
@@ -391,22 +397,22 @@ ecarte:{setup:['Debout, élastique tenu à deux mains devant toi','Bras tendus �
  cues:[{j:'hN',t:'Bras tendus',ph:'b',o:[-40,-60]},{j:'upperback',t:'Omoplates serrées',ph:'b',o:[140,60]}]},
 curl:{setup:['Debout, 2 haltères de 3 kg dans chaque main (6 kg par main)','Bras le long du corps, paumes vers l’avant','Coudes collés contre les côtes'],
  mistakes:['Avancer les coudes','Se balancer avec le dos'],
- breath:'Souffle en montant.',easier:'Un seul haltère de 3 kg par main.',
+ breath:'Souffle en montant. Inspire en redescendant.',easier:'Un seul haltère de 3 kg par main.',
  phase:['Monte','Redescends en 2 s'],move:'hN',
  cues:[{j:'eN',t:'Coude collé au corps',ph:'all',o:[-180,0]}]},
 squat:{setup:['Pieds un peu plus écartés que les hanches, pointes légèrement ouvertes','Sac serré contre la poitrine','Regard droit devant toi'],
  mistakes:['Talons qui décollent','Genoux qui rentrent vers l’intérieur','Dos qui s’arrondit'],
- breath:'Inspire en descendant, souffle en remontant.',easier:'Sans le sac, ou descends jusqu’à toucher une chaise.',
+ breath:'Inspire en haut et descends. Souffle en remontant.',easier:'Sans le sac, ou descends jusqu’à toucher une chaise.',
  phase:['Descends, fesses en arrière','Pousse dans les talons'],move:'hip',
  cues:[{j:'kN',t:'Genoux dans l’axe des pieds',ph:'b',o:[60,-70]},{j:'fN',t:'Talons au sol',ph:'all',o:[90,-40]}]},
 sdt:{setup:['Debout, sac tenu devant les cuisses à deux mains','Genoux à peine pliés, et ils ne bougent plus','Dos plat, épaules en arrière'],
  mistakes:['Arrondir le dos : c’est le plus important','Plier les genoux comme pour un squat','Descendre trop bas si ton dos commence à s’arrondir'],
- breath:'Inspire en descendant, souffle en remontant.',easier:'Moins d’eau, et descends seulement jusqu’aux genoux.',
+ breath:'Inspire en descendant. Souffle en remontant.',easier:'Moins d’eau, et descends seulement jusqu’aux genoux.',
  phase:['Recule les fesses','Remonte en serrant les fessiers'],move:'hip',
  cues:[{j:'hip',t:'Fesses en arrière',ph:'b',o:[-120,90]},{j:'midback',t:'Dos plat',ph:'b',o:[10,-150]}]},
 rotation:{setup:['Élastique coincé dans la porte, à hauteur de poitrine','Mets-toi de profil par rapport à la porte, pieds écartés','Bras tendus devant toi, mains jointes sur l’élastique'],
  mistakes:['Tourner les hanches : seul le buste tourne','Laisser l’élastique te ramener d’un coup'],
- breath:'Souffle en tournant.',easier:'Rapproche-toi de la porte.',
+ breath:'Souffle en tournant. Inspire en revenant.',easier:'Rapproche-toi de la porte.',
  phase:['Tourne le buste','Freine le retour'],move:'hN',
  cues:[{j:'hip',t:'Hanches fixes',ph:'all',o:[120,40]},{j:'hN',t:'Bras tendus',ph:'all',o:[0,-70]}]},
 serrees:{setup:['Mains au sol sous les épaules, plus rapprochées que pour les pompes classiques','Corps droit de la tête aux talons'],
@@ -431,7 +437,7 @@ climber:{setup:['Mets-toi en haut d’une pompe : mains sous les épaules, bras 
  cues:[{j:'hip',t:'Fesses basses',ph:'all',o:[-90,-140]},{j:'kN',t:'Genou vers la poitrine',ph:'a',o:[150,40]}]},
 deadbug:{setup:['Allongé sur le dos, bras tendus vers le plafond','Jambes levées, genoux pliés à 90° au-dessus des hanches','Plaque le bas du dos contre le sol'],
  mistakes:['Le bas du dos se décolle du sol','Aller trop vite'],
- breath:'Souffle en tendant le bras et la jambe.',easier:'Tends seulement la jambe, bras immobiles.',
+ breath:'Souffle en tendant le bras et la jambe. Inspire en revenant.',easier:'Tends seulement la jambe, bras immobiles.',
  phase:['Tends bras et jambe opposés','Reviens au centre'],move:'fN',
  cues:[{j:'lowback',t:'Bas du dos collé au sol',ph:'all',o:[20,-150]}]},
 };
@@ -459,7 +465,33 @@ const BRACE={
  jacks:['léger','Ventre légèrement serré, reste souple.'],
  climber:['fort','Garde le corps en planche : ce sont les abdos qui tiennent tout pendant que les jambes bougent.'],
 };
-Object.entries(GUIDE).forEach(([id,g])=>Object.assign(X[id],g,{brace:BRACE[id]}));
+/* Position du dos et du corps, et respiration (aller = 1re valeur, retour = 2e) */
+const POSTURE={
+ pompes:['Corps en planche droite de la tête aux talons. Dos plat : ni creusé, ni arrondi. Regard vers le sol, un peu devant les mains.',['in','out']],
+ serrees:['Comme les pompes : corps droit de la tête aux talons, dos plat, regard vers le sol.',['in','out']],
+ dev:['Debout, genoux souples, dos droit. Côtes rentrées : le bas du dos ne se creuse pas quand les bras montent.',['out','in']],
+ lat:['Debout, dos droit, buste très légèrement penché en avant. Épaules basses, loin des oreilles.',['out','in']],
+ triceps:['Debout, dos droit, côtes rentrées pour ne pas cambrer. Coudes près de la tête, pointés vers le plafond.',['out','in']],
+ crunch:['Allongé, tout le dos au sol au départ. Le bassin s’enroule vers toi, la tête et les épaules restent posées.',['out','in']],
+ planche:['Corps aligné tête, hanche, pieds. Épaule juste au-dessus du coude, hanche haute.','hold'],
+ hipdips:['Planche latérale, épaule au-dessus du coude. Le buste reste de profil : il ne tourne pas vers le sol.',['in','out']],
+ climber:['Haut d’une pompe : dos plat, fesses à hauteur des épaules, épaules au-dessus des mains.','free'],
+ jacks:['Debout, dos droit, ventre légèrement serré. Atterris souplement, genoux jamais verrouillés.','free'],
+ squat:['Dos droit, poitrine sortie, regard devant. Tu t’assois vers l’arrière, talons au sol, genoux dans l’axe des pieds.',['in','out']],
+ sdt:['Dos PLAT du début à la fin, épaules en arrière, nuque dans l’axe. Ce sont les hanches qui reculent, les genoux bougent à peine.',['in','out']],
+ rotation:['Debout, pieds écartés, genoux souples, bassin face à l’avant. Seul le buste tourne, dos bien droit.',['out','in']],
+ deadbug:['Allongé, bas du dos plaqué au sol tout le long. Genoux au-dessus des hanches, bras vers le plafond.',['out','in']],
+ rowing:['Penché à 45°, dos plat (jamais rond), fesses en arrière, genoux un peu pliés. Nuque dans l’alignement du dos.',['out','in']],
+ curl:['Debout, dos droit, coudes collés aux côtes. Le buste ne bouge pas, seuls les avant-bras montent.',['out','in']],
+ ecarteSol:['Allongé, dos à plat au sol, genoux pliés, pieds posés.',['in','out']],
+ bicycle:['Allongé, bas du dos collé au sol, épaules légèrement décollées. Mains derrière la tête sans tirer sur la nuque.',['out','out']],
+ hollow:['Allongé, bas du dos PLAQUÉ au sol, corps en forme de banane. Si le dos décolle, remonte les jambes.','hold'],
+ tirage:['Debout, genoux un peu pliés, poitrine sortie, buste immobile.',['out','in']],
+ ecarte:['Debout, dos droit, bras tendus devant, épaules basses.',['out','in']],
+};
+Object.entries(GUIDE).forEach(([id,g])=>Object.assign(X[id],g,{brace:BRACE[id],posture:POSTURE[id]?.[0],bm:POSTURE[id]?.[1]}));
+const breathTxt=(e,go)=>{const m=e.bm;if(!m)return '';if(m==='hold')return 'Respire calmement';if(m==='free')return 'Respire en rythme';return m[go?0:1]==='in'?'Inspire':'Souffle'};
+const postureHTML=e=>e.posture?`<div class="post"><b>Position du corps</b><div>${esc(e.posture)}</div></div>`:'';
 const braceHTML=e=>e.brace?`<div class="brace"><span class="bl bl-${e.brace[0]==='léger'?1:e.brace[0]==='moyen'?2:3}"><i></i><i></i><i></i></span><div><b>Gainage ${e.brace[0]==='abdos'?'· ce sont les abdos qui travaillent':e.brace[0]}</b><div>${esc(e.brace[1])}</div></div></div>`:'';
 
 /* Charge suivie par exercice : L = litres d'eau dans le sac (pas 0,5) · opts = niveaux */
@@ -646,14 +678,14 @@ function animate(now){
   if(IO){if(!el._obs){el._obs=1;el._vis=true;IO.observe(el)}if(!el._vis)return}
   const synced=el.dataset.labels==='1'&&RUN&&RUN.phase==='work'&&RUN.go&&el.closest('.dockpage');
   const ph=x=>e.spin?((x/e.period)%1+1)%1:(1-Math.cos(x/e.period*Math.PI*2))/2;
-  if(synced){const t=elapsed()*(SLOW?.4:1);el.innerHTML=figSVG(e,ph(t),ph(t-.12),true);const cap=el.parentElement.querySelector('[data-cap]');if(cap&&e.phase){const go=Math.sin(t/e.period*Math.PI*2)>=0||e.unit==='s';const txt=(e.unit==='s'?'⏱ ':'▸ ')+e.phase[go?0:1];if(cap.textContent!==txt)cap.textContent=txt}return}
+  if(synced){const t=elapsed()*(SLOW?.4:1);el.innerHTML=figSVG(e,ph(t),ph(t-.12),true);const cap=el.parentElement.querySelector('[data-cap]');if(cap&&e.phase){const go=Math.sin(t/e.period*Math.PI*2)>=0||e.unit==='s';const txt=(e.unit==='s'?'⏱ ':'▸ ')+e.phase[go?0:1];if(cap.textContent!==txt)cap.textContent=txt;const br=el.parentElement.querySelector('[data-br]');if(br){const bt=breathTxt(e,go);if(br.textContent!==bt){br.textContent=bt;br.className='brth '+(bt==='Inspire'?'bi':bt==='Souffle'?'bo':'bc')}}}return}
   el.innerHTML=figSVG(e,ph(s),el.dataset.trail?ph(s-.12):null,el.dataset.labels==='1');
-  if(el.dataset.labels==='1'){const cap=el.parentElement.querySelector('[data-cap]');if(cap&&e.phase){const go=Math.sin(s/e.period*Math.PI*2)>=0||e.unit==='s';const txt=(e.unit==='s'?'⏱ ':'▸ ')+e.phase[go?0:1];if(cap.textContent!==txt)cap.textContent=txt}}
+  if(el.dataset.labels==='1'){const cap=el.parentElement.querySelector('[data-cap]');if(cap&&e.phase){const go=Math.sin(s/e.period*Math.PI*2)>=0||e.unit==='s';const txt=(e.unit==='s'?'⏱ ':'▸ ')+e.phase[go?0:1];if(cap.textContent!==txt)cap.textContent=txt;const br=el.parentElement.querySelector('[data-br]');if(br){const bt=breathTxt(e,go);if(br.textContent!==bt){br.textContent=bt;br.className='brth '+(bt==='Inspire'?'bi':bt==='Souffle'?'bo':'bc')}}}}
  });
 }
 requestAnimationFrame(animate);
 
-const stageHTML=(e,extra='')=>`<div class="stage" ${extra}><div class="cap"><span data-cap="${e.id}"></span><div class="sbtn"><button data-slow class="${SLOW?'on':''}" aria-label="Ralenti" style="font-size:13px;font-weight:900;letter-spacing:-.02em">½×</button><button data-info="${e.id}" aria-label="Mise en place"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01"/></svg></button></div></div><div class="fig" data-fig="${e.id}" data-trail="1" data-labels="1"></div></div>`;
+const stageHTML=(e,extra='')=>`<div class="stage" ${extra}><div class="brth" data-br="${e.id}"></div><div class="cap"><span data-cap="${e.id}"></span><div class="sbtn"><button data-slow class="${SLOW?'on':''}" aria-label="Ralenti" style="font-size:13px;font-weight:900;letter-spacing:-.02em">½×</button><button data-info="${e.id}" aria-label="Mise en place"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01"/></svg></button></div></div><div class="fig" data-fig="${e.id}" data-trail="1" data-labels="1"></div></div>`;
 document.addEventListener('click',ev=>{
  const sl=ev.target.closest('[data-slow]');if(sl){SLOW=!SLOW;document.querySelectorAll('[data-slow]').forEach(b=>b.classList.toggle('on',SLOW));return}
  const inf=ev.target.closest('[data-info]');if(inf)showInfo(inf.dataset.info);
@@ -662,7 +694,7 @@ function showInfo(id){const e=X[id];
  $('#modal').innerHTML=`<div class="modal" id="mi"><div class="glass sheet"><div class="between"><h2 style="margin:0">${esc(e.name)}</h2><button class="chip" id="mic">Fermer</button></div>
  <div style="margin-top:14px">${stageHTML(e).replace('data-info','data-x')}</div>
  <h2 style="font-size:18px">Mise en place</h2><ol class="steps">${e.setup.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>
- ${braceHTML(e)}<h2 style="font-size:18px">Pendant le mouvement</h2>${e.tips.map(x=>`<div class="tip">${esc(x)}</div>`).join('')}<div class="tip"><b>Respiration :</b> ${esc(e.breath)}</div>
+ ${postureHTML(e)}${braceHTML(e)}<h2 style="font-size:18px">Pendant le mouvement</h2>${e.tips.map(x=>`<div class="tip">${esc(x)}</div>`).join('')}<div class="tip"><b>Respiration :</b> ${esc(e.breath)}</div>
  <h2 style="font-size:18px">Erreurs à éviter</h2>${e.mistakes.map(x=>`<div class="bad">${esc(x)}</div>`).join('')}
  <h2 style="font-size:18px">Trop dur ?</h2><div class="tip">${esc(e.easier)}</div>
  <h2 style="font-size:18px">Trop facile ?</h2><div class="tip">${esc(e.progress)}</div>
@@ -803,9 +835,9 @@ function homeView(){
  <div class="glass pad" style="margin-top:12px"><div class="week">${days}</div>
 </div>
  <h2>Aujourd’hui, pour la taille</h2>
- <div class="glass pad"><div class="small muted" style="margin-bottom:10px;line-height:1.45">C’est ça qui fait partir les poignées d’amour. Coche au fil de la journée.</div>
-  <div class="habits">${[['swim','🏊','Piscine',swamToday()],['prot','🍗','~140 g de protéines',habit('prot')],['steps','👟','8 000 pas',habit('steps')]].map(([k,ic,t,on])=>`<button class="hab ${on?'on':''}" data-hab="${k}"><span>${ic}</span>${t}${on?'<i>✓</i>':''}</button>`).join('')}</div>
-  <div class="small muted" style="margin-top:10px">Cette semaine : 🏊 ${swimsWeek()} · 🍗 ${habitWeek('prot')} · 👟 ${habitWeek('steps')}</div></div>
+ <div class="glass pad"><div class="small muted" style="margin-bottom:10px;line-height:1.45">Avec tes balades et tes protéines, c’est ça qui fait partir les poignées d’amour. Coche au fil de la journée.</div>
+  <div class="habits">${[['swim','🏊','Piscine',swamToday()],['sleep','😴','7 h de sommeil',habit('sleep')],['sugar','🍬','Zéro grignotage',habit('sugar')]].map(([k,ic,t,on])=>`<button class="hab ${on?'on':''}" data-hab="${k}"><span>${ic}</span>${t}${on?'<i>✓</i>':''}</button>`).join('')}</div>
+  <div class="small muted" style="margin-top:10px">Cette semaine : 🏊 ${swimsWeek()} · 😴 ${habitWeek('sleep')} · 🍬 ${habitWeek('sugar')}</div></div>
  <h2>Au programme</h2>
  <div class="glass pad">${s.list.map(([id,n])=>{const e=X[id];return `<div class="exo"><div class="fig" data-fig="${id}"></div><div><b>${esc(e.name)}</b><span class="muted">${n} × ${e.min}–${e.max}${e.unit==='s'?' s':''}${e.per?' / '+e.per:''}</span></div></div>`}).join('')}</div>
  <div class="small muted" style="text-align:center;margin-top:22px">Fonctionne hors connexion · données gardées sur ce téléphone</div>`;
@@ -822,7 +854,7 @@ function progView(){
   <div class="pad"><div class="between"><b style="font-size:20px;letter-spacing:-.02em">${esc(e.name)}</b><span class="chip g">${n} × ${e.min}–${e.max}${e.unit==='s'?' s':''}</span></div>
   <div class="small muted" style="margin:6px 0 4px">${esc(e.muscles)}${e.per?' · par '+e.per:''} · repos ${e.rest>=90?'1 min 30':e.rest+' s'}</div>
   ${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}
-  ${braceHTML(e)}
+  ${postureHTML(e)}<div class="post"><b>Respiration</b><div>${esc(e.breath)}</div></div>${braceHTML(e)}
   <div class="small" style="margin-top:8px;color:#D6D6DE"><span class="gtext" style="font-weight:800">Pour durcir</span> · ${esc(e.progress)}</div></div></div>`}).join('')}
  <h2>Sons et musique</h2>
  <div class="glass pad"><p class="muted small" style="margin-top:0;line-height:1.45">Lance ta musique (Spotify, Apple Music…) puis ouvre l’app : elle ne la coupe pas.</p>
@@ -834,7 +866,7 @@ function progView(){
   <div class="tip">Aucun exercice ne fait fondre le gras à un endroit précis : il part quand le gras global baisse.</div>
   <div class="tip"><b>~140 g de protéines par jour.</b> 3 œufs ≈ 20 g · 1 boîte de thon ≈ 25 g · 150 g de poulet ≈ 35 g · 1 skyr ≈ 15 g.</div>
   <div class="tip">Ne coupe pas tes portions au début. Tour de taille stable après 4 semaines ? Enlève un tiers du riz (l’app te le dira).</div>
-  <div class="tip">8 000 pas par jour en plus de la piscine, et 7 à 8 h de sommeil.</div>
+  <div class="tip">Tes balades avec les chiens et la piscine font déjà beaucoup. Ajoute 7 à 8 h de sommeil et évite le grignotage sucré.</div>
  </div>`;
 }
 let CHX='pompes';
@@ -979,7 +1011,7 @@ function renderRun(bump){
   ${test&&state==='ready'?`<div class="banner">Test : fais le maximum de pompes propres. Moins de 6 ? Fais les séries suivantes sur les genoux, et règle la charge sur « Sur les genoux ».</div>`:''}
   ${hard&&state==='ready'?`<div class="banner">Haut de fourchette partout la dernière fois : ${esc(e.progress)}</div>`:''}
   <div class="dock">${dock}</div>
-  ${state==='ready'?(firstOfExo?`<div class="glass pad" style="margin-top:12px"><div class="kicker">Mise en place</div><ol class="steps">${e.setup.map(t=>`<li>${esc(t)}</li>`).join('')}</ol><div class="tip" style="margin-top:10px"><b>Respire :</b> ${esc(e.breath)}</div>${braceHTML(e)}</div>`:`<div style="margin-top:10px">${e.tips.map(t=>`<div class="tip">${esc(t)}</div>`).join('')}${braceHTML(e)}</div>`):''}</div>`);
+  ${state==='ready'?(firstOfExo?`<div class="glass pad" style="margin-top:12px"><div class="kicker">Mise en place</div><ol class="steps">${e.setup.map(t=>`<li>${esc(t)}</li>`).join('')}</ol>${postureHTML(e)}<div class="post"><b>Respiration</b><div>${esc(e.breath)}</div></div>${braceHTML(e)}</div>`:`<div style="margin-top:10px">${postureHTML(e)}<div class="post"><b>Respiration</b><div>${esc(e.breath)}</div></div>${braceHTML(e)}</div>`):''}</div>`);
   app.querySelectorAll('[data-ld]').forEach(b=>b.onclick=()=>{const l=LOADS[e.id],d=+b.dataset.ld;RUN.loads[e.id]=l.L?Math.max(0,Math.min(25,RUN.loads[e.id]+d*.5)):Math.max(0,Math.min(l.opts.length-1,RUN.loads[e.id]+d));RUN.bumped[e.id]=false;beep(900,.04,.06);renderRun()});
   app.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{RUN.manual=true;RUN.val=Math.max(0,Math.min(300,RUN.val+ +b.dataset.d));beep(1200,.03,.06);renderRun(true)});
   const on=(a,f)=>{const x=app.querySelector(`[data-act=${a}]`);if(x)x.onclick=f};

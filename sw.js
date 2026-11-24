@@ -1,6 +1,6 @@
 // Réseau d'abord pour la page (toujours la dernière version quand il y a internet),
 // cache en secours (hors connexion). Les icônes restent servies depuis le cache.
-const CACHE = 'muscu-v21';
+const CACHE = 'muscu-v22';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', (e) => e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener('activate', (e) =>
