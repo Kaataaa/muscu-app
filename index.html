@@ -340,9 +340,9 @@ Object.entries(X).forEach(([id,e])=>e.id=id);
 
 /* ---------- Séances ---------- */
 const SESSIONS={
- A:{name:'Séance A',sub:'Pecs · Épaules · Triceps · Abdos',list:[['pompes',4],['dev',3],['lat',3],['triceps',3],['crunch',3],['planche',3],['climber',3]]},
- B:{name:'Séance B',sub:'Taille · Obliques · Jambes · Cardio',list:[['squat',3],['sdt',3],['twist',3],['hipdips',3],['deadbug',3],['jacks',3]]},
- C:{name:'Séance C',sub:'Bras · Dos · Pecs · Abdos',list:[['rowing',3],['curl',3],['serrees',3],['ecarteSol',3],['bicycle',3],['hollow',3],['climber',3]]},
+ A:{name:'Séance A',sub:'Abdos bas · Obliques · Pecs',list:[['pompes',3],['crunch',4],['planche',3],['bicycle',3],['lat',2],['climber',3]]},
+ B:{name:'Séance B',sub:'Taille · Obliques · Brûle-graisse',list:[['squat',3],['twist',4],['hipdips',3],['deadbug',3],['hollow',3],['jacks',3]]},
+ C:{name:'Séance C',sub:'Abdos · Taille · Bras',list:[['rowing',2],['curl',2],['serrees',2],['crunch',3],['twist',3],['planche',3],['climber',3]]},
 };
 const ORDER=['A','B','C'];
 const WEEKGOAL=4; // séances visées par semaine (5 possibles du lundi au vendredi)
@@ -795,7 +795,7 @@ const habitWeek=k=>{let n=0;for(let i=0;i<7;i++){const dt=new Date(+monday(new D
 let OB=lsGet('mm2_onb',false)?-1:0;
 const SLIDES=[
  {k:'Bienvenue',h:'Ton plan <span class="gtext">sur mesure.</span>',fig:'pompes',body:`<p>Objectif : <b>garder tes pecs et tes bras</b>, <b>dessiner tes abdos</b> et <b>affiner ta taille</b>.</p><p class="muted">Tout se fait chez toi avec ton sac à dos, ton élastique et tes haltères. L’app te guide à chaque répétition.</p>`},
- {k:'Ta semaine',h:'Du lundi au vendredi, <span class="gtext">après la piscine.</span>',body:`<div class="glass pad">${[['A','Pecs · épaules · triceps · abdos'],['B','Taille · obliques · jambes · cardio'],['C','Bras · dos · pecs · abdos']].map(([k,t])=>`<div class="between" style="padding:10px 0;border-bottom:1px solid var(--line)"><b>Séance ${k}</b><span class="small muted" style="text-align:right">${t}</span></div>`).join('')}</div><p>Les 3 séances tournent : <b>A → B → C → A…</b> Vise <b>${WEEKGOAL} séances par semaine</b>. Tu rates un jour ? Pas grave, l’app te propose simplement la suivante.</p><p class="muted">Chaque séance finit par du cardio (mountain climbers ou jumping jacks) pour brûler un peu plus.</p>`},
+ {k:'Ta semaine',h:'Du lundi au vendredi, <span class="gtext">après la piscine.</span>',body:`<div class="glass pad">${[['A','Abdos bas · obliques · pecs'],['B','Taille · obliques · brûle-graisse'],['C','Abdos · taille · bras']].map(([k,t])=>`<div class="between" style="padding:10px 0;border-bottom:1px solid var(--line)"><b>Séance ${k}</b><span class="small muted" style="text-align:right">${t}</span></div>`).join('')}</div><p>Les 3 séances tournent : <b>A → B → C → A…</b> Vise <b>${WEEKGOAL} séances par semaine</b>. Tu rates un jour ? Pas grave, l’app te propose simplement la suivante.</p><p class="muted">Chaque séance finit par du cardio (mountain climbers ou jumping jacks) pour brûler un peu plus.</p>`},
  {k:'Le gainage',h:'Ventre gainé, <span class="gtext">pas bloqué.</span>',fig:'planche',body:`<ol class="steps"><li><b>Gainer</b>, c’est serrer le ventre comme si quelqu’un allait te donner une petite tape dessus, et serrer légèrement les fesses.</li><li>Ce n’est <b>pas</b> rentrer le ventre, et tu ne bloques <b>pas</b> ta respiration : tu continues de respirer.</li><li><b>Fort</b> (environ 70 %) sur les exercices qui chargent le dos : rowing, squat, soulevé de terre, pompes, planche.</li><li><b>Léger</b> sur les bras : curl, élévations, écartés.</li><li>Chaque exercice t’indique le bon niveau avec cette jauge : <span class="bl bl-3" style="display:inline-flex;vertical-align:middle"><i></i><i></i><i></i></span></li></ol>`},
  {k:'Les bases',h:'Jamais fait de muscu ? <span class="gtext">Voilà l’essentiel.</span>',body:`<ol class="steps"><li>Toujours l’échauffement guidé de 3 min avant.</li><li>La technique d’abord, la charge ensuite. Commence léger.</li><li>Descends lentement (2 s), remonte avec contrôle.</li><li>Souffle pendant l’effort, ne bloque jamais ta respiration.</li><li>Arrête une série quand il te reste environ 2 répétitions propres.</li><li>Douleur dans une articulation = tu arrêtes l’exercice. Des courbatures les jours suivants, c’est normal.</li></ol>`},
  {k:'Pendant la séance',h:'Regarde, place-toi, <span class="gtext">fais.</span>',fig:'rowing',labels:true,body:`<ol class="steps"><li>Le personnage te montre le mouvement. Les <b>repères</b> indiquent ce qui compte, la <b>flèche</b> le trajet, la consigne en haut le moment.</li><li>Le bouton <b>ⓘ</b> ouvre la fiche : mise en place, gainage, erreurs à éviter, version plus facile. Le bouton <b>½×</b> passe au ralenti.</li><li>Fais ta série, règle ton nombre avec − et +, puis <b>Série faite</b>.</li><li>Le repos se lance tout seul. 3 bips = c’est reparti.</li></ol>`},
@@ -872,7 +872,7 @@ let PROGK='A';
 function progView(){
  const s=SESSIONS[PROGK];setTheme(PROGK);
  return `<div class="kicker">3 séances en rotation · objectif ${WEEKGOAL} par semaine</div><h1 style="margin-top:6px">Ton <span class="gtext">programme</span></h1>
- <p class="muted" style="line-height:1.45">Du lundi au vendredi, après la piscine : A → B → C → A… Tu rates un jour ? Tu reprends simplement la séance suivante. Priorité : abdos, obliques et taille, en gardant pecs et bras.</p>
+ <p class="muted" style="line-height:1.45">Du lundi au vendredi, après la piscine : A → B → C → A… Tu rates un jour ? Tu reprends simplement la séance suivante. Priorité absolue : abdos, obliques et taille. Pecs et bras en entretien.</p>
  <div class="seg">${ORDER.map(k=>`<button data-pk="${k}" class="${PROGK===k?'on':''}">Séance ${k}</button>`).join('')}</div>
  <div class="small muted" style="margin-top:8px">${esc(SESSIONS[PROGK].sub)} · ≈ ${estMin(PROGK)} min</div>
  ${s.list.map(([id,n])=>{const e=X[id];return `<div class="glass" style="margin-top:14px;overflow:hidden">
